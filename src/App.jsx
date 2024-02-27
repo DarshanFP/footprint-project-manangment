@@ -119,7 +119,7 @@ const App = () => {
       <Router>
         <Routes>
           {/** Category 1 : Unprotected Routes  */}
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<MyProjects />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/emailotp" element={<EmailOtp></EmailOtp>}></Route>
