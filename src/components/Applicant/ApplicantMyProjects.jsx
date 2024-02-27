@@ -1,6 +1,5 @@
 // projectsToBeReviewed.jsx
 
-
 import React, { useEffect, useReducer, useState } from "react";
 import {
   ChakraProvider,
@@ -13,7 +12,8 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import authAxios from "../../AuthAxios";
-
+import { Flex } from "@chakra-ui/react";
+import DashboardApplicant from "./dashboardApplicant";
 
 const MyProjects = () => {
   const showToast = useToast();
@@ -29,11 +29,11 @@ const MyProjects = () => {
       getAllEOI: [],
     }
   );
-  
-  // From the api call try and get all the projects 
+
+  // From the api call try and get all the projects
   useEffect(() => {
     const getAllProject = async () => {
-      // get projects of a particular type 
+      // get projects of a particular type
       async function fetchDataForApplicantRoute(route) {
         try {
           const response = await authAxios.get(`projects/${route}`);
@@ -82,8 +82,7 @@ const MyProjects = () => {
         );
         const getAllWHFCApplicant = getAllWHFCApplicantData ?? [];
 
-
-        /// Error mark 
+        /// Error mark
         const getAllEGSApplicantData = await fetchDataForApplicantRoute(
           "getAllEGSApplicant"
         );
@@ -109,7 +108,7 @@ const MyProjects = () => {
         );
         const getAllCGApplicant = getAllCGApplicantData ?? [];
 
-        // Object 
+        // Object
         /*
         {
           HOI: [
@@ -120,7 +119,7 @@ const MyProjects = () => {
           ] , 
           EOI , DPLG , HIV
         }
-        */ 
+        */
         const newProjectList = {
           HOI: getAllHOI.map((project) => {
             return {
@@ -204,33 +203,24 @@ const MyProjects = () => {
   console.log(projectList);
   return (
     <ChakraProvider>
-      
-      <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg">
-        <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
-        My Projects
-        </Heading>
-
-        <VStack spacing={6} align="stretch">
-          {projectList.getAllHOI.map((project) => (
-            <Box
-              key={project.id}
-              bg="white"
-              p={6}
-              borderRadius="lg"
-              boxShadow="md"
-              width="100%"
+      <Flex w="full" h="full">
+        <VStack w='35%' h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+        <VStack w='65%' h='100vh' overflowY='scroll'>
+          <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg" w='60%'>
+            <Heading
+              as="h1"
+              size="xl"
+              mb={6}
+              textAlign="center"
+              color="blue.500"
             >
-              <Heading size="md" mb={2} color="blue.500">
-                {project.id}
-              </Heading>
-            </Box>
-          ))}
-          {/* To display each of the form what we did 
-          We take all the keys from the projectList - EOI , HOI , DPLG 
-          */}
-          {Object.keys(projectList).map((key) => (
-            <React.Fragment key={key}>
-              {projectList[key].map((project) => (
+              My Projects
+            </Heading>
+
+            <VStack spacing={6} align="stretch">
+              {projectList.getAllHOI.map((project) => (
                 <Box
                   key={project.id}
                   bg="white"
@@ -239,46 +229,68 @@ const MyProjects = () => {
                   boxShadow="md"
                   width="100%"
                 >
-                  <Heading size="md" mb={2} color="blue.500">
-                    {
-                      /* HIV20241 */
-                    }
-                    {project.id} 
-                  </Heading>
+                  <Heading size="md" mb={2} color="green.500" display='flex'>
+                        {/* HIV20241 */}
+                        <Text color='black' fontSize='large' fontWeight='400' >Project Id - # </Text> {project.id}
+                      </Heading>
+                </Box>
+              ))}
+              {/* To display each of the form what we did 
+          We take all the keys from the projectList - EOI , HOI , DPLG 
+          */}
+              {Object.keys(projectList).map((key) => (
+                <React.Fragment key={key}>
+                  {projectList[key].map((project) => (
+                    <Box
+                      key={project.id}
+                      bg="white"
+                      p={6}
+                      borderRadius="lg"
+                      boxShadow="md"
+                      width="100%"
+                    >
+                      <Heading size="md" mb={2} color="green.500" display='flex'>
+                        {/* HIV20241 */}
+                        <Text color='black' fontSize='large' fontWeight='400' >Project Id - # </Text> {project.id}
+                      </Heading>
 
-                  {/*ViewEOI
+                      {/*ViewEOI
                   Object --- use Params - object 
                   Object --> String 
                   String - encodedURIComponent 
                   */}
-                  <Button
-                    colorScheme="blue"
-                    as={Link}
-                    to={`/View${key}/${encodeURIComponent(
-                      JSON.stringify(project.project)
-                    )}`} // Update this route as needed
-                    mb={2}
-                    borderRadius="full"
-                  >
-                    View
-                  </Button>
-                  <Button
+                      <Button
+                        colorScheme="blue"
+                        as={Link}
+                        to={`/View${key}/${encodeURIComponent(
+                          JSON.stringify(project.project)
+                        )}`} // Update this route as needed
+                        mb={2}
+                        mx='2'
+                        borderRadius="full"
+                      >
+                        View
+                      </Button>
+                      <Button
                         colorScheme="red"
                         as={Link}
                         to={`/Edit${key}/${encodeURIComponent(
                           JSON.stringify(project.project)
                         )}`} // Update this route as needed
                         mb={2}
+                        mx='2'
                         borderRadius="10"
                       >
                         Edit
                       </Button>
-                </Box>
+                    </Box>
+                  ))}
+                </React.Fragment>
               ))}
-            </React.Fragment>
-          ))}
+            </VStack>
+          </Box>
         </VStack>
-      </Box>
+      </Flex>
     </ChakraProvider>
   );
 };
