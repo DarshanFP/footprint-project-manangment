@@ -55,8 +55,6 @@ const DashboardApplicant = () => {
     <ChakraProvider>
       <Box p={8} maxW="xl" bg="gray.100" borderRadius="lg" w='100%'>
         
-      
-        
         <Heading as="h2" size="xl" mb={6} textAlign="center" color="teal.500">
           Welcome, Applicant!
         </Heading>
@@ -71,6 +69,30 @@ const DashboardApplicant = () => {
             width="100%"
             textAlign="center"
             
+          >
+            <Heading size="md" mb={4} color="teal.500">
+              All projects
+            </Heading>
+            <Text fontSize="md" color="gray.600">
+              Choose to apply projects
+            </Text>
+            <Button
+              as={Link}
+              to="/allApplicantProjects"
+              colorScheme="teal"
+              mt={4}
+              borderRadius="full"
+            >
+              Choose Projects
+            </Button>
+          </Box>
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="lg"
+            boxShadow="md"
+            width="100%"
+            textAlign="center"
           >
             <Heading size="md" mb={4} color="teal.500">
               My Projects

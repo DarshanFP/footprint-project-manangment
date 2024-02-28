@@ -204,11 +204,11 @@ const MyProjects = () => {
   return (
     <ChakraProvider>
       <Flex w="full" h="full">
-        <VStack w='35%' h="100vh" overflowY="scroll">
+        <VStack w='30%' h="100vh" overflowY="scroll">
           <DashboardApplicant></DashboardApplicant>
         </VStack>
-        <VStack w='65%' h='100vh' overflowY='scroll'>
-          <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg" w='60%'>
+        <VStack w='70%' h='100vh' overflowY='scroll'>
+          <Box p={4} mx="auto" bg="gray.100" borderRadius="lg" w='100%'>
             <Heading
               as="h1"
               size="xl"

@@ -100,6 +100,7 @@ import AllApplicantsReviewer from "./components/Reviewer/AllApplicantsReviewer";
 import EmailOtp from "./components/Auth/EmailOtp";
 import ForgetPassword from "./components/Auth/ForgetPassword";
 import EditSocialIndividual from "./components/SocialIndividual/editSocialIndividual";
+import AllProjects from "./components/Applicant/AllProjects";
 
 // Token checking in protected
 // Token expiry - 1 hour
@@ -119,8 +120,8 @@ const App = () => {
       <Router>
         <Routes>
           {/** Category 1 : Unprotected Routes  */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<LoginPage />} />
+          {/* <Route path="/" element={<Home />} /> */}
+          <Route path="/" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/emailotp" element={<EmailOtp></EmailOtp>}></Route>
           <Route
@@ -130,6 +131,9 @@ const App = () => {
           <Route path="/registerApprover" element={<RegisterApproverPage />}>
             {" "}
           </Route>
+          
+          {/* New Section add by Joydev */}
+          <Route path="/allApplicantProjects" element={<AllProjects/>}/>
 
           {/** This first section is only accessible to the applciant */}
 

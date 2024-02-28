@@ -1,7 +1,7 @@
 // Import necessary libraries and components
 // done with integration
 import React, { useEffect } from "react";
-import { useToast } from "@chakra-ui/react";
+import { Flex, Image, useToast } from "@chakra-ui/react";
 import authAxios, { setAuthToken } from "../../AuthAxios.js";
 import {
   Box,
@@ -23,6 +23,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import main_img from "../../Images/frinedlly.jpg";
 
 const LoginPage = () => {
   const showToast = useToast();
@@ -55,7 +56,7 @@ const LoginPage = () => {
         setAuthToken();
         await Promise.resolve(setTimeout(() => {}, 10000000));
         console.log("Logging out");
-        navigate("/login" );
+        navigate("/login");
       }
       // token expires after one hour
     }, 3600000);
@@ -132,7 +133,7 @@ const LoginPage = () => {
               duration: 5000,
               isClosable: true,
             });
-            navigate("/dashboardApprover");
+            navigate("/allApplicantProjects");
           }
         } else {
           showToast({
@@ -181,95 +182,113 @@ const LoginPage = () => {
   // Function to handle any change in zone and correspondingly get reviewers
 
   return (
-    <VStack spacing={8} p={8} align="center" justify="center">
-      <Heading mb={4} fontSize="3xl" fontWeight="bold">
-        Welcome back!
-      </Heading>
-      <Text fontSize="2x9" color="gray.600">
-        Login to your account to continue.
-      </Text>
-      <Box width="100%" maxW="400px">
-        {/* Form element with Formik handleSubmit */}
-        <form onSubmit={formik.handleSubmit}>
-          {/*user type */}
-          <FormControl
-            id="userType"
-            isInvalid={formik.touched.userType && formik.errors.userType}
-            isRequired
-          >
-            <FormLabel>User Type</FormLabel>
-            <Select {...formik.getFieldProps("userType")}>
-              <option value="applicant">Applicant</option>
-              <option value="reviewer">Reviewer</option>
-              <option value="approver">Approver</option>
-            </Select>
-            <FormErrorMessage>{formik.errors.userType}</FormErrorMessage>
-          </FormControl>
-          {/* Email input */}
-          <FormControl
-            id="email"
-            isInvalid={formik.touched.email && formik.errors.email}
-            isRequired
-          >
-            <FormLabel>Email address</FormLabel>
-            <Input
-              type="email"
-              placeholder="john.doe@example.com"
-              {...formik.getFieldProps("email")}
-            />
-            <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
-          </FormControl>
-          {/* Password input */}
-          <FormControl
-            id="password"
-            isInvalid={formik.touched.password && formik.errors.password}
-            isRequired
-            mt={2}
-          >
-            <FormLabel>Password</FormLabel>
-            <InputGroup>
-              {/**Password field with a button to make it visible while changing */}
-
+    <Flex
+      w="80vw"
+      h='90vh'
+      m="auto"
+      my="8"
+      shadow="0px 0px 50px gray"
+      border="1px solid black"
+      rounded="35"
+      overflow={"hidden"}
+      // background="#30415b"
+    >
+      <VStack w='50%' spacing={8} p={4} align="center" justify="center">
+        <Heading mb={2} fontSize="3xl" fontWeight="bold">
+          Welcome back!
+        </Heading>
+        <Text fontSize="2x9" color="gray.600">
+          Login to your account to continue.
+        </Text>
+        <Box width="100%" maxW="400px">
+          {/* Form element with Formik handleSubmit */}
+          <form onSubmit={formik.handleSubmit}>
+            {/*user type */}
+            <FormControl
+              id="userType"
+              isInvalid={formik.touched.userType && formik.errors.userType}
+              isRequired
+            >
+              <FormLabel>User Type</FormLabel>
+              <Select {...formik.getFieldProps("userType")}>
+                <option value="applicant">Applicant</option>
+                <option value="reviewer">Reviewer</option>
+                <option value="approver">Approver</option>
+              </Select>
+              <FormErrorMessage>{formik.errors.userType}</FormErrorMessage>
+            </FormControl>
+            {/* Email input */}
+            <FormControl
+              id="email"
+              isInvalid={formik.touched.email && formik.errors.email}
+              isRequired
+            >
+              <FormLabel>Email address</FormLabel>
               <Input
-                type={formik.values.showPassword ? "text" : "password"}
-                placeholder="********"
-                {...formik.getFieldProps("password")}
+                type="email"
+                placeholder="john.doe@example.com"
+                {...formik.getFieldProps("email")}
               />
-              {/* Toggle password visibility button */}
-              <InputRightElement>
-                <IconButton
-                  variant="ghost"
-                  icon={formik.values.showPassword ? <FaEyeSlash /> : <FaEye />}
-                  onClick={handleTogglePasswordVisibility}
+              <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
+            </FormControl>
+            {/* Password input */}
+            <FormControl
+              id="password"
+              isInvalid={formik.touched.password && formik.errors.password}
+              isRequired
+              mt={1}
+            >
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                {/**Password field with a button to make it visible while changing */}
+
+                <Input
+                  type={formik.values.showPassword ? "text" : "password"}
+                  placeholder="********"
+                  {...formik.getFieldProps("password")}
                 />
-              </InputRightElement>
-            </InputGroup>
-            <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
-          </FormControl>
-          {/* Submit button */}
-          <Button
-            colorScheme="blue"
-            type="submit"
-            mt={4}
-            width="100%"
-            borderRadius="full"
-          >
-            Login
-          </Button>
-        </form>
-      </Box>
-      {/* Forgot password link */}
-      <Link to="/forgetpassword" mt={2} color="blue.500" fontSize="sm">
-        Forgot password?
-      </Link>
-      {/* Registration link */}
-      <Text mt={4} fontSize="sm" color="gray.600">
-        Don't have an account?{" "}
-        <ChakraLink color="blue.500" as={Link} to="/register">
-          Register here.
-        </ChakraLink>
-      </Text>
-    </VStack>
+                {/* Toggle password visibility button */}
+                <InputRightElement>
+                  <IconButton
+                    variant="ghost"
+                    icon={
+                      formik.values.showPassword ? <FaEyeSlash /> : <FaEye />
+                    }
+                    onClick={handleTogglePasswordVisibility}
+                  />
+                </InputRightElement>
+              </InputGroup>
+              <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+            </FormControl>
+            {/* Submit button */}
+            <Button
+              colorScheme="blue"
+              type="submit"
+              mt={2}
+              width="100%"
+              borderRadius="full"
+            >
+              Login
+            </Button>
+          </form>
+        </Box>
+        {/* Forgot password link */}
+        <Link to="/forgetpassword" color="blue.500" fontSize="sm">
+          Forgot password?
+        </Link>
+        {/* Registration link */}
+        <Text fontSize="sm" color="gray.600">
+          Don't have an account?{" "}
+          <ChakraLink color="blue.500" as={Link} to="/register">
+            Register here.
+          </ChakraLink>
+        </Text>
+      </VStack>
+
+      <VStack w="50%" p="0" h='100%' >
+        <Image objectFit='cover' h='100%' src={main_img} alt="" w="100%" />
+      </VStack>
+    </Flex>
   );
 };
 

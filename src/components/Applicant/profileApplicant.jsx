@@ -11,11 +11,13 @@ import {
   useToast,
   Alert,
   AlertIcon,
+  Flex,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import authAxios from "../../AuthAxios.js";
 import useLogOut from "../../hooks/logout.jsx";
 import { useParams } from "react-router-dom";
+import DashboardApplicant from "./dashboardApplicant.jsx";
 
 const ProfilePageApplicant = () => {
   const mappedUser = useParams();
@@ -117,7 +119,11 @@ const ProfilePageApplicant = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box p={4} w='70%' h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading as="h1" size="xl" mb={6} textAlign="center">
           Applicant Profile
         </Heading>
@@ -282,6 +288,7 @@ const ProfilePageApplicant = () => {
           )}
         </Formik>
       </Box>
+      </ Flex>
     </ChakraProvider>
   );
 };

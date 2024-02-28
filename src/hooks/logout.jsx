@@ -7,7 +7,7 @@ const useLogOut = () => {
   return () => {
     localStorage.removeItem("userToken");
     setAuthToken();
-    navigator("/login");
+    navigator("/");
     console.log("navigation failed");
   };
 };

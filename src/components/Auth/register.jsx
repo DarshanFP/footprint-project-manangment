@@ -116,7 +116,7 @@ const RegisterPage = () => {
           duration: 500,
           isClosable: true,
         });
-        navigate("/login"); // navigate to login page
+        navigate("/"); // navigate to login page
       } catch (error) {
         if (error.response.status === 400) {
           console.log(error.response);
@@ -382,7 +382,7 @@ const RegisterPage = () => {
       {/* Already have an account link */}
       <Text mt={4} fontSize="sm" color="gray.600">
         Already have an account?{" "}
-        <ChakraLink color="blue.500" as={Link} to="/login">
+        <ChakraLink color="blue.500" as={Link} to="/">
           Login here.
         </ChakraLink>
       </Text>
