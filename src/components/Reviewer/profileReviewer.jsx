@@ -11,10 +11,12 @@ import {
   Alert,
   AlertIcon,
   useToast,
+  Flex,
 } from '@chakra-ui/react';
 import { Formik, Form } from 'formik';
 import useLogOut from '../../hooks/logout.jsx';
 import authAxios from "../../AuthAxios.js";
+import DashboardReviewer from './dashboardReviewer.jsx';
 
 const ProfilePageReviewer = () => {
   const showToast = useToast();
@@ -118,7 +120,11 @@ const ProfilePageReviewer = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardReviewer></DashboardReviewer>
+        </VStack>
+      <Box p={4}  w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading as="h1" size="xl" mb={6} textAlign="center">
           Reviewer
            Profile
@@ -274,6 +280,7 @@ const ProfilePageReviewer = () => {
           )}
         </Formik>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

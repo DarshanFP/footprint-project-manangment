@@ -218,6 +218,7 @@ const EducationIndividual = () => {
           status: "success",
         });
         setTimeout(() => {
+          setIsSubmitted(true);
           navigate("/myProjects");
         }, 2000)
       } else {
@@ -237,7 +238,6 @@ const EducationIndividual = () => {
       });
     }
     // Add your form submission logic here
-    setIsSubmitted(true);
   };
 
   return (

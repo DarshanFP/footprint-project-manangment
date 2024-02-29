@@ -7,9 +7,11 @@ import {
   Text,
   Button,
   VStack,
+  Flex,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import authAxios from "../../AuthAxios";
+import DashboardReviewer from "./dashboardReviewer";
 
 const ReviewProjects = () => {
   const [yearFilter, setYearFilter] = useState(0);
@@ -231,7 +233,11 @@ const ReviewProjects = () => {
   console.log(projectList);
   return (
     <ChakraProvider>
-      <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg">
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardReviewer></DashboardReviewer>
+        </VStack>
+      <Box p={8} bg="gray.100" borderRadius="lg" w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
           All reviewed projects
         </Heading>
@@ -295,6 +301,7 @@ const ReviewProjects = () => {
           ))}
         </VStack>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

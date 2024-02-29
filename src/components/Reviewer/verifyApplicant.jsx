@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import axios from "../../AuthAxios.js";
+import DashboardReviewer from "./dashboardReviewer.jsx";
 
 const VerifyApplicant = ({ loggedInReviewerId }) => {
   const [applicants, setApplicants] = useState([]);
@@ -97,7 +98,11 @@ const VerifyApplicant = ({ loggedInReviewerId }) => {
 
   return (
     <ChakraProvider>
-      <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg">
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardReviewer></DashboardReviewer>
+        </VStack>
+      <Box p={4}  w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'} bg="gray.100" borderRadius="lg">
         <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
           Verify Applicants
         </Heading>
@@ -158,6 +163,7 @@ const VerifyApplicant = ({ loggedInReviewerId }) => {
           )}
         </List>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

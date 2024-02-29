@@ -1,7 +1,8 @@
 // ApprovedProjectsForReviewer.jsx
 import React from 'react';
-import { ChakraProvider, Box, Heading, Button, VStack } from '@chakra-ui/react';
+import { ChakraProvider, Box, Heading, Button, VStack, Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import DashboardReviewer from './dashboardReviewer';
 
 // Dummy data, replace this with your actual data
 const approvedProjectsForReviewer = [
@@ -21,7 +22,11 @@ const ApprovedProjectsForReviewer = ({ reviewerProvince }) => {
 
   return (
     <ChakraProvider>
-      <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg">
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardReviewer></DashboardReviewer>
+        </VStack>
+      <Box p={8} w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'} bg="gray.100" borderRadius="lg">
         <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
           Approved Projects for Reviewer in {reviewerProvince}
         </Heading>
@@ -34,7 +39,8 @@ const ApprovedProjectsForReviewer = ({ reviewerProvince }) => {
               p={6}
               borderRadius="lg"
               boxShadow="md"
-              width="100%"
+              width="60%"
+              mx='auto'
             >
               <Heading size="md" mb={2} color="blue.500">
                 {project.title}
@@ -52,6 +58,7 @@ const ApprovedProjectsForReviewer = ({ reviewerProvince }) => {
           ))}
         </VStack>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };
