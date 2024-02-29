@@ -25,10 +25,12 @@ import {
   Tr,
   Th,
   Td,
+  Flex,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios.js";
 import cloudAxios from "../../CloudAxios.js";
 import { useNavigate } from "react-router-dom";
+import DashboardApplicant from "../Applicant/dashboardApplicant.jsx";
 
 const HealthIndividualOngoing = () => {
   console.log("health individual ongoing");
@@ -277,7 +279,11 @@ const HealthIndividualOngoing = () => {
       </ModalContent>
       </Modal>
       </>}
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box p={4} w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading
           as="h1"
           size="xl"
@@ -750,6 +756,7 @@ const HealthIndividualOngoing = () => {
           </Button>
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

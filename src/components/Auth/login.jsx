@@ -102,7 +102,7 @@ const LoginPage = () => {
             });
           } else {
             // replace all other routes from navigate and naviagate to dashboardApplicant
-            navigate("/dashboardApplicant");
+            navigate("/allApplicantProjects");
           }
         } else if (values.userType === "reviewer") {
           response = await authAxios.post("/users/reviewerlogin", req);

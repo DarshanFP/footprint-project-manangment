@@ -21,9 +21,11 @@ import {
   ModalContent,
   ModalBody,
   CircularProgress,
+  Flex,
 } from "@chakra-ui/react";
 import cloudAxios from "../../CloudAxios";
 import authAxios from "../../AuthAxios";
+import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 const EducationIndividualOngoing = () => {
   const navigate = useNavigate();
@@ -216,15 +218,18 @@ const EducationIndividualOngoing = () => {
           </Modal>
         </>
       )}
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box p={6} w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading
           as="h1"
           size="xl"
           mb={6}
           align="center"
           justifyContent="center"
-        >
-          Education individual Ongoing Project Application Form
+        >Education individual Ongoing Project Application Form
         </Heading>
 
         <form onSubmit={handleSubmit}>
@@ -904,6 +909,7 @@ const EducationIndividualOngoing = () => {
           </Button>
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

@@ -9,6 +9,8 @@ import {
   Button,
   VStack,
   useToast,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import authAxios from "../../AuthAxios";
@@ -17,6 +19,7 @@ import DashboardApplicant from "./dashboardApplicant";
 
 const MyProjects = () => {
   const showToast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   // project list
   const [projectList, setProjectList] = useReducer(
@@ -36,12 +39,15 @@ const MyProjects = () => {
       // get projects of a particular type
       async function fetchDataForApplicantRoute(route) {
         try {
+          setIsLoading(true);
           const response = await authAxios.get(`projects/${route}`);
           console.log(route, response);
           const data = response.data.data ?? [];
+          setIsLoading(false);
           return data;
         } catch (error) {
           console.log(route, error);
+          setIsLoading(false);
           return [];
         }
       }
@@ -200,15 +206,15 @@ const MyProjects = () => {
 
     return () => {};
   }, []);
-  console.log(projectList);
+  // console.log(projectList);
   return (
     <ChakraProvider>
       <Flex w="full" h="full">
-        <VStack w='30%' h="100vh" overflowY="scroll">
+        <VStack w="30%" h="100vh" overflowY="scroll">
           <DashboardApplicant></DashboardApplicant>
         </VStack>
-        <VStack w='70%' h='100vh' overflowY='scroll'>
-          <Box p={4} mx="auto" bg="gray.100" borderRadius="lg" w='100%'>
+        <VStack w="70%" h="100vh" overflowY="scroll">
+          <Box p={4} mx="auto" bg="gray.100" borderRadius="lg" w="100%">
             <Heading
               as="h1"
               size="xl"
@@ -218,6 +224,17 @@ const MyProjects = () => {
             >
               My Projects
             </Heading>
+            {isLoading && 
+              <Center mt={'15'}>
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="blue.500"
+                  size="xl"
+                />
+              </Center>
+            }
 
             <VStack spacing={6} align="stretch">
               {projectList.getAllHOI.map((project) => (
@@ -229,10 +246,13 @@ const MyProjects = () => {
                   boxShadow="md"
                   width="100%"
                 >
-                  <Heading size="md" mb={2} color="green.500" display='flex'>
-                        {/* HIV20241 */}
-                        <Text color='black' fontSize='large' fontWeight='400' >Project Id - # </Text> {project.id}
-                      </Heading>
+                  <Heading size="md" mb={2} color="green.500" display="flex">
+                    {/* HIV20241 */}
+                    <Text color="black" fontSize="large" fontWeight="400">
+                      Project Id - #{" "}
+                    </Text>{" "}
+                    {project.id}
+                  </Heading>
                 </Box>
               ))}
               {/* To display each of the form what we did 
@@ -249,9 +269,17 @@ const MyProjects = () => {
                       boxShadow="md"
                       width="100%"
                     >
-                      <Heading size="md" mb={2} color="green.500" display='flex'>
+                      <Heading
+                        size="md"
+                        mb={2}
+                        color="green.500"
+                        display="flex"
+                      >
                         {/* HIV20241 */}
-                        <Text color='black' fontSize='large' fontWeight='400' >Project Id - # </Text> {project.id}
+                        <Text color="black" fontSize="large" fontWeight="400">
+                          Project Id - #{" "}
+                        </Text>{" "}
+                        {project.id}
                       </Heading>
 
                       {/*ViewEOI
@@ -266,7 +294,7 @@ const MyProjects = () => {
                           JSON.stringify(project.project)
                         )}`} // Update this route as needed
                         mb={2}
-                        mx='2'
+                        mx="2"
                         borderRadius="full"
                       >
                         View
@@ -278,7 +306,7 @@ const MyProjects = () => {
                           JSON.stringify(project.project)
                         )}`} // Update this route as needed
                         mb={2}
-                        mx='2'
+                        mx="2"
                         borderRadius="10"
                       >
                         Edit

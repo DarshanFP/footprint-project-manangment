@@ -27,14 +27,16 @@ import {
   Td,
   useToast,
   useDisclosure,
+  Flex,
 } from "@chakra-ui/react";
 import cloudAxios from "../../CloudAxios";
 import authAxios from "../../AuthAxios";
+import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 const SocialIndividual = () => {
-  const navigate =useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({});
-  const [budgetData, setBudgetData] = useState([{ budget: '', cost: 0 }]);
+  const [budgetData, setBudgetData] = useState([{ budget: "", cost: 0 }]);
   const [revenueData, setRevenueData] = useState([
     { businessPlan: "", currentYear: "", year1: "", year2: "", year3: "" },
   ]);
@@ -84,7 +86,7 @@ const SocialIndividual = () => {
     try {
       setIsLoading(true);
 
-      // Images uploaded to cloudinary 
+      // Images uploaded to cloudinary
       const photographUrl = await handleImageUpload(
         e.target.photographFile.files[0]
       );
@@ -138,7 +140,7 @@ const SocialIndividual = () => {
           agree: true,
         },
         estimated_income: {
-          currentYear : e.target.estimatedIncomeCurrentYear.value,
+          currentYear: e.target.estimatedIncomeCurrentYear.value,
           year1: e.target.estimatedIncomeYear1.value,
           year2: e.target.estimatedIncomeYear2.value,
           year3: e.target.estimatedIncomeYear3.value,
@@ -155,9 +157,10 @@ const SocialIndividual = () => {
           title: "Successfull form submission",
           status: "success",
           duration: 5000,
-        }); navigate("/dashboardApplicant");
+        });
+        navigate("/dashboardApplicant");
       } else {
-        console.log('Error is here')
+        console.log("Error is here");
         showToast({
           title: "Unsuccessful form submission",
           status: "error",
@@ -167,13 +170,11 @@ const SocialIndividual = () => {
       }
     } catch (err) {
       setIsLoading(false);
-      showToast(
-        {
-          title: "Error submitting form",
-          status: "error",
-          duration: 5000,
-        }
-      )
+      showToast({
+        title: "Error submitting form",
+        status: "error",
+        duration: 5000,
+      });
       console.log(err);
     }
   };
@@ -205,128 +206,149 @@ const SocialIndividual = () => {
       setRevenueData(newData);
     };
 
-
     return (
-      <Box p={4}>
-        <Heading as="h1" size="xl" mb={6}>
-          Revenue Goals – Facts and Figures
-        </Heading>
+          <Box
+            p={4}
+            w="70%"
+            h="100vh"
+            overflowY={"scroll"}
+            overflowX={"hidden"}
+          >
+            <Heading as="h1" size="xl" mb={6}>
+              Revenue Goals – Facts and Figures
+            </Heading>
 
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Business Plans</Th>
-              <Th>Year {new Date().getFullYear()}</Th>
-              <Th>Year {new Date().getFullYear() + 1}</Th>
-              <Th>Year {new Date().getFullYear() + 2}</Th>
-              <Th>Year {new Date().getFullYear() + 3}</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {revenueData.map((row, index) => (
-              <Tr key={index}>
-                <Td>
-                  <Input
-                    type="text"
-                    value={row.businessPlan}
-                    onChange={(e) =>
-                      handleRevenueChange(index, "businessPlan", e.target.value)
-                    }
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={row.currentYear}
-                    onChange={(e) =>
-                      handleRevenueChange(index, "currentYear", e.target.value)
-                    }
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={row.year1}
-                    onChange={(e) =>
-                      handleRevenueChange(index, "year1", e.target.value)
-                    }
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={row.year2}
-                    onChange={(e) =>
-                      handleRevenueChange(index, "year2", e.target.value)
-                    }
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={row.year3}
-                    onChange={(e) =>
-                      handleRevenueChange(index, "year3", e.target.value)
-                    }
-                  />
-                </Td>
-                <Td>
-                  <Button
-                    colorScheme="red"
-                    size="sm"
-                    onClick={() => handleDeleteRevenueRow(index)}
-                  >
-                    Delete
-                  </Button>
-                </Td>
-              </Tr>
-            ))}
+            <Table variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>Business Plans</Th>
+                  <Th>Year {new Date().getFullYear()}</Th>
+                  <Th>Year {new Date().getFullYear() + 1}</Th>
+                  <Th>Year {new Date().getFullYear() + 2}</Th>
+                  <Th>Year {new Date().getFullYear() + 3}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {revenueData.map((row, index) => (
+                  <Tr key={index}>
+                    <Td>
+                      <Input
+                        type="text"
+                        value={row.businessPlan}
+                        onChange={(e) =>
+                          handleRevenueChange(
+                            index,
+                            "businessPlan",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </Td>
+                    <Td>
+                      <Input
+                        type="number"
+                        value={row.currentYear}
+                        onChange={(e) =>
+                          handleRevenueChange(
+                            index,
+                            "currentYear",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </Td>
+                    <Td>
+                      <Input
+                        type="number"
+                        value={row.year1}
+                        onChange={(e) =>
+                          handleRevenueChange(index, "year1", e.target.value)
+                        }
+                      />
+                    </Td>
+                    <Td>
+                      <Input
+                        type="number"
+                        value={row.year2}
+                        onChange={(e) =>
+                          handleRevenueChange(index, "year2", e.target.value)
+                        }
+                      />
+                    </Td>
+                    <Td>
+                      <Input
+                        type="number"
+                        value={row.year3}
+                        onChange={(e) =>
+                          handleRevenueChange(index, "year3", e.target.value)
+                        }
+                      />
+                    </Td>
+                    <Td>
+                      <Button
+                        colorScheme="red"
+                        size="sm"
+                        onClick={() => handleDeleteRevenueRow(index)}
+                      >
+                        Delete
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))}
 
-            {/* Add Row Button */}
-            <Tr>
-              <Td colSpan="5" textAlign="center">
-                <Button colorScheme="blue" onClick={handleAddRevenueRow}>
-                  Add Row
-                </Button>
-              </Td>
-            </Tr>
+                {/* Add Row Button */}
+                <Tr>
+                  <Td colSpan="5" textAlign="center">
+                    <Button colorScheme="blue" onClick={handleAddRevenueRow}>
+                      Add Row
+                    </Button>
+                  </Td>
+                </Tr>
 
-            {/* Total Expenses Row */}
-            <Tr>
-              <Td>Total Expenses</Td>
-              <Td>{calculateTotals("currentYear")}</Td>
-              <Td>{calculateTotals("year1")}</Td>
-              <Td>{calculateTotals("year2")}</Td>
-              <Td>{calculateTotals("year3")}</Td>
-            </Tr>
+                {/* Total Expenses Row */}
+                <Tr>
+                  <Td>Total Expenses</Td>
+                  <Td>{calculateTotals("currentYear")}</Td>
+                  <Td>{calculateTotals("year1")}</Td>
+                  <Td>{calculateTotals("year2")}</Td>
+                  <Td>{calculateTotals("year3")}</Td>
+                </Tr>
 
-            {/* Estimated Income per Year Row */}
-            <Tr>
-              <Td>Estimated Income per Year</Td>
-              <Td>
-                <Input type="number" name='estimatedIncomeCurrentYear' placeholder="Enter value" />
-              </Td>
-              <Td>
-                <Input type="number" 
-                name="estimatedIncomeYear1"
-                placeholder="Enter value" 
-                />
-                
-              </Td>
-              <Td>
-                <Input type="number" 
-                name="estimatedIncomeYear2"
-                placeholder="Enter value" />
-              </Td>
-              <Td>
-                <Input type="number" 
-                name="estimatedIncomeYear3"
-                placeholder="Enter value" />
-              </Td>
-            </Tr>
-          </Tbody>
-        </Table>
-      </Box>
+                {/* Estimated Income per Year Row */}
+                <Tr>
+                  <Td>Estimated Income per Year</Td>
+                  <Td>
+                    <Input
+                      type="number"
+                      name="estimatedIncomeCurrentYear"
+                      placeholder="Enter value"
+                    />
+                  </Td>
+                  <Td>
+                    <Input
+                      type="number"
+                      name="estimatedIncomeYear1"
+                      placeholder="Enter value"
+                    />
+                  </Td>
+                  <Td>
+                    <Input
+                      type="number"
+                      name="estimatedIncomeYear2"
+                      placeholder="Enter value"
+                    />
+                  </Td>
+                  <Td>
+                    <Input
+                      type="number"
+                      name="estimatedIncomeYear3"
+                      placeholder="Enter value"
+                    />
+                  </Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </Box>
     );
   };
 
@@ -486,7 +508,11 @@ const SocialIndividual = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full">
+          <VStack w="30%" h="100vh" overflowY="scroll">
+            <DashboardApplicant></DashboardApplicant>
+          </VStack>
+      <Box p={6} h={'100vh'} w='70%' overflowY={'scroll'} overflowX={'hidden'}>
         {isLoading && (
           <>
             <Modal isOpen={true} onClose={onClose}>
@@ -675,7 +701,12 @@ const SocialIndividual = () => {
             {/* educational status of children*/}
             <FormControl>
               <FormLabel>Educational status of children</FormLabel>
-              <Input type="text" name="eduStatus" onChange={handleChange} required/>
+              <Input
+                type="text"
+                name="eduStatus"
+                onChange={handleChange}
+                required
+              />
             </FormControl>
 
             {/* Religion */}
@@ -846,12 +877,16 @@ const SocialIndividual = () => {
           </VStack>
 
           {/* Submit Button */}
-          <Button colorScheme="blue" type="submit" 
-           onClick={() => (formData.projectInChargeAgreement = true)}>
+          <Button
+            colorScheme="blue"
+            type="submit"
+            onClick={() => (formData.projectInChargeAgreement = true)}
+          >
             Submit
           </Button>
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

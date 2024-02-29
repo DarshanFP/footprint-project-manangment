@@ -152,14 +152,16 @@ const App = () => {
             path="/educationIndividual"
             element={<EducationIndividual />}
           />
-
           <Route path="/socialIndividual" element={<SocialIndividual />} />
+          {/* Needs to be add... Not mention in the list  */}
           <Route path="/educationGroup" element={<EducationGroup />} />
+
           <Route path="/common" element={<Common />} />
           <Route
             path="/devProjLivliGroup"
             element={<DevProjectLivlihoodGroup />}
           />
+          {/* Needs to be add... Not mention in the list  */}
           <Route
             path="/institutionalSkillGroup"
             element={<InstitutionalSkillTrainingForm />}

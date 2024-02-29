@@ -17,9 +17,11 @@ import {
   AlertIcon,
   InputGroup,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import authAxios from "../../AuthAxios";
+import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 const ViewEI = () => {
   const showToast = useToast();
@@ -167,7 +169,14 @@ const ViewEI = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full">
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box p={8} w={"70%"}
+          overflowY={"scroll"}
+          overflowX={"hidden"}
+          h={"100vh"}>
         <Heading
           as="h1"
           size="xl"
@@ -1223,6 +1232,7 @@ const ViewEI = () => {
             </Button>
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

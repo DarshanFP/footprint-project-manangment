@@ -18,11 +18,11 @@ const AllProjects = () => {
   const AllProjects = [
     {
       projectName: "HIV effected outreach welfare - (hiv_affected_outreaches)",
-      formPath: "/common",
+      formPath: "/HIVAffectedOutreach",
     },
     {
       projectName: "Education group Support-rural,urban,tribal - (education_group_support)",
-      formPath: "/common",
+      formPath: "/EducationRuralUrbanTribalGroup",
     },
     {
       projectName: "Institutional Group Educational Support - (EGS)",
@@ -34,7 +34,7 @@ const AllProjects = () => {
     },
     {
       projectName: "Next phase developmental proposal - (npdp)",
-      formPath: "/common",
+      formPath: "/nextPhaseDevelopmentProject",
     },
     {
       projectName: "Residential skill training -(isg) International support group",
@@ -42,27 +42,27 @@ const AllProjects = () => {
     },
     {
       projectName: "Development Liveihood support (DPLG) - Development Project LG",
-      formPath: "/common",
+      formPath: "/devProjLivliGroup",
     },
     {
       projectName: "Welfare home for chlidren ongoing - (waelfare_home_childrens)",
-      formPath: "/common",
+      formPath: "/WelfareHomeGroup",
     },
     {
       projectName: "Educational Support - (eis) - Educational Individual",
-      formPath: "/common",
+      formPath: "/educationIndividual",
     },
     {
       projectName: "Ongoing Educational Support - (EOI) - Educational onging Individual",
-      formPath: "/common",
+      formPath: "/educationIndividualOngoing",
     },
     {
       projectName: "Access to helth. - (hoi) - Helth ongoning individual",
-      formPath: "/common",
+      formPath: "/healthIndividualOngoing",
     },
     {
       projectName: "Livelihood Support - (sis) - social individual",
-      formPath: "/common",
+      formPath: "/socialIndividual",
     },
   ];
 

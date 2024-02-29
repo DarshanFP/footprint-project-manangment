@@ -20,8 +20,10 @@ import {
   Th,
   Td,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
+import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 export const DevProjectLivlihoodGroup = () => {
   const navigate = useNavigate();
@@ -393,7 +395,11 @@ export const DevProjectLivlihoodGroup = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box p={6} w={'70%'} overflowY={'scroll'} overflowX={'hidden'} h={'100vh'}>
         <Heading
           as="h1"
           size="xl"
@@ -825,6 +831,7 @@ export const DevProjectLivlihoodGroup = () => {
           </Button>
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

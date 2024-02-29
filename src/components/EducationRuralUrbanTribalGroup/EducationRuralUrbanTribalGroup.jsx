@@ -19,9 +19,11 @@ import {
   Td,
   Textarea,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
 import { useNavigate } from "react-router-dom";
+import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 const EducationRuralUrbanTribalGroup = () => {
   const showToast = useToast();
@@ -297,7 +299,11 @@ const EducationRuralUrbanTribalGroup = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box p={6} w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading as="h2" size="lg">
           Education Rural Urban Tribal Group
         </Heading>
@@ -914,6 +920,7 @@ const EducationRuralUrbanTribalGroup = () => {
           </form>
         </VStack>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

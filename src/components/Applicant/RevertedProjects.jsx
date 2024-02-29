@@ -10,9 +10,11 @@ import {
   VStack,
   useToast,
   HStack,
+  Flex,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import authAxios from "../../AuthAxios";
+import DashboardApplicant from "./dashboardApplicant";
 
 const RevertedProjects = () => {
   const showToast = useToast();
@@ -264,74 +266,82 @@ const RevertedProjects = () => {
   console.log(projectList);
   return (
     <ChakraProvider>
-      <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg">
-        <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
-          Reverted Projects
-        </Heading>
-
-        <VStack spacing={6} align="stretch">
-          {projectList.getAllHOI.map((project) => (
-            <Box
-              key={project.id}
-              bg="white"
-              p={6}
-              borderRadius="lg"
-              boxShadow="md"
-              width="100%"
-            >
-              <Heading size="md" mb={2} color="blue.500">
-                {project.id}
-              </Heading>
-            </Box>
-          ))}
-          {Object.keys(projectList).map((key) => (
-            <React.Fragment key={key}>
-              {projectList[key].map((project) => (
-                <Box
-                  key={project.id}
-                  bg="white"
-                  p={6}
-                  borderRadius="lg"
-                  boxShadow="md"
-                  width="100%"
-                >
-                  <VStack>
-                    <Heading size="md" mb={2} color="blue.500">
-                      {project.id}
-                    </Heading>
-                    Please view the comments from view section before proceding
-                    to edit the form
-                    <HStack>
-                      <Button
-                        colorScheme="blue"
-                        as={Link}
-                        to={`/View${key}/${encodeURIComponent(
-                          JSON.stringify(project.project)
-                        )}`} // Update this route as needed
-                        mb={2}
-                        borderRadius="10"
-                      >
-                        View
-                      </Button>
-                      <Button
-                        colorScheme="red"
-                        as={Link}
-                        to={`/Edit${key}/${encodeURIComponent(
-                          JSON.stringify(project.project)
-                        )}`} // Update this route as needed
-                        mb={2}
-                        borderRadius="10"
-                      >
-                        Edit
-                      </Button>
-                    </HStack>
-                  </VStack>
-                </Box>
-              ))}
-            </React.Fragment>
-          ))}
+      <Flex w="100vw" h="full">
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
         </VStack>
-      </Box>
+        <Box p={8} bg="gray.100" borderRadius="lg" w={"70%"}
+          overflowY={"scroll"}
+          overflowX={"hidden"}
+          h={"100vh"}>
+          <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
+            Reverted Projects
+          </Heading>
+
+          <VStack spacing={6} align="stretch">
+            {projectList.getAllHOI.map((project) => (
+              <Box
+                key={project.id}
+                bg="white"
+                p={6}
+                borderRadius="lg"
+                boxShadow="md"
+                width="100%"
+              >
+                <Heading size="md" mb={2} color="blue.500">
+                  {project.id}
+                </Heading>
+              </Box>
+            ))}
+            {Object.keys(projectList).map((key) => (
+              <React.Fragment key={key}>
+                {projectList[key].map((project) => (
+                  <Box
+                    key={project.id}
+                    bg="white"
+                    p={6}
+                    borderRadius="lg"
+                    boxShadow="md"
+                    width="100%"
+                  >
+                    <VStack>
+                      <Heading size="md" mb={2} color="blue.500">
+                        {project.id}
+                      </Heading>
+                      Please view the comments from view section before proceding
+                      to edit the form
+                      <HStack>
+                        <Button
+                          colorScheme="blue"
+                          as={Link}
+                          to={`/View${key}/${encodeURIComponent(
+                            JSON.stringify(project.project)
+                          )}`} // Update this route as needed
+                          mb={2}
+                          borderRadius="10"
+                        >
+                          View
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          as={Link}
+                          to={`/Edit${key}/${encodeURIComponent(
+                            JSON.stringify(project.project)
+                          )}`} // Update this route as needed
+                          mb={2}
+                          borderRadius="10"
+                        >
+                          Edit
+                        </Button>
+                      </HStack>
+                    </VStack>
+                  </Box>
+                ))}
+              </React.Fragment>
+            ))}
+          </VStack>
+        </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

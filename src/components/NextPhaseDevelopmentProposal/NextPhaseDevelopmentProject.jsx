@@ -17,8 +17,11 @@ import {
   Tr,
   Th,
   Td,
+  Flex,
+  VStack,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios.js";
+import DashboardApplicant from "../Applicant/dashboardApplicant.jsx";
 
 const NextPhaseForm = () => {
   const navigate= useNavigate();
@@ -100,7 +103,11 @@ const NextPhaseForm = () => {
       }}
     >
       {({ values }) => (
-        <Box p="4">
+        <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+        <Box p="6" w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
           <Form>
             <Heading
               as="h1"
@@ -566,6 +573,7 @@ const NextPhaseForm = () => {
             </Button>
           </Form>
         </Box>
+        </Flex>
       )}
     </Formik>
   );

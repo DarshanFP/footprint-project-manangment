@@ -112,7 +112,7 @@ const DashboardApplicant = () => {
           </Box>
 
           {/* Individual Projects Box */}
-          <Box
+          {/* <Box
             bg="white"
             p={6}
             borderRadius="lg"
@@ -135,10 +135,10 @@ const DashboardApplicant = () => {
             >
               Explore Individual Projects
             </Button>
-          </Box>
+          </Box> */}
 
           {/* Group Projects Box */}
-          <Box
+          {/* <Box
             bg="white"
             p={6}
             borderRadius="lg"
@@ -161,7 +161,7 @@ const DashboardApplicant = () => {
             >
               Explore Group Projects
             </Button>
-          </Box>
+          </Box> */}
 
           {/* Profile Box */}
           <Box
