@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 const DashboardReviewer = () => {
   return (
     <ChakraProvider>
-      <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg" w='100%' >
+      <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg" w='100%'>
       
         
         <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">

@@ -220,7 +220,7 @@ const App = () => {
             element={<ProjectsToBeReviewed />}
           />
           <Route
-            path="/ProjectsToBeApproved/:profile"
+            path="/ProjectsToBeApproved"
             element={<ProjectsToBeApproved />}
           />
           <Route path="/MyReviewedProject" element={<MyReviewedProject />} />

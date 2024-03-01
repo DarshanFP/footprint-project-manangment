@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import axios from "../../AuthAxios.js";
+import DashboardApprover from "./dashboardApprover.jsx";
 
 const VerifyReviewer = () => {
   const showToast = useToast();
@@ -37,9 +38,9 @@ const VerifyReviewer = () => {
               return {
                 id: reviewer._id,
                 name: reviewer.name,
-                email: reviewer.email, 
+                email: reviewer.email,
                 contact: reviewer.mobile,
-                province:reviewer.province,
+                province: reviewer.province,
                 status: "pending",
               };
             })
@@ -55,8 +56,6 @@ const VerifyReviewer = () => {
         })
       );
   }, [showToast]);
-
-
 
   const handleVerify = (reviewerId) => {
     // Update the status of the reviewer to "Verified" on the server
@@ -112,70 +111,75 @@ const VerifyReviewer = () => {
   // console.log("Get reviewers to verify");
   return (
     <ChakraProvider>
-      <Box p={8} maxW="xl" mx="auto" bg="gray.100" borderRadius="lg">
-        <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
-          Verify Reviewers
-        </Heading>
+      <Flex w="100vw" h="full">
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApprover></DashboardApprover>
+        </VStack>
+        <Box p={8} w="70%" h="100vh" overflowY={"scroll"} overflowX={"hidden"}>
+          <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
+            Verify Reviewers
+          </Heading>
 
-        {reviewers.length > 0 ? (
-          <List spacing={3} width="100%">
-            {reviewers.map((reviewer) => (
-              <Box
-                key={reviewer.id}
-                bg="white"
-                p={6}
-                borderRadius="lg"
-                boxShadow="md"
-                width="100%"
-              >
-                <Flex justify="space-between" align="center">
-                  <Heading size="md" color="blue.500">
-                    {reviewer.name}
-                  </Heading>
-                  <Text fontSize="md" color="gray.600">
-                    Status: {reviewer.status}
-                  </Text>
-                  <VStack align="flex-end" spacing={2}>
-                  <Text fontSize="md" color="gray.600">
-                    Status: {reviewer.status}
-                  </Text>
-                  <Text fontSize="md" color="gray.600">
-                    Email: {reviewer.email}
-                  </Text>
-                  <Text fontSize="md" color="gray.600">
-                    Contact: {reviewer.contact}
-                  </Text>
-                  <Text fontSize="md" color="gray.600">
-                    province: {reviewer.province}
-                  </Text>
+          {reviewers.length > 0 ? (
+            <List spacing={3} width="100%">
+              {reviewers.map((reviewer) => (
+                <Box
+                  key={reviewer.id}
+                  bg="white"
+                  p={6}
+                  borderRadius="lg"
+                  boxShadow="md"
+                  width="100%"
+                >
+                  <Flex justify="space-between" align="center">
+                    <Heading size="md" color="blue.500">
+                      {reviewer.name}
+                    </Heading>
+                    <Text fontSize="md" color="gray.600">
+                      Status: {reviewer.status}
+                    </Text>
+                    <VStack align="flex-end" spacing={2}>
+                      <Text fontSize="md" color="gray.600">
+                        Status: {reviewer.status}
+                      </Text>
+                      <Text fontSize="md" color="gray.600">
+                        Email: {reviewer.email}
+                      </Text>
+                      <Text fontSize="md" color="gray.600">
+                        Contact: {reviewer.contact}
+                      </Text>
+                      <Text fontSize="md" color="gray.600">
+                        province: {reviewer.province}
+                      </Text>
+                    </VStack>
+                  </Flex>
+                  <Divider mt={4} mb={4} />
+                  <VStack spacing={3}>
+                    <Button
+                      leftIcon={<ListIcon as={FaCheck} />}
+                      colorScheme="green"
+                      onClick={() => handleVerify(reviewer.id)}
+                    >
+                      Verify
+                    </Button>
+                    <Button
+                      leftIcon={<ListIcon as={FaTimes} />}
+                      colorScheme="red"
+                      onClick={() => handleDecline(reviewer.id)}
+                    >
+                      Decline
+                    </Button>
                   </VStack>
-                </Flex>
-                <Divider mt={4} mb={4} />
-                <VStack spacing={3}>
-                  <Button
-                    leftIcon={<ListIcon as={FaCheck} />}
-                    colorScheme="green"
-                    onClick={() => handleVerify(reviewer.id)}
-                  >
-                    Verify
-                  </Button>
-                  <Button
-                    leftIcon={<ListIcon as={FaTimes} />}
-                    colorScheme="red"
-                    onClick={() => handleDecline(reviewer.id)}
-                  >
-                    Decline
-                  </Button>
-                </VStack>
-              </Box>
-            ))}
-          </List>
-        ) : (
-          <Text textAlign="center" color="gray.600">
-            No reviewers to verify.
-          </Text>
-        )}
-      </Box>
+                </Box>
+              ))}
+            </List>
+          ) : (
+            <Text textAlign="center" color="gray.600">
+              No reviewers to verify.
+            </Text>
+          )}
+        </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

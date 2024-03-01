@@ -18,9 +18,11 @@ import {
   AlertIcon,
   InputGroup,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import authAxios from "../../AuthAxios";
+import DashboardReviewer from "../Reviewer/dashboardReviewer";
 
 const ReviewEI = () => {
   const showToast = useToast();
@@ -104,11 +106,12 @@ const ReviewEI = () => {
       projectData.project_in_charge_agree.agree || false,
     projectInChargeAgreementDate:
       projectData.project_in_charge_agree.date || "",
-    provincialSuperiorAgreement: "", // Assuming not present in req
+    provincialSuperiorAgreement: projectData.provincial_superior_agree.agree || false, // Assuming not present in req
     provincialSuperiorAgreementDate: "", // Assuming not present in req
-    comment: "", // Assuming not present in req
+    comment: projectData.comment_box_provincial_superior || "", // Assuming not present in req
   });
-  console.log(formData);
+  console.log(formData.comment);
+  console.log(formData.provincialSuperiorAgreement);
   // Populate formData from req
 
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -141,11 +144,14 @@ const ReviewEI = () => {
       if (res.data.success) {
         showToast({
           title: formData.provincialSuperiorAgreement ? "Reviewed successfully" : "Reverted successfully",
-          duration: 5000,
+          duration: 2000,
           status: "success",
         });
         setIsSubmitted(true);
-        navigate("/dashboardApplicant");  
+        setTimeout(() => {
+          navigate("/MyReviewedProject"); 
+        }, 1000)
+         
 
       }
       else {
@@ -170,7 +176,11 @@ const ReviewEI = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardReviewer></DashboardReviewer>
+        </VStack>
+      <Box p={8} w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading
           as="h1"
           size="xl"
@@ -1078,6 +1088,9 @@ const ReviewEI = () => {
                 type="text"
                 name="comment"
                 onChange={handleChange}
+                value={
+                  formData.comment
+                }
                 required
               />
             </FormControl>
@@ -1104,8 +1117,16 @@ const ReviewEI = () => {
           >
             Revert
           </Button>
+          {formData.comment !== "" && <Button
+            colorScheme="blue"
+            type="submit"
+            mx={3}
+          >
+            Print
+          </Button>}
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

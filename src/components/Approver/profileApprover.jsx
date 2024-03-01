@@ -10,12 +10,14 @@ import {
   VStack,
   Alert,
   AlertIcon,
-  useToast
+  useToast,
+  Flex
 } from '@chakra-ui/react';
 import { Formik, Form } from 'formik';
 import useLogOut from '../../hooks/logout.jsx';
 import authAxios from "../../AuthAxios.js";
 import {useParams} from 'react-router-dom';
+import DashboardApprover from './dashboardApprover.jsx';
 
 const ProfilePageApprover = () => {
   const showToast = useToast();
@@ -90,7 +92,11 @@ const ProfilePageApprover = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApprover></DashboardApprover>
+        </VStack>
+      <Box p={4} w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading as="h1" size="xl" mb={6} textAlign="center">
           Applicant Profile
         </Heading>
@@ -232,6 +238,7 @@ const ProfilePageApprover = () => {
           )}
         </Formik>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };
