@@ -122,7 +122,7 @@ const LoginPage = () => {
               duration: 5000,
               isClosable: true,
             });
-            navigate(`/dashboardReviewer`);
+            navigate(`/projectsToBeReviewed`);
           }
         } else if (values.userType === "approver") {
           response = await authAxios.post("/users/approverlogin", req);
@@ -133,7 +133,7 @@ const LoginPage = () => {
               duration: 5000,
               isClosable: true,
             });
-            navigate("/allApplicantProjects");
+            navigate("/dashboardApprover");
           }
         } else {
           showToast({
