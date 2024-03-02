@@ -1,6 +1,5 @@
 // projectsToBeReviewed.jsx
-
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ChakraProvider,
   Box,
@@ -9,337 +8,167 @@ import {
   Button,
   VStack,
   useToast,
-  HStack,
   Flex,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import authAxios from "../../AuthAxios";
 import DashboardApplicant from "./dashboardApplicant";
 
 const RevertedProjects = () => {
   const showToast = useToast();
-  const [projectList, setProjectList] = useReducer(
-    (prev, next) => {
-      const newProjectList = { ...prev, ...next };
-      return newProjectList;
-    },
-    {
-      getAllHOI: [],
-      getAllEOI: [],
-    }
-  );
 
-
-  // Individual Projects , Group Projects
-
-  // If the projectCoordinator has not agreed and the comment box is filled 
-  // provincial Superior has not agreed and comment box is filled 
-  // In both of these cases the project shall be counted as reverted 
-  const individualFilter = (value) =>
-    (!value.project_coordinator_agree.agree &&
-      value.comment_box_project_coordinator) ||
-    (!value.provincial_superior_agree.agree &&
-      value.comment_box_provincial_superior);
-
-
-  // group fiter appr=
-  const groupFilterApprover = (approver) => !approver.agree && approver.comment;
-
-
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [AllProjects, setAllProjects] = useState([]);
   useEffect(() => {
-    const getAllProject = async () => {
-      // get all the three types of projects
-      async function fetchDataForApplicantRoute(route) {
-        try {
-          const response = await authAxios.get(`projects/${route}`);
-          console.log(route, response);
-          const data = response.data.data ?? [];
-          return data;
-        } catch (error) {
-          console.log(route, error);
-          return [];
-        }
-      }
-
+    (async () => {
+      const token = localStorage.getItem("userToken");
+      setIsLoading(true);
       try {
-        const getAllHOIData = await fetchDataForApplicantRoute(
-          "getAllHOIapplicant"
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}projects/getallprojectsapplicant`,
+          {
+            headers: {
+              "Content-Type": "Application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        const getAllHOI = getAllHOIData ?? [];
-
-        const getAllEIApplicantData = await fetchDataForApplicantRoute(
-          "getallEIapplicant"
-        );
-        const getAllEIApplicant = getAllEIApplicantData ?? [];
-
-        const getAllSIApplicantData = await fetchDataForApplicantRoute(
-          "getallSIapplicant"
-        );
-        const getAllSIApplicant = getAllSIApplicantData ?? [];
-
-        const getAllDPLGApplicantData = await fetchDataForApplicantRoute(
-          "getallDPLGapplicant"
-        );
-        const getAllDPLGApplicant = getAllDPLGApplicantData ?? [];
-
-        const getAllHIVApplicantData = await fetchDataForApplicantRoute(
-          "getAllHIVApplicant"
-        );
-        const getAllHIVApplicant = getAllHIVApplicantData ?? [];
-
-        const getAllWHFCApplicantData = await fetchDataForApplicantRoute(
-          "getAllWHFCApplicant"
-        );
-        const getAllWHFCApplicant = getAllWHFCApplicantData ?? [];
-
-        const getAllEGSApplicantData = await fetchDataForApplicantRoute(
-          "getAllEGSApplicant"
-        );
-        const getAllEGSApplicant = getAllEGSApplicantData ?? [];
-
-        const getAllNPDPApplicantData = await fetchDataForApplicantRoute(
-          "getAllNPDPApplicant"
-        );
-        const getAllNPDPApplicant = getAllNPDPApplicantData ?? [];
-
-        const getAllEOIApplicantData = await fetchDataForApplicantRoute(
-          "getallEOIapplicant"
-        );
-        const getAllEOIApplicant = getAllEOIApplicantData ?? [];
-
-        const getAllISGApplicantData = await fetchDataForApplicantRoute(
-          "/getallISGapplicant"
-        );
-        const getAllISGApplicant = getAllISGApplicantData ?? [];
-
-        const getAllCGApplicantData = await fetchDataForApplicantRoute(
-          "/getallCGapplicant"
-        );
-        const getAllCGApplicant = getAllCGApplicantData ?? [];
-
-        const newProjectList = {
-          HOI: getAllHOI.filter(individualFilter).map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          // Get call 
-          // Mongo DB document 
-          // doc.general_information.provincial_superiors
-          EGS: getAllEGSApplicant
-            .filter(
-              // models 
-              (value) =>
-                (!value.general_information.provincial_superior.agree &&
-                  value.general_information.provincial_superior.comment ) ||
-                  // That should not be an empty array -- false 
-                value.general_information.project_coordinators.filter(
-                  groupFilterApprover
-                ).length
-            )
-            .map((project) => {
-              return {
-                id: project.project_number,
-                project: project,
-              };
-            }),
-          EI: getAllEIApplicant.filter(individualFilter).map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          SI: getAllSIApplicant.filter(individualFilter).map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          DPLG: getAllDPLGApplicant
-            .filter(
-              (value) =>
-                (!value.provincial_superior_agree.agree &&
-                  value.comment_box_provincial_superior) ||
-                value.project_coordinators.filter(groupFilterApprover).length
-            )
-            .map((project) => {
-              return {
-                id: project.project_code,
-                project: project,
-              };
-            }),
-          HIV: getAllHIVApplicant
-            .filter(
-              (value) =>
-                (!value.mailing_list.provincial_superior.agree &&
-                  value.mailing_list.provincial_superior.comment) ||
-                value.mailing_list.project_coordinators.filter(
-                  groupFilterApprover
-                )
-            )
-            .map((project) => {
-              return {
-                id: project.project_number,
-                project: project,
-              };
-            }),
-          WHFC: getAllWHFCApplicant
-            .filter(
-              (value) =>
-                (!value.mailing_list.provincial_superior.agree &&
-                  value.mailing_list.provincial_superior.comment) ||
-                value.mailing_list.project_coordinators.filter(
-                  groupFilterApprover
-                )
-            )
-            .map((project) => {
-              return {
-                id: project.project_number,
-                project: project,
-              };
-            }),
-          NPDP: getAllNPDPApplicant
-            .filter(
-              (value) =>
-                (!value.mailing_list.provincial_superior.agree &&
-                  value.mailing_list.provincial_superior.comment) ||
-                value.mailing_list.project_coordinators.filter(
-                  groupFilterApprover
-                )
-            )
-            .map((project) => {
-              return {
-                id: project.project_number,
-                project: project,
-              };
-            }),
-          EOI: getAllEOIApplicant.filter(individualFilter).map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          SG: getAllISGApplicant
-            .filter(
-              (value) =>
-                (!value.provincial_superior_agree.agree &&
-                  value.comment_box_provincial_superior) ||
-                value.project_coordinators.filter(groupFilterApprover).length
-            )
-            .map((project) => {
-              return {
-                id: project.project_code,
-                project: project,
-              };
-            }),
-          CG: getAllCGApplicant
-            .filter(
-              (value) =>{
-
-                console.log(value.project_coordinators.filter(groupFilterApprover).length);
-
-                return (!value.provincial_superior_agree.agree &&
-                  value.comment_box_provincial_superior) ||
-                value.project_coordinators.filter(groupFilterApprover).length }
-            )
-            .map((project) => {
-              return {
-                id: project.project_code,
-                project: project,
-              };
-            }),
-        };
-
-        setProjectList(newProjectList);
-        console.log("projectList", projectList);
+        const data = await response.json();
+        setAllProjects(data.data);
+        setIsLoading(false);
+        console.log(data);
       } catch (error) {
-        console.log(error);
+        setIsLoading(false);
+        showToast({
+          title: "Error",
+          description: error.message,
+          status: "error",
+          duration: 500,
+        });
       }
-    };
+    })();
+  }, [showToast]);
+  let projectCount = 0;
 
-    getAllProject();
-
-    return () => {};
-  }, []);
-  console.log(projectList);
   return (
     <ChakraProvider>
       <Flex w="100vw" h="full">
         <VStack w="30%" h="100vh" overflowY="scroll">
           <DashboardApplicant></DashboardApplicant>
         </VStack>
-        <Box p={8} bg="gray.100" borderRadius="lg" w={"70%"}
+        <Box
+          p={8}
+          bg="gray.100"
+          borderRadius="lg"
+          w="70%"
+          h="100vh"
           overflowY={"scroll"}
           overflowX={"hidden"}
-          h={"100vh"}>
+        >
           <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
-            Reverted Projects
+            Revarted Projects
           </Heading>
 
           <VStack spacing={6} align="stretch">
-            {projectList.getAllHOI.map((project) => (
-              <Box
-                key={project.id}
-                bg="white"
-                p={6}
-                borderRadius="lg"
-                boxShadow="md"
-                width="100%"
+            {/* {projectList.getAllHOI.map((project) => (
+            <Box
+              key={project.id}
+              bg="white"
+              p={6}
+              borderRadius="lg"
+              boxShadow="md"
+              width="100%"
+            >
+              <Heading size="md" mb={2} color="blue.500">
+                {project.id}
+              </Heading>
+
+              <Button
+                colorScheme="blue"
+                as={Link}
+                to={`/ReviewHIO/${encodeURIComponent(
+                  JSON.stringify(project.project)
+                )}`} // Update this route as needed
+                mb={2}
+                borderRadius="full"
               >
-                <Heading size="md" mb={2} color="blue.500">
-                  {project.id}
-                </Heading>
-              </Box>
-            ))}
-            {Object.keys(projectList).map((key) => (
-              <React.Fragment key={key}>
-                {projectList[key].map((project) => (
-                  <Box
-                    key={project.id}
-                    bg="white"
-                    p={6}
-                    borderRadius="lg"
-                    boxShadow="md"
-                    width="100%"
-                  >
-                    <VStack>
-                      <Heading size="md" mb={2} color="blue.500">
-                        {project.id}
-                      </Heading>
-                      Please view the comments from view section before proceding
-                      to edit the form
-                      <HStack>
-                        <Button
-                          colorScheme="blue"
-                          as={Link}
-                          to={`/View${key}/${encodeURIComponent(
-                            JSON.stringify(project.project)
-                          )}`} // Update this route as needed
-                          mb={2}
-                          borderRadius="10"
-                        >
-                          View
-                        </Button>
-                        <Button
-                          colorScheme="red"
-                          as={Link}
-                          to={`/Edit${key}/${encodeURIComponent(
-                            JSON.stringify(project.project)
-                          )}`} // Update this route as needed
-                          mb={2}
-                          borderRadius="10"
-                        >
-                          Edit
-                        </Button>
-                      </HStack>
-                    </VStack>
-                  </Box>
-                ))}
-              </React.Fragment>
-            ))}
+                Review
+              </Button>
+            </Box>
+          ))} */}
+            {isLoading ? (
+              <Center>
+                <Spinner />
+              </Center>
+            ) : (
+              AllProjects &&
+              AllProjects.map((ele, key) => (
+                <React.Fragment key={key}>
+                  {/* {console.log(ele.data[0].provincial_superior_agree)} */}
+                  {ele.data.map((project, k) => {
+                    // console.log(ele.name + '    ' + project.project_code + '   ' + project.project_coordinator_agree)
+                    if ((project.provincial_superior_agree.agree === false && project.comment_box_provincial_superior !== null) || (project.project_coordinator_agree.agree === false && project.comment_box_project_coordinator !== null )) {
+                      projectCount = projectCount + 1;
+                      return (
+                        <Center>
+                          <Box
+                            key={k}
+                            bg="white"
+                            p={6}
+                            borderRadius="lg"
+                            boxShadow="md"
+                            width="70%"
+                            display={"flex"}
+                            alignItems={"center"}
+                            justifyContent={"space-between"}
+                          >
+                            <Heading
+                              size="md"
+                              mb={2}
+                              color="blue.500"
+                              display={"flex"}
+                              alignItems={"center"}
+                              justifyContent={"center"}
+                            >
+                              <Text color={"black"} fontSize={"lg"}>
+                                Project Id- #
+                              </Text>
+                              {project.project_code}
+                            </Heading>
+
+                            <Box>
+                              <Button
+                                colorScheme="red"
+                                as={Link}
+                                to={`/Edit${ele.name}/${encodeURIComponent(
+                                  JSON.stringify(project)
+                                )}`} // Update this route as needed
+                                mb={2}
+                                mx="2"
+                                borderRadius="10"
+                              >
+                                Edit
+                              </Button>
+                            </Box>
+                          </Box>
+                        </Center>
+                      );
+                    } else {
+                      return <Box key={k}></Box>;
+                    }
+                  })}
+                </React.Fragment>
+              ))
+            )}
           </VStack>
+          {!isLoading && projectCount === 0 && (
+            <Center>
+              <Text color={"red"} size={"15"} my={"4"}>
+                No Application found !!
+              </Text>
+            </Center>
+          )}
         </Box>
       </Flex>
     </ChakraProvider>

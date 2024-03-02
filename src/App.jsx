@@ -101,6 +101,7 @@ import EmailOtp from "./components/Auth/EmailOtp";
 import ForgetPassword from "./components/Auth/ForgetPassword";
 import EditSocialIndividual from "./components/SocialIndividual/editSocialIndividual";
 import AllProjects from "./components/Applicant/AllProjects";
+import ViewEIApprover from "./components/EducationIndividual/ViewEIApprover";
 
 // Token checking in protected
 // Token expiry - 1 hour
@@ -225,6 +226,7 @@ const App = () => {
           />
           <Route path="/MyReviewedProject" element={<MyReviewedProject />} />
           <Route path="/ApprovedProjects" element={<ApprovedProjects />} />
+          
           <Route
             path="/ApprovedProjectsForReviewer"
             element={<ApprovedProjectsForReviewer reviewerProvince="north" />}
@@ -255,6 +257,7 @@ const App = () => {
             element={<ApproveWelfareHomeForChildren />}
           />
           <Route path="/ViewEI" element={<ViewEI />} />
+          
           <Route path="/ReviewNPDP/:project" element={<ReviewNPDP />} />
           <Route path="/ApproveNPDP/:project" element={<ApproveNPDP />} />
           <Route path="/viewNPDP" element={<ViewNPDP />} />
@@ -293,6 +296,7 @@ const App = () => {
           <Route path="/ViewEGS/:project" element={<ViewEduRUTG />} />
           <Route path="/viewNPDP/:project" element={<ViewNPDP />} />
           <Route path="/ViewEI/:project" element={<ViewEI />} />
+          <Route path="/ViewEIApprover/:project" element={<ViewEIApprover />} />
           <Route path="/ViewEG" element={<ViewEG />} />
           <Route path="/ViewDPLG/:project" element={<ViewDPLG />} />
           <Route path="/ViewHIV/:project" element={<ViewHIV />} />

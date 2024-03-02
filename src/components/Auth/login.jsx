@@ -133,7 +133,7 @@ const LoginPage = () => {
               duration: 5000,
               isClosable: true,
             });
-            navigate("/dashboardApprover");
+            navigate("/ProjectsToBeApproved");
           }
         } else {
           showToast({

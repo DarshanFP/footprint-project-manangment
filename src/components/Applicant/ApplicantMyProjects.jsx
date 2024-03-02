@@ -1,6 +1,5 @@
 // projectsToBeReviewed.jsx
-
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ChakraProvider,
   Box,
@@ -9,315 +8,193 @@ import {
   Button,
   VStack,
   useToast,
+  Flex,
   Spinner,
   Center,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import authAxios from "../../AuthAxios";
-import { Flex } from "@chakra-ui/react";
 import DashboardApplicant from "./dashboardApplicant";
 
 const MyProjects = () => {
   const showToast = useToast();
+
   const [isLoading, setIsLoading] = useState(false);
-
-  // project list
-  const [projectList, setProjectList] = useReducer(
-    (prev, next) => {
-      const newProjectList = { ...prev, ...next };
-      return newProjectList;
-    },
-    {
-      getAllHOI: [],
-      getAllEOI: [],
-    }
-  );
-
-  // From the api call try and get all the projects
+  const [AllProjects, setAllProjects] = useState([]);
   useEffect(() => {
-    const getAllProject = async () => {
-      // get projects of a particular type
-      async function fetchDataForApplicantRoute(route) {
-        try {
-          setIsLoading(true);
-          const response = await authAxios.get(`projects/${route}`);
-          console.log(route, response);
-          const data = response.data.data ?? [];
-          setIsLoading(false);
-          return data;
-        } catch (error) {
-          console.log(route, error);
-          setIsLoading(false);
-          return [];
-        }
-      }
-
+    (async () => {
+      const token = localStorage.getItem("userToken");
+      setIsLoading(true);
       try {
-        const getAllHOIData = await fetchDataForApplicantRoute(
-          "getAllHOIapplicant"
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}projects/getallprojectsapplicant`,
+          {
+            headers: {
+              "Content-Type": "Application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        const getAllHOI = getAllHOIData ?? [];
-
-        const getAllEGSData = await fetchDataForApplicantRoute(
-          "getAllEGSApplicant"
-        );
-        const getAllEGS = getAllEGSData ?? [];
-
-        const getAllEIApplicantData = await fetchDataForApplicantRoute(
-          "getallEIapplicant"
-        );
-        const getAllEIApplicant = getAllEIApplicantData ?? [];
-
-        const getAllSIApplicantData = await fetchDataForApplicantRoute(
-          "getallSIapplicant"
-        );
-        const getAllSIApplicant = getAllSIApplicantData ?? [];
-
-        const getAllDPLGApplicantData = await fetchDataForApplicantRoute(
-          "getallDPLGapplicant"
-        );
-        const getAllDPLGApplicant = getAllDPLGApplicantData ?? [];
-
-        const getAllHIVApplicantData = await fetchDataForApplicantRoute(
-          "getAllHIVApplicant"
-        );
-        const getAllHIVApplicant = getAllHIVApplicantData ?? [];
-
-        const getAllWHFCApplicantData = await fetchDataForApplicantRoute(
-          "getAllWHFCApplicant"
-        );
-        const getAllWHFCApplicant = getAllWHFCApplicantData ?? [];
-
-        /// Error mark
-        const getAllEGSApplicantData = await fetchDataForApplicantRoute(
-          "getAllEGSApplicant"
-        );
-        const getAllEGSApplicant = getAllEGSApplicantData ?? [];
-
-        const getAllNPDPApplicantData = await fetchDataForApplicantRoute(
-          "getAllNPDPApplicant"
-        );
-        const getAllNPDPApplicant = getAllNPDPApplicantData ?? [];
-
-        const getAllEOIApplicantData = await fetchDataForApplicantRoute(
-          "getallEOIapplicant"
-        );
-        const getAllEOIApplicant = getAllEOIApplicantData ?? [];
-
-        const getAllISGApplicantData = await fetchDataForApplicantRoute(
-          "/getallISGapplicant"
-        );
-        const getAllISGApplicant = getAllISGApplicantData ?? [];
-
-        const getAllCGApplicantData = await fetchDataForApplicantRoute(
-          "/getallCGapplicant"
-        );
-        const getAllCGApplicant = getAllCGApplicantData ?? [];
-
-        // Object
-        /*
-        {
-          HOI: [
-            {
-              name: Your name , 
-              contact_number : 7085772856
-            }
-          ] , 
-          EOI , DPLG , HIV
-        }
-        */
-        const newProjectList = {
-          HOI: getAllHOI.map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          EGS: getAllEGS.map((project) => {
-            return {
-              id: project.project_number,
-              project: project,
-            };
-          }),
-          EI: getAllEIApplicant.map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          SI: getAllSIApplicant.map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          DPLG: getAllDPLGApplicant.map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          HIV: getAllHIVApplicant.map((project) => {
-            return {
-              id: project.project_number,
-              project: project,
-            };
-          }),
-          WHFC: getAllWHFCApplicant.map((project) => {
-            return {
-              id: project.project_number,
-              project: project,
-            };
-          }),
-          NPDP: getAllNPDPApplicant.map((project) => {
-            return {
-              id: project.project_number,
-              project: project,
-            };
-          }),
-          EOI: getAllEOIApplicant.map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          SG: getAllISGApplicant.map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-          CG: getAllCGApplicant.map((project) => {
-            return {
-              id: project.project_code,
-              project: project,
-            };
-          }),
-        };
-
-        setProjectList(newProjectList);
-        console.log("projectList", projectList);
+        const data = await response.json();
+        setAllProjects(data.data);
+        setIsLoading(false);
+        console.log(data);
       } catch (error) {
-        console.log(error);
+        setIsLoading(false);
+        showToast({
+          title: "Error",
+          description: error.message,
+          status: "error",
+          duration: 500,
+        });
       }
-    };
+    })();
+  }, [showToast]);
+  let projectCount = 0;
 
-    getAllProject();
-
-    return () => {};
-  }, []);
-  // console.log(projectList);
   return (
     <ChakraProvider>
-      <Flex w="full" h="full">
+      <Flex w="100vw" h="full">
         <VStack w="30%" h="100vh" overflowY="scroll">
           <DashboardApplicant></DashboardApplicant>
         </VStack>
-        <VStack w="70%" h="100vh" overflowY="scroll">
-          <Box p={4} mx="auto" bg="gray.100" borderRadius="lg" w="100%">
-            <Heading
-              as="h1"
-              size="xl"
-              mb={6}
-              textAlign="center"
-              color="blue.500"
+        <Box
+          p={8}
+          bg="gray.100"
+          borderRadius="lg"
+          w="70%"
+          h="100vh"
+          overflowY={"scroll"}
+          overflowX={"hidden"}
+        >
+          <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
+            My Applied Projects
+          </Heading>
+
+          <VStack spacing={6} align="stretch">
+            {/* {projectList.getAllHOI.map((project) => (
+            <Box
+              key={project.id}
+              bg="white"
+              p={6}
+              borderRadius="lg"
+              boxShadow="md"
+              width="100%"
             >
-              My Projects
-            </Heading>
-            {isLoading && 
-              <Center mt={'15'}>
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="blue.500"
-                  size="xl"
-                />
+              <Heading size="md" mb={2} color="blue.500">
+                {project.id}
+              </Heading>
+
+              <Button
+                colorScheme="blue"
+                as={Link}
+                to={`/ReviewHIO/${encodeURIComponent(
+                  JSON.stringify(project.project)
+                )}`} // Update this route as needed
+                mb={2}
+                borderRadius="full"
+              >
+                Review
+              </Button>
+            </Box>
+          ))} */}
+            {isLoading ? (
+              <Center>
+                <Spinner />
               </Center>
-            }
-
-            <VStack spacing={6} align="stretch">
-              {projectList.getAllHOI.map((project) => (
-                <Box
-                  key={project.id}
-                  bg="white"
-                  p={6}
-                  borderRadius="lg"
-                  boxShadow="md"
-                  width="100%"
-                >
-                  <Heading size="md" mb={2} color="green.500" display="flex">
-                    {/* HIV20241 */}
-                    <Text color="black" fontSize="large" fontWeight="400">
-                      Project Id - #{" "}
-                    </Text>{" "}
-                    {project.id}
-                  </Heading>
-                </Box>
-              ))}
-              {/* To display each of the form what we did 
-          We take all the keys from the projectList - EOI , HOI , DPLG 
-          */}
-              {Object.keys(projectList).map((key) => (
+            ) : (
+              AllProjects &&
+              AllProjects.map((ele, key) => (
                 <React.Fragment key={key}>
-                  {projectList[key].map((project) => (
-                    <Box
-                      key={project.id}
-                      bg="white"
-                      p={6}
-                      borderRadius="lg"
-                      boxShadow="md"
-                      width="100%"
-                    >
-                      <Heading
-                        size="md"
-                        mb={2}
-                        color="green.500"
-                        display="flex"
-                      >
-                        {/* HIV20241 */}
-                        <Text color="black" fontSize="large" fontWeight="400">
-                          Project Id - #{" "}
-                        </Text>{" "}
-                        {project.id}
-                      </Heading>
+                  {/* {console.log(ele.data[0].provincial_superior_agree)} */}
+                  {ele.data.map((project, k) => {
+                    // console.log(ele.name + '    ' + project.project_code + '   ' + project.project_coordinator_agree)
+                    if ((project.provincial_superior_agree.agree === false && project.comment_box_provincial_superior !== null) || (project.project_coordinator_agree.agree === false && project.comment_box_project_coordinator !== null )) {
+                      return <Box key={k}></Box>;
+                    } else {
+                      projectCount = projectCount + 1;
+                      return (
+                        <Center>
+                          <Box
+                            key={k}
+                            bg="white"
+                            p={6}
+                            borderRadius="lg"
+                            boxShadow="md"
+                            width="70%"
+                            display={"flex"}
+                            alignItems={"center"}
+                            justifyContent={"space-between"}
+                          >
+                            <Heading
+                              size="md"
+                              mb={2}
+                              color="blue.500"
+                              display={"flex"}
+                              alignItems={"center"}
+                              justifyContent={"center"}
+                            >
+                              <Text color={"black"} fontSize={"lg"}>
+                                Project Id- #
+                              </Text>
+                              {project.project_code}
+                            </Heading>
 
-                      {/*ViewEOI
-                  Object --- use Params - object 
-                  Object --> String 
-                  String - encodedURIComponent 
-                  */}
-                      <Button
-                        colorScheme="blue"
-                        as={Link}
-                        to={`/View${key}/${encodeURIComponent(
-                          JSON.stringify(project.project)
-                        )}`} // Update this route as needed
-                        mb={2}
-                        mx="2"
-                        borderRadius="full"
-                      >
-                        View
-                      </Button>
-                      <Button
-                        colorScheme="red"
-                        as={Link}
-                        to={`/Edit${key}/${encodeURIComponent(
-                          JSON.stringify(project.project)
-                        )}`} // Update this route as needed
-                        mb={2}
-                        mx="2"
-                        borderRadius="10"
-                      >
-                        Edit
-                      </Button>
-                    </Box>
-                  ))}
+                            <Box>
+                              {project.project_coordinator_agree.agree !== true && <Button
+                                colorScheme="blue"
+                                as={Link}
+                                to={`/View${ele.name}/${encodeURIComponent(
+                                  JSON.stringify(project)
+                                )}`} // Update this route as needed
+                                mb={2}
+                                mx="2"
+                                borderRadius="full"
+                              >
+                                View
+                              </Button>}
+                              {project.provincial_superior_agree.agree === false && <Button
+                                colorScheme="red"
+                                as={Link}
+                                to={`/Edit${ele.name}/${encodeURIComponent(
+                                  JSON.stringify(project)
+                                )}`} // Update this route as needed
+                                mb={2}
+                                mx="2"
+                                borderRadius="10"
+                              >
+                                Edit
+                              </Button>}
+
+                              {project.project_coordinator_agree.agree === true && <Button
+                                colorScheme="green"
+                                as={Link}
+                                to={`/View${ele.name}/${encodeURIComponent(
+                                  JSON.stringify(project)
+                                )}`}
+                                // Update this route as needed
+                                mb={2}
+                                borderRadius="full"
+                              >
+                                Approved
+                              </Button>}
+                            </Box>
+                          </Box>
+                        </Center>
+                      );
+                    }
+                  })}
                 </React.Fragment>
-              ))}
-            </VStack>
-          </Box>
-        </VStack>
+              ))
+            )}
+          </VStack>
+          {!isLoading && projectCount === 0 && (
+            <Center>
+              <Text color={"red"} size={"15"} my={"4"}>
+                No Application found !!
+              </Text>
+            </Center>
+          )}
+        </Box>
       </Flex>
     </ChakraProvider>
   );

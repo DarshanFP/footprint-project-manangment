@@ -37,7 +37,7 @@ const ProjectsToBeApproved = () => {
         const data = await response.json();
         setAllProjects(data.data);
         setIsLoading(false);
-        console.log( data );
+        console.log(data);
       } catch (error) {
         setIsLoading(false);
         showToast({
@@ -107,55 +107,57 @@ const ProjectsToBeApproved = () => {
                 <React.Fragment key={key}>
                   {/* {console.log(ele.data[0].provincial_superior_agree)} */}
                   {ele.data.map((project, k) => {
+                    // console.log(ele.name + '    ' + project.project_code + '   ' + project.project_coordinator_agree)
+                    if (
+                      project.project_coordinator_agree.agree !== true &&
+                      project.provincial_superior_agree.agree === true &&
+                      project.comment_box_project_coordinator === null
+                    ) {
+                      projectCount = projectCount + 1;
+                      return (
+                        <Center>
+                          <Box
+                            key={k}
+                            bg="white"
+                            p={6}
+                            borderRadius="lg"
+                            boxShadow="md"
+                            width="70%"
+                            display={"flex"}
+                            alignItems={"center"}
+                            justifyContent={"space-between"}
+                          >
+                            <Heading
+                              size="md"
+                              mb={2}
+                              color="blue.500"
+                              display={"flex"}
+                              alignItems={"center"}
+                              justifyContent={"center"}
+                            >
+                              <Text color={"black"} fontSize={"lg"}>
+                                Project Id- #
+                              </Text>
+                              {project.project_code}
+                            </Heading>
 
-                    console.log(ele.name + '    ' + project.project_code + '   ' + project.provincial_superior_agree)
-                    // if (
-                    //   project.provincial_superior_agree.agree !== true &&
-                    //   project.comment_box_provincial_superior === null )
-                    // {
-                    //   projectCount = projectCount + 1;
-                    //   return (
-                    //     <Box
-                    //       key={k}
-                    //       bg="white"
-                    //       p={6}
-                    //       borderRadius="lg"
-                    //       boxShadow="md"
-                    //       width="100%"
-                    //       display={"flex"}
-                    //       alignItems={"center"}
-                    //       justifyContent={"space-between"}
-                    //     >
-                    //       <Heading
-                    //         size="md"
-                    //         mb={2}
-                    //         color="blue.500"
-                    //         display={"flex"}
-                    //         alignItems={"center"}
-                    //         justifyContent={"center"}
-                    //       >
-                    //         <Text color={"black"} fontSize={"lg"}>
-                    //           Project Id- #
-                    //         </Text>
-                    //         {project.project_code}
-                    //       </Heading>
-
-                    //       <Button
-                    //         colorScheme="blue"
-                    //         as={Link}
-                    //         to={`/Review${ele.name}/${encodeURIComponent(
-                    //           JSON.stringify(project)
-                    //         )}`} // Update this route as needed
-                    //         mb={2}
-                    //         borderRadius="full"
-                    //       >
-                    //         Review
-                    //       </Button>
-                    //     </Box>
-                    //   );
-                    // } else {
-                    //   return <></>;
-                    // }
+                            <Button
+                              colorScheme="blue"
+                              as={Link}
+                              to={`/Approve${ele.name}/${encodeURIComponent(
+                                JSON.stringify(project)
+                              )}`} // Update this route as needed
+                              mb={2}
+                              borderRadius="full"
+                            >
+                              Review
+                            </Button>
+                          </Box>
+                        </Center>
+                      );
+                    } else {
+                      return <Box key={k}></Box>;
+                    }
                   })}
                 </React.Fragment>
               ))

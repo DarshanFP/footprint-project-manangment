@@ -4,6 +4,7 @@ import {
   Box,
   Image,
   Heading,
+  HStack,
   FormControl,
   FormLabel,
   Input,
@@ -18,23 +19,14 @@ import {
   useToast,
   Flex,
 } from "@chakra-ui/react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import authAxios from "../../AuthAxios";
-import cloudAxios from "../../CloudAxios";
-import DashboardApplicant from "../Applicant/dashboardApplicant";
+import DashboardApprover from './../Approver/dashboardApprover';
 
-/**
- * EditEI component for editing education individual data.
- *
- * @returns {JSX.Element} The EditEI component.
- */
-
-const EditEI = () => {
-  const navigate = useNavigate();
+const ViewEIApprover = () => {
   const showToast = useToast();
   const projectData = JSON.parse(decodeURIComponent(useParams().project));
-  
-  
+  console.log(projectData);
   const imageMappings = {
     photographUrl: projectData.photograph_benificary,
     aadharCardCopy: projectData.aadhar_img,
@@ -51,6 +43,11 @@ const EditEI = () => {
 
   const [formData, setFormData] = useState({
     ...imageMappings,
+
+    amountApproved:projectData.amount_approved,
+    provincialSuperiorName: projectData.reviewer.name, // Assuming not present in req
+    provincialSuperiorEmail: projectData.reviewer.email ,// Assuming not present in req
+    provincialSuperiorContact: projectData.reviewer.mobile, // Assuming not present in req
     projectInchargeName: projectData.applicant.name,
     projectInchargeContact: projectData.applicant.mobile, // Assuming not present in req
     projectInchargeEmail: projectData.applicant.email, // Assuming not present in req
@@ -89,8 +86,8 @@ const EditEI = () => {
     previousMarksPercentage: projectData.previousMarksPercentage || 0, // Assuming 0 as the default value
     presentEducationDetails: projectData.presentEducationDetails || "",
     presentInstitutionDetails: projectData.presentInstitutionDetails || "",
-    educationalAspiration: projectData.educationalAspiration || "", // not present
-    sustainabilityDetails: projectData.sustainabilityDetails || "", // sustainability
+    educationalAspiration: projectData.educationalAspiration || "", // not present 
+    sustainabilityDetails: projectData.sustainabilityDetails || "", // sustainability 
     eligibleForScholarship: projectData.eligibleForScholarship || "",
     expectedScholarshipAmount: projectData.expectedScholarshipAmount || 0, // Assuming 0 as the default value
     familyFinancialContribution: projectData.familyFinancialContribution || 0, // Assuming 0 as the default value
@@ -105,9 +102,18 @@ const EditEI = () => {
     balanceAmountRequested: projectData.balanceAmountRequested || 0, // Assuming 0 as the default value
     beneficiaryAgreement: projectData.benificary_agree.agree || false,
     beneficiaryAgreementDate: projectData.benificary_agree.date || "",
-    approver_cmt : projectData.comment_box_project_coordinator || "",
-    reviewer_cmt : projectData.comment_box_provincial_superior || "",
+    projectInChargeAgreement:
+      projectData.project_in_charge_agree.agree || false,
+    projectInChargeAgreementDate:
+      projectData.project_in_charge_agree.date || "",
+    provincialSuperiorAgreement: projectData.provincial_superior_agree.agree, // Assuming not present in req
+    provincialSuperiorAgreementDate: projectData.provincial_superior_agree.date, // Assuming not present in req
+    reviewerComment : projectData.comment_box_provincial_superior,
+    comment: projectData.comment_box_project_coordinator,
+    projectCoordinatorAgreement: projectData.project_coordinator_agree,
+    projectCoordinatorAgreementDate:projectData.project_coordinator_agree.date,
   });
+  console.log(formData);
   // Populate formData from req
 
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -119,212 +125,58 @@ const EditEI = () => {
     });
   };
 
-  const handleImageChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.files[0],
-    });
-  };
-
-  const [isLoading, setIsLoading] = useState(true);
-
   const handleSubmit = async (e) => {
-    const handleImageUpload = async (file) => {
-      try {
-        console.log("try");
-        const form = new FormData();
-        form.append("file", file);
-        form.append("upload_preset", process.env.REACT_APP_UPLOAD_PRESET);
-        const response = await cloudAxios.post("/", form);
-        const imgData = response.data;
-        return imgData.secure_url;
-      } catch (error) {
-        showToast({
-          title: "Error uploading image to cloudinary",
-          status: "error",
-          duration: 5000,
-        });
-      }
-    };
-    const convertImagesToUrls = async (e) => {
-      const image = {};
-      
-
-      try {
-        image.photograph_benificary =
-          formData.photographUrl instanceof File
-            ? await handleImageUpload(formData.photographUrl)
-            : imageMappings.photographUrl;
-        image.aadhar_img =
-          formData.aadharCardCopy instanceof File
-            ? await handleImageUpload(formData.aadharCardCopy)
-            : imageMappings.aadharCardCopy;
-        image.fee_quotation_from_the_institution_img =
-          formData.feeQuotationOriginal instanceof File
-            ? await handleImageUpload(formData.a)
-            : imageMappings.feeQuotationOriginal;
-        image.proof_of_scholarship_received_from_government_img =
-          formData.scholarshipProof instanceof File
-            ? await handleImageUpload(formData.scholarshipProof)
-            : imageMappings.scholarshipProof;
-        image.medical_confirmation_img =
-          formData.medicalConfirmationOriginal instanceof File
-            ? await handleImageUpload(formData.medicalConfirmationOriginal)
-            : imageMappings.medicalConfirmationOriginal;
-        image.caste_certificate_img =
-          formData.casteCertificateCopy instanceof File
-            ? await handleImageUpload(formData.casteCertificateCopy)
-            : imageMappings.casteCertificateCopy;
-        image.affidavit_proof_img =
-          formData.affidavitProofOriginal instanceof File
-            ? await handleImageUpload(formData.affidavitProofOriginal)
-            : imageMappings.affidavitProofOriginal;
-        image.request_letter_img =
-          formData.requestLetterOriginal instanceof File
-            ? await handleImageUpload(formData.requestLetterOriginal)
-            : imageMappings.requestLetterOriginal;
-        image.death_certificate_img =
-          formData.deathCertificateCopy instanceof File
-            ? await handleImageUpload(formData.deathCertificateCopy)
-            : imageMappings.deathCertificateCopy;
-        image.mark_list_of_previous_year =
-          formData.markListPreviousYear instanceof File
-            ? await handleImageUpload(formData.markListPreviousYear)
-            : imageMappings.markListPreviousYear;
-
-        // At this point, the image object contains URLs for all the images
-        return image;
-      } catch (error) {
-        console.log(error);
-        showToast({
-          title: "Error uploading image to cloudinary",
-          description: "error",
-          duration: 5000,
-        });
-        return {}; // Or handle the error as needed in your application
-      }
-    };
     e.preventDefault();
-
-    setIsLoading(true);
-
+    console.log("submit");
+    // Add your form submission logic here
     try {
-      const image = await convertImagesToUrls(e);
-      console.log(image);
-
       const req = {
-        projectID: projectData.project_code,
-        name: formData.beneficiaryName,
-        mobile: formData.beneficiaryContact,
-        email: formData.beneficiaryEmail,
-        address: formData.beneficiaryAddress,
-        aadhar_no: parseInt(formData.aadharCardNo),
-        gender: formData.gender,
-        DOB: formData.dob,
-        father: formData.fatherName,
-        mother: formData.motherName,
-        mother_tongue: formData.motherTongue,
-        religion: formData.religion,
-        caste: formData.casteTribe,
-        occupation_of_father: formData.fatherOccupation,
-        monthly_income_of_father: parseInt(formData.fatherMonthlyIncome),
-        monthly_income_of_mother: parseInt(formData.motherMonthlyIncome),
-        occupation_of_mother: formData.motherOccupation,
-        motherIs: formData.motherIs,
-        fatherIs: formData.fatherIs,
-        grandmother_support: formData.grandmotherSupport ?? "Supportive",
-        grandfather_support: formData.grandfatherSupport,
-        health_status_of_father: formData.fatherHealthStatus,
-        health_status_of_father_others: formData.fatherHealthStatus,
-        health_status_of_mother: formData.motherHealthStatus,
-        health_status_of_mother_others: formData.motherHealthStatusOthers,
-        residential_status: formData.residentialStatus,
-        residential_status_others: formData.residentialStatusOthers,
-        family_situation_of_the_beneficiary: formData.familySituationDetails,
-        financialSupportDetails: formData.financialSupportDetails,
-        familyEmploymentDetails: formData.familyEmploymentDetails,
-        previousEducationDetails: formData.previousEducationDetails,
-        previousInstitutionDetails: formData.previousInstitutionDetails,
-        previousMarksPercentage: parseInt(formData.previousMarksPercentage),
-        presentEducationDetails: formData.presentEducationDetails,
-        presentInstitutionDetails: formData.presentInstitutionDetails,
-        educationalAspiration: formData.educationalAspiration,
-        sustainabilityDetails: formData.sustainabilityDetails,
-        eligibleForScholarship: formData.eligibleForScholarship,
-        expectedScholarshipAmount: parseInt(formData.expectedScholarshipAmount),
-        familyFinancialContribution: parseInt(
-          formData.familyFinancialContribution
-        ),
-        noFamilySupportReasons: formData.noFamilySupportReasons,
-        presentStudy: formData.presentStudy,
-        budgetDetails: formData.budgetDetails,
-        totalCostOfStudy: formData.totalCostOfStudy,
-        scholarshipExpected: parseInt(formData.scholarshipExpected),
-        beneficiaryContribution: parseInt(formData.beneficiaryContribution),
-        totalScholarshipAndContribution: parseInt(
-          formData.totalScholarshipAndContribution
-        ),
-        balanceAmountRequested: parseInt(formData.balanceAmountRequested),
-        benificary_agree: {
-          agree: true,
+        projectID: projectData._id,
+        comment_box_project_coordinator: formData.comment,
+        project_coordinator_agree: {
+          agree: formData.projectCoordinatorAgree,
         },
-        project_in_charge_agree: {
-          agree: true,
-        },
-        ...image,
-        // comment_box_project_coordinator: formData.commentBoxProjectCooredinator,
-        // comment_box_provincial_superior: formData.commentBoxProvincialSuperior,
-        comment_box_project_coordinator: null,
-        comment_box_provincial_superior: null,
-        project_coordinator_agree: { agree: false },
-        provincial_superior_agree: { agree: false },
+        amount_approved: formData.amountApproved,
       };
-
-      const res = await authAxios.put("projects/editEI", req);
-      console.log(res.data);
-      setIsLoading(false);
+      const res = await authAxios.put("/projects/editapproverEI/", req);
+      console.log(res);
       if (res.data.success) {
+        showToast(
+          {
+            title: 'Successfully submitted the document' , 
+            duration: '5000'
+          }
+        )
+        setIsSubmitted(true)}
+      else {
         showToast({
-          title: "Successfull form submission",
-          duration: 5000,
-          status: "success",
-        });
-        setTimeout(() => {
-          navigate('/myProjects');
-        }, 2000)
-      } else {
-        showToast({
-          title: "Unsuccessful form submission",
-          duration: 5000,
+          title: "Error submitting the approved doc",
           status: "error",
+          duration: 5000,
         });
+        console.log(res.data);
       }
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
+    } catch (e) {
+      console.log(e);
       showToast({
-        title: "Unsuccessful form submission",
-        duration: 5000,
+        title: "Error submitting the approved doc",
+        description: e,
         status: "error",
+        duration: 5000,
       });
     }
-    // Add your form submission logic here
-    setIsSubmitted(true);
   };
 
   return (
     <ChakraProvider>
       <Flex w="100vw" h="full">
         <VStack w="30%" h="100vh" overflowY="scroll">
-          <DashboardApplicant></DashboardApplicant>
+          <DashboardApprover></DashboardApprover>
         </VStack>
-      <Box p={8}
-          bg="gray.100"
-          borderRadius="lg"
-          w="70%"
-          h="100vh"
+      <Box p={8} w={"70%"}
           overflowY={"scroll"}
-          overflowX={"hidden"}>
+          overflowX={"hidden"}
+          h={"100vh"}>
         <Heading
           as="h1"
           size="xl"
@@ -344,64 +196,101 @@ const EditEI = () => {
 
         <form onSubmit={handleSubmit}>
           <VStack align="start" spacing={4} mb={8}>
+            {/* Name of Project Incharge */}
+            <FormControl>
+              <FormLabel>Name of Project Incharge</FormLabel>
+              <Input
+                type="text"
+                name="projectInchargeName"
+                onChange={handleChange}
+                value={formData.projectInchargeName}
+                readOnly
+              />
+            </FormControl>
+
+            {/* Contact of Project Incharge */}
+            <FormControl>
+              <FormLabel>Contact of Project Incharge</FormLabel>
+              <Input
+                type="text"
+                name="projectInchargeContact"
+                onChange={handleChange}
+                value={formData.projectInchargeContact}
+                readOnly
+              />
+            </FormControl>
+
+            {/* Email of Project Incharge */}
+            <FormControl>
+              <FormLabel>Email of Project Incharge</FormLabel>
+              <Input
+                type="email"
+                name="projectInchargeEmail"
+                onChange={handleChange}
+                value={formData.projectInchargeEmail}
+                readOnly
+              />
+            </FormControl>
+          </VStack>
+          <VStack align="start" spacing={4} mb={8}>
+            {/* Name of Project Incharge */}
+            <FormControl>
+              <FormLabel>Name of Provincial Superior</FormLabel>
+              <Input
+                type="text"
+                name="provincialSuperiorName"
+                onChange={handleChange}
+                value={formData.provincialSuperiorName}
+                readOnly
+              />
+            </FormControl>
+
+            {/* Contact of Project Incharge */}
+            <FormControl>
+              <FormLabel>Contact of Provincial Superior</FormLabel>
+              <Input
+                type="text"
+                name="provincialSuperiorContact"
+                onChange={handleChange}
+                value={formData.provincialSuperiorContact}
+                readOnly
+              />
+            </FormControl>
+
+            {/* Email of Project Incharge */}
+            <FormControl>
+              <FormLabel>Email of Provincial Superior</FormLabel>
+              <Input
+                type="text"
+                name="provincialSuperiorEmail"
+                onChange={handleChange}
+                value={formData.provincialSuperiorEmail}
+                readOnly
+              />
+            </FormControl>
+          </VStack>
+
+          <VStack align="start" spacing={4} mb={8}>
             {/*Personal Information of the Beneficiary */}
             <Heading as="h1" size="xl" mb={6}>
               Personal Information of the Beneficiary
             </Heading>
-            
-            {/* Name */}
-            <FormControl>
-              <FormLabel color={'red'}>## Approver Comment *</FormLabel>
-              <Input
-                type="text"
-                name="approver_cmt"
-                value={formData.approver_cmt}
-                readOnly
-                color={'red'}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel color={'red'}>## Reviewer Comment *</FormLabel>
-              <Input
-                type="text"
-                name="approver_cmt"
-                value={formData.reviewer_cmt}
-                readOnly
-                color={'red'}
-              />
-            </FormControl>
-
             {/* Photograph (URL) */}
             <FormControl>
               <FormLabel>Photograph</FormLabel>
               <Box>
-                {formData.photographUrl && (
+                {formData.photographFile && (
                   <Box>
                     <strong>Uploaded File:</strong>{" "}
-                    {formData.photographUrl?.name ??
-                      formData.photographUrl.split("/")[
-                        formData.photographUrl.split("/").length - 1
-                      ]}
+                    {formData.photographFile.name}
                   </Box>
                 )}
                 <Image
                   boxSize="40%"
-                  src={
-                    // Determine if formData.photographUrl is a fake path or a URL and if a fake path convert into file
-                    formData.photographUrl instanceof File
-                      ? URL.createObjectURL(formData.photographUrl)
-                      : formData.photographUrl
-                  }
+                  src={formData.photographUrl}
                   alt="Beneficiary Image"
                   mx="auto"
                   fit="contain"
-                />
-                {/* component to upload image */}
-                <Input
-                  type="file"
-                  name="photographUrl"
-                  onChange={handleImageChange}
-                  accept="image/*"
                 />
               </Box>
             </FormControl>
@@ -414,7 +303,7 @@ const EditEI = () => {
                 name="beneficiaryName"
                 onChange={handleChange}
                 value={formData.beneficiaryName}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -426,7 +315,7 @@ const EditEI = () => {
                 name="beneficiaryContact"
                 onChange={handleChange}
                 value={formData.beneficiaryContact}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -438,7 +327,7 @@ const EditEI = () => {
                 name="beneficiaryEmail"
                 onChange={handleChange}
                 value={formData.beneficiaryEmail}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -449,7 +338,7 @@ const EditEI = () => {
                 name="beneficiaryAddress"
                 onChange={handleChange}
                 value={formData.beneficiaryAddress}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -461,7 +350,7 @@ const EditEI = () => {
                 name="aadharCardNo"
                 onChange={handleChange}
                 value={formData.aadharCardNo}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -472,7 +361,7 @@ const EditEI = () => {
                 name="gender"
                 onChange={handleChange}
                 value={formData.gender}
-                required
+                readOnly
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -488,7 +377,7 @@ const EditEI = () => {
                 name="dob"
                 onChange={handleChange}
                 value={formData.dob}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -500,7 +389,7 @@ const EditEI = () => {
                 name="fatherName"
                 onChange={handleChange}
                 value={formData.fatherName}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -512,7 +401,7 @@ const EditEI = () => {
                 name="motherName"
                 onChange={handleChange}
                 value={formData.motherName}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -524,19 +413,19 @@ const EditEI = () => {
                 name="motherTongue"
                 onChange={handleChange}
                 value={formData.motherTongue}
-                required
+                readOnly
               />
             </FormControl>
 
             {/* Religion */}
-            <FormControl>
+            <FormControl isRequired>
               <FormLabel>Religion</FormLabel>
               <Input
                 type="text"
                 name="religion"
                 onChange={handleChange}
                 value={formData.religion}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -548,7 +437,7 @@ const EditEI = () => {
                 name="casteTribe"
                 onChange={handleChange}
                 value={formData.casteTribe}
-                required
+                readOnly
               />
             </FormControl>
           </VStack>
@@ -567,7 +456,7 @@ const EditEI = () => {
                 name="fatherOccupation"
                 onChange={handleChange}
                 value={formData.fatherOccupation}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -579,7 +468,7 @@ const EditEI = () => {
                 name="fatherMonthlyIncome"
                 onChange={handleChange}
                 value={formData.fatherMonthlyIncome}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -591,7 +480,7 @@ const EditEI = () => {
                 name="motherOccupation"
                 onChange={handleChange}
                 value={formData.motherOccupation}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -603,7 +492,7 @@ const EditEI = () => {
                 name="motherMonthlyIncome"
                 onChange={handleChange}
                 value={formData.motherMonthlyIncome}
-                required
+                readOnly
               />
             </FormControl>
           </VStack>
@@ -620,7 +509,7 @@ const EditEI = () => {
                 name="motherStatus"
                 onChange={handleChange}
                 value={formData.motherStatus}
-                required
+                readOnly
               >
                 <option value="healthy">Healthy</option>
                 <option value="sick">Sick</option>
@@ -635,7 +524,7 @@ const EditEI = () => {
                 name="fatherStatus"
                 onChange={handleChange}
                 value={formData.fatherStatus}
-                required
+                readOnly
               >
                 <option value="healthy">Healthy</option>
                 <option value="sick">Sick</option>
@@ -651,7 +540,7 @@ const EditEI = () => {
                 name="grandmotherSupport"
                 onChange={handleChange}
                 value={formData.grandmotherSupport}
-                required
+                readOnly
               >
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
@@ -666,7 +555,7 @@ const EditEI = () => {
                 name="grandfatherSupport"
                 onChange={handleChange}
                 value={formData.grandfatherSupport}
-                required
+                readOnly
               >
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
@@ -681,7 +570,7 @@ const EditEI = () => {
                 name="fatherHealthStatus"
                 onChange={handleChange}
                 value={formData.fatherHealthStatus}
-                required
+                readOnly
               >
                 <option value="chronicallySick">Chronically Sick</option>
                 <option value="hivPositive">HIV/AIDS positive</option>
@@ -697,7 +586,7 @@ const EditEI = () => {
                   onChange={handleChange}
                   placeholder="Specify other health status"
                   value={formData.fatherHealthStatusOthers}
-                  required
+                  readOnly
                 />
               )}
             </FormControl>
@@ -709,7 +598,7 @@ const EditEI = () => {
                 name="motherHealthStatus"
                 onChange={handleChange}
                 value={formData.motherHealthStatus}
-                required
+                readOnly
               >
                 <option value="chronicallySick">Chronically Sick</option>
                 <option value="hivPositive">HIV/AIDS positive</option>
@@ -725,7 +614,7 @@ const EditEI = () => {
                   onChange={handleChange}
                   placeholder="Specify other health status"
                   value={formData.motherHealthStatusOthers}
-                  required
+                  readOnly
                 />
               )}
             </FormControl>
@@ -737,7 +626,7 @@ const EditEI = () => {
                 name="residentialStatus"
                 onChange={handleChange}
                 value={formData.residentialStatus}
-                required
+                readOnly
               >
                 <option value="houseOwner">House Owner</option>
                 <option value="landOwner">Land Owner</option>
@@ -752,7 +641,7 @@ const EditEI = () => {
                   onChange={handleChange}
                   placeholder="Specify other residential status"
                   value={formData.residentialStatusOthers}
-                  required
+                  readOnly
                 />
               )}
             </FormControl>
@@ -772,7 +661,7 @@ const EditEI = () => {
                 name="familySituationDetails"
                 onChange={handleChange}
                 value={formData.familySituationDetails}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -786,7 +675,7 @@ const EditEI = () => {
                 name="financialSupportDetails"
                 onChange={handleChange}
                 value={formData.financialSupportDetails}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -800,7 +689,7 @@ const EditEI = () => {
                 name="familyEmploymentDetails"
                 onChange={handleChange}
                 value={formData.familyEmploymentDetails}
-                required
+                readOnly
               />
             </FormControl>
           </VStack>
@@ -816,7 +705,7 @@ const EditEI = () => {
                 name="previousEducationDetails"
                 onChange={handleChange}
                 value={formData.previousEducationDetails}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -829,7 +718,7 @@ const EditEI = () => {
                 name="previousInstitutionDetails"
                 onChange={handleChange}
                 value={formData.previousInstitutionDetails}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -841,7 +730,7 @@ const EditEI = () => {
                 name="previousMarksPercentage"
                 onChange={handleChange}
                 value={formData.previousMarksPercentage}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -852,7 +741,7 @@ const EditEI = () => {
                 name="presentEducationDetails"
                 onChange={handleChange}
                 value={formData.presentEducationDetails}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -865,7 +754,7 @@ const EditEI = () => {
                 name="presentInstitutionDetails"
                 onChange={handleChange}
                 value={formData.presentInstitutionDetails}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -877,11 +766,11 @@ const EditEI = () => {
               </FormLabel>
               <Textarea
                 name="educationalAspiration"
-                required
+                readOnly
                 value={formData.educationalAspiration}
+                required
               />
             </FormControl>
-
 
             {/* Sustainability of the support */}
             <FormControl>
@@ -893,7 +782,7 @@ const EditEI = () => {
                 name="sustainabilityDetails"
                 onChange={handleChange}
                 value={formData.sustainabilityDetails}
-                required
+                readOnly
               />
             </FormControl>
           </VStack>
@@ -912,7 +801,7 @@ const EditEI = () => {
                 name="eligibleForScholarship"
                 onChange={handleChange}
                 value={formData.eligibleForScholarship}
-                required
+                readOnly
               >
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
@@ -927,7 +816,7 @@ const EditEI = () => {
                 name="expectedScholarshipAmount"
                 onChange={handleChange}
                 value={formData.expectedScholarshipAmount}
-                required
+                readOnly
                 // required={formData.eligibleForScholarship === "yes"}
                 // disabled={formData.eligibleForScholarship === "no"}
               />
@@ -941,7 +830,7 @@ const EditEI = () => {
                 name="familyFinancialContribution"
                 onChange={handleChange}
                 value={formData.familyFinancialContribution}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -954,8 +843,9 @@ const EditEI = () => {
                 name="noFamilySupportReasons"
                 onChange={handleChange}
                 value={formData.noFamilySupportReasons}
-                required={formData.familyFinancialContribution === 0}
-                disabled={formData.familyFinancialContribution > 0}
+                readOnly
+                // required={formData.familyFinancialContribution === 0}
+                // disabled={formData.familyFinancialContribution > 0}
               />
             </FormControl>
           </VStack>
@@ -972,7 +862,7 @@ const EditEI = () => {
                 name="presentStudy"
                 onChange={handleChange}
                 value={formData.presentStudy}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -983,7 +873,7 @@ const EditEI = () => {
                 name="budgetDetails"
                 onChange={handleChange}
                 value={formData.budgetDetails}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -995,7 +885,7 @@ const EditEI = () => {
                 name="totalCostOfStudy"
                 onChange={handleChange}
                 value={formData.totalCostOfStudy}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -1009,7 +899,7 @@ const EditEI = () => {
                 name="scholarshipExpected"
                 onChange={handleChange}
                 value={formData.scholarshipExpected}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -1021,7 +911,7 @@ const EditEI = () => {
                 name="beneficiaryContribution"
                 onChange={handleChange}
                 value={formData.beneficiaryContribution}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -1033,7 +923,7 @@ const EditEI = () => {
                 name="totalScholarshipAndContribution"
                 onChange={handleChange}
                 value={formData.totalScholarshipAndContribution}
-                required
+                readOnly
               />
             </FormControl>
 
@@ -1045,7 +935,7 @@ const EditEI = () => {
                 name="balanceAmountRequested"
                 onChange={handleChange}
                 value={formData.balanceAmountRequested}
-                required
+                readOnly
               />
             </FormControl>
           </VStack>
@@ -1057,31 +947,19 @@ const EditEI = () => {
             </Heading>
 
             {/* Aadhar Card (True Copy) */}
-            <FormControl>
+            <FormControl isRequired>
               <FormLabel>Aadhar Card (True Copy)</FormLabel>
               <Image
                 mx="auto"
                 boxSize="50%"
                 objectFit="contain"
-                src={
-                  formData.aadharCardCopy instanceof File
-                    ? URL.createObjectURL(formData.aadharCardCopy)
-                    : formData.aadharCardCopy
-                }
-                alt="Aadhar Card"
-              />
-              {/* component to upload image */}
-              <Input
-                required={false}
-                type="file"
-                name="aadharCardCopy"
-                onChange={handleImageChange}
-                accept="image/*"
+                src={formData.aadharCardCopy}
+                alt="Dan Abramov"
               />
             </FormControl>
 
             {/* Fee Quotation from the Institution (Original) */}
-            <FormControl>
+            <FormControl isRequired>
               <FormLabel>
                 Fee Quotation from the Institution (Original)
               </FormLabel>
@@ -1089,27 +967,13 @@ const EditEI = () => {
                 mx="auto"
                 boxSize="50%"
                 objectFit="contain"
-                src={
-                  // formData.feeQuotationOriginal is not instance of file we get file after doing .files[0]
-
-                  formData.feeQuotationOriginal instanceof File
-                    ? URL.createObjectURL(formData.feeQuotationOriginal)
-                    : formData.feeQuotationOriginal
-                }
-                alt="Fee Quotation from the Institution"
-              />
-              {/* component to upload image */}
-              <Input
-                type="file"
-                required={false}
-                name="feeQuotationOriginal"
-                onChange={handleImageChange}
-                accept="image/*"
+                src={formData.feeQuotationOriginal}
+                alt="Dan Abramov"
               />
             </FormControl>
 
             {/* Proof of Scholarship Received from Government */}
-            <FormControl>
+            <FormControl isRequired>
               <FormLabel>
                 Proof of Scholarship Received from Government
               </FormLabel>
@@ -1117,20 +981,8 @@ const EditEI = () => {
                 mx="auto"
                 boxSize="50%"
                 objectFit="contain"
-                src={
-                  formData.scholarshipProof instanceof File
-                    ? URL.createObjectURL(formData.scholarshipProof)
-                    : formData.scholarshipProof
-                }
-                alt="Scholarship Proof"
-              />
-              {/* component to upload image */}
-              <Input
-                type="file"
-                required={false}
-                name="scholarshipProof"
-                onChange={handleImageChange}
-                accept="image/*"
+                src={formData.scholarshipProof}
+                alt="Dan Abramov"
               />
             </FormControl>
 
@@ -1144,44 +996,20 @@ const EditEI = () => {
                 mx="auto"
                 boxSize="50%"
                 objectFit="contain"
-                src={
-                  formData.medicalConfirmationOriginal instanceof File
-                    ? URL.createObjectURL(formData.medicalConfirmationOriginal)
-                    : formData.medicalConfirmationOriginal
-                }
-                alt="Medical Confirmation"
-              />
-              {/* component to upload image */}
-              <Input
-                type="file"
-                required={false}
-                name="medicalConfirmationOriginal"
-                onChange={handleImageChange}
-                accept="image/*"
+                src={formData.medicalConfirmationOriginal}
+                alt="Dan Abramov"
               />
             </FormControl>
 
             {/* Caste Certificate (True Copy) */}
-            <FormControl>
+            <FormControl isRequired>
               <FormLabel>Caste Certificate (True Copy)</FormLabel>
               <Image
                 mx="auto"
                 boxSize="50%"
                 objectFit="contain"
-                src={
-                  formData.casteCertificateCopy instanceof File
-                    ? URL.createObjectURL(formData.casteCertificateCopy)
-                    : formData.casteCertificateCopy
-                }
-                alt="Caste Certificate"
-              />
-              {/* component to upload image */}
-              <Input
-                type="file"
-                required={false}
-                name="casteCertificateCopy"
-                onChange={handleImageChange}
-                accept="image/*"
+                src={formData.casteCertificateCopy}
+                alt="Dan Abramov"
               />
             </FormControl>
 
@@ -1194,44 +1022,20 @@ const EditEI = () => {
                 mx="auto"
                 boxSize="50%"
                 objectFit="contain"
-                src={
-                  formData.affidavitProofOriginal instanceof File
-                    ? URL.createObjectURL(formData.affidavitProofOriginal)
-                    : formData.affidavitProofOriginal
-                }
-                alt="Affidavit Proof"
-              />
-              {/* component to upload image */}
-              <Input
-                type="file"
-                required={false}
-                name="affidavitProofOriginal"
-                onChange={handleImageChange}
-                accept="image/*"
+                src={formData.affidavitProofUrl}
+                alt="Dan Abramov"
               />
             </FormControl>
 
             {/* Request Letter (Original Copy) */}
-            <FormControl>
+            <FormControl isRequired>
               <FormLabel>Request Letter (Original Copy)</FormLabel>
               <Image
                 mx="auto"
                 boxSize="50%"
                 objectFit="contain"
-                src={
-                  formData.requestLetterOriginal instanceof File
-                    ? URL.createObjectURL(formData.requestLetterOriginal)
-                    : formData.requestLetterOriginal
-                }
-                alt="Request Letter"
-              />
-              {/* component to upload image */}
-              <Input
-                type="file"
-                required={false}
-                name="requestLetterOriginal"
-                onChange={handleImageChange}
-                accept="image/*"
+                src={formData.requestLetterOriginal}
+                alt="Dan Abramov"
               />
             </FormControl>
 
@@ -1244,56 +1048,193 @@ const EditEI = () => {
                 mx="auto"
                 boxSize="50%"
                 objectFit="contain"
-                src={
-                  formData.deathCertificateCopy instanceof File
-                    ? URL.createObjectURL(formData.deathCertificateCopy)
-                    : formData.deathCertificateCopy
-                }
-                alt="Death Certificate"
-              />
-              {/* component to upload image */}
-              <Input
-                type="file"
-                required={false}
-                name="deathCertificateCopy"
-                onChange={handleImageChange}
-                accept="image/*"
+                src={formData.deathCertificateCopy}
+                alt="Dan Abramov"
               />
             </FormControl>
 
             {/* Mark List of Previous Year */}
-            <FormControl>
+            <FormControl isRequired>
               <FormLabel>Mark List of Previous Year</FormLabel>
               <Image
                 mx="auto"
                 boxSize="50%"
                 objectFit="contain"
-                src={
-                  formData.markListPreviousYear instanceof File
-                    ? URL.createObjectURL(formData.markListPreviousYear)
-                    : formData.markListPreviousYear
-                }
-                alt="Mark List of Previous Year"
-              />
-              {/* component to upload image */}
-              <Input
-                type="file"
-                required={false}
-                name="markListPreviousYear"
-                onChange={handleImageChange}
-                accept="image/*"
+                src={formData.markListPreviousYear}
+                alt="Dan Abramov"
               />
             </FormControl>
           </VStack>
 
-          {/* Submit Button */}
-          <Button mx="3" colorScheme="blue" type="submit">
-            Submit
-          </Button>
+          <VStack align="start" spacing={4} mb={8}>
+            <Heading as="h1" size="xl" mb={6}>
+              Signatures
+            </Heading>
+
+            {/* Beneficiary / Family member agreement */}
+            <FormControl>
+              <Checkbox
+                name="beneficiaryAgreement"
+                onChange={handleChange}
+                isChecked={formData.beneficiaryAgreement}
+                readOnly
+                size="lg"
+              >
+                The Beneficiary / Family member agree
+              </Checkbox>
+              <Input
+                type="date"
+                name="beneficiaryAgreementDate"
+                onChange={handleChange}
+                value={formData.beneficiaryAgreementDate.substring(0, 10) || ""}
+                readOnly
+              />
+            </FormControl>
+
+            {/* Project-In-Charge agreement */}
+            <FormControl>
+              <Checkbox
+                name="projectInChargeAgreement"
+                onChange={handleChange}
+                size="lg"
+                isChecked={formData.projectInChargeAgreement}
+                readOnly
+              >
+                The Project-In-Charge agree
+              </Checkbox>
+              <Input
+                type="date"
+                name="projectInChargeAgreementDate"
+                onChange={handleChange}
+                value={
+                  formData.projectInChargeAgreementDate.substring(0, 10) || ""
+                }
+                readOnly
+              />
+            </FormControl>
+            <FormControl>
+              <Checkbox
+                name="provincialSuperiorAgreement"
+                onChange={handleChange}
+                size="lg"
+                isChecked={formData.provincialSuperiorAgreement}
+                readOnly
+              >
+                The Provincial Superior Agreement
+              </Checkbox>
+              <Input
+                type="date"
+                name="provincialSuperiorAgreement"
+                onChange={handleChange}
+                value={
+                  formData.provincialSuperiorAgreementDate.substring(0, 10) || ""
+                }
+                readOnly
+              />
+            </FormControl>
+
+            <FormControl>
+              <Checkbox
+                name="projectCoordinatorAgreement"
+                onChange={handleChange}
+                size="lg"
+                isChecked={formData.projectCoordinatorAgreement}
+                readOnly
+              >
+                The Project Coordinator Agreement
+              </Checkbox>
+              <Input
+                type="date"
+                name="projectCoordinatorAgreement"
+                onChange={handleChange}
+                value={
+                  formData.projectCoordinatorAgreementDate.substring(0, 10) || ""
+                }
+                readOnly
+              />
+            </FormControl>
+          </VStack>
+          <VStack align="start" spacing={4} mb={8}>
+            {/* Comment */}
+            <FormControl isRequired>
+              <FormLabel>Comment(For Reviewer)</FormLabel>
+              <Input
+                type="text"
+                name="reviewerComment"
+                value={formData.reviewerComment}
+                readOnly
+              />
+            </FormControl>
+            <FormControl >
+              <FormLabel>Comment(For Approver)</FormLabel>
+              <Input
+                type="text"
+                name="comment"
+                onChange={handleChange}
+                value={formData.comment}
+                readOnly
+              />
+            </FormControl>
+            <FormControl readOnly>
+              <FormLabel>Amount Approved</FormLabel>
+              <Input
+                type="text"
+                name="amountApproved"
+                value={formData.amountApproved}
+                onChange={handleChange}
+                readOnly
+              />
+            </FormControl>
+          </VStack>
+          <Heading as="h2" size="lg" mb={4} textAlign="center">
+            Manual Signatures
+          </Heading>
+          <HStack align="start" spacing={8} mb={8}>            
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              Project Executor
+              </Heading>
+            </Box>
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              Project Applicant
+              </Heading>
+            </Box>
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              President of Society
+              </Heading>
+            </Box>
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              Sanctioning Authority
+              </Heading>
+            </Box>
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+               Project Co-ordinator
+              </Heading>
+            </Box>
+
+
+          </HStack>
+          
+          {/* Print Button */}
+          <Button
+              onClick={() => window.print()}
+              colorScheme="blue"
+            >
+              Print
+            </Button>
         </form>
       </Box>
       </Flex>
     </ChakraProvider>
   );
 };
-export default EditEI;
+export default ViewEIApprover;
