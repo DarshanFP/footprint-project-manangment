@@ -71,6 +71,32 @@ const DashboardApprover = () => {
             </Button>
           </Box>
 
+          {/* Projects to Be Approved Box */}
+          {userDetails.region === 'switzerland' && <Box
+            bg="yellow.200"
+            p={6}
+            borderRadius="lg"
+            boxShadow="md"
+            width="100%"
+            textAlign="center"
+          >
+            <Heading size="md" mb={4} color="green.500">
+              Projects to Be Approved by SWZ
+            </Heading>
+            <Text fontSize="md" color="gray.600">
+              Final Project Approve 
+            </Text>
+            <Button
+              as={Link}
+              to={`/projectsToBeApprovedSWZ`}
+              colorScheme="green"
+              mt={4}
+              borderRadius="full"
+            >
+              Approve Final Projects
+            </Button>
+          </Box>}
+
           {/* Verify Reviewer Box */}
           <Box
             bg="white"

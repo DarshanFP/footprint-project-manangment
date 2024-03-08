@@ -110,6 +110,7 @@ const ViewEI = () => {
     provincialSuperiorAgreementDate: projectData.provincial_superior_agree.date, // Assuming not present in req
     reviewerComment : projectData.comment_box_provincial_superior,
     comment: projectData.comment_box_project_coordinator,
+    comment_SWZ: projectData.comment_box_project_coordinator_swz,
     projectCoordinatorAgreement: projectData.project_coordinator_agree,
     projectCoordinatorAgreementDate:projectData.project_coordinator_agree.date,
   });
@@ -1175,6 +1176,16 @@ const ViewEI = () => {
                 readOnly
               />
             </FormControl>
+            <FormControl >
+              <FormLabel>Comment(For Approver SWZ)</FormLabel>
+              <Input
+                type="text"
+                name="comment"
+                onChange={handleChange}
+                value={formData.comment_SWZ}
+                readOnly
+              />
+            </FormControl>
             <FormControl readOnly>
               <FormLabel>Amount Approved</FormLabel>
               <Input
@@ -1189,36 +1200,38 @@ const ViewEI = () => {
           <Heading as="h2" size="lg" mb={4} textAlign="center">
                 Manual Signatures
               </Heading>
-          <HStack align="start" spacing={8} mb={8}>            
-            <Box borderWidth="3px" p={8} borderRadius="lg" width="100%" mb={4} borderColor="black" borderStyle="solid">
-              <Heading as="h5" size="sm" mb={7} textAlign="center" color="grey">
-                Project Executor
+              <HStack align="start" spacing={8} mb={8}>            
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              Project Executor
               </Heading>
             </Box>
-
-            <Box borderWidth="3px" p={8} borderRadius="lg" width="100%" mb={4} borderColor="black" borderStyle="solid">
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
               <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
-               Project Applicant
-              </Heading>             
-            </Box>
-
-            <Box borderWidth="3px" p={8} borderRadius="lg" width="100%" mb={4} borderColor="black" borderStyle="solid">
-              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
-                President of Society
+              Project Applicant
               </Heading>
             </Box>
-
-            <Box borderWidth="3px" p={8} borderRadius="lg" width="100%" mb={4} borderColor="black" borderStyle="solid">
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
               <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
-                Sanctioning Authority
+              President of Society
               </Heading>
             </Box>
-
-            <Box borderWidth="3px" p={8} borderRadius="lg" width="100%" mb={4}borderColor="black" borderStyle="solid">
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              Sanctioning Authority
+              </Heading>
+            </Box>
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
               <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
                Project Co-ordinator
               </Heading>
             </Box>
+
 
           </HStack>
           

@@ -139,7 +139,7 @@ const ProjectsToBeApproved = () => {
                               {project.project_code}
                             </Heading>
 
-                            <Button
+                            {project.project_coordinator_agree_swz.agree !== true && <Button
                               colorScheme="blue"
                               as={Link}
                               to={`/View${ele.name}Approver/${encodeURIComponent(
@@ -149,12 +149,24 @@ const ProjectsToBeApproved = () => {
                               borderRadius="full"
                             >
                               View
-                            </Button>
+                            </Button>}
+
+                            {project.project_coordinator_agree_swz.agree === true && <Button
+                              colorScheme="blue"
+                              as={Link}
+                              to={`/View${ele.name}Approver/${encodeURIComponent(
+                                JSON.stringify(project)
+                              )}`} // Update this route as needed
+                              mb={2}
+                              borderRadius="full"
+                            >
+                              Approved
+                            </Button>}
                           </Box>
                         </Center>
                       );
                     } else {
-                      return <Box key={k}></Box>;
+                      return <></>;
                     }
                   })}
                 </React.Fragment>

@@ -24,6 +24,12 @@ import {
   useToast,
   useDisclosure,
   Flex,
+  Tbody,
+  Thead,
+  Table,
+  Tr,
+  Th,
+  Td,
 } from "@chakra-ui/react";
 import cloudAxios from "../../CloudAxios";
 import authAxios from "../../AuthAxios";
@@ -45,6 +51,27 @@ const EducationIndividual = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const [budgetDetails, setBudgetDetails] = useState([{
+    budget : "",
+    cost : 0
+  }]);
+  const calculateTotalCost = () => {
+    return budgetDetails.reduce((total, ele) => {
+      return total + ele.cost;
+    }, 0)
+  }
+  const handleBudget = () => {
+    setBudgetDetails([
+      ...budgetDetails,
+      {
+        budget : "",
+        cost : 0
+      }
+    ])
+  }
+
+  // console.log( formData );
 
   const handleSubmit = async (e) => {
     const handleImageUpload = async (file) => {
@@ -90,7 +117,7 @@ const EducationIndividual = () => {
           ? await handleImageUpload(
               e.target.medicalConfirmationOriginal.files[0]
             )
-          : "";
+          : "NA";
         console.log("image4");
         image.caste_certificate_img = await handleImageUpload(
           e.target.casteCertificateCopy.files[0]
@@ -98,14 +125,14 @@ const EducationIndividual = () => {
         console.log("image5");
         image.affidavit_proof_img = e.target.affidavitProofOriginal.files[0]
           ? await handleImageUpload(e.target.affidavitProofOriginal.files[0])
-          : "";
+          : "NA";
         image.request_letter_img = await handleImageUpload(
           e.target.requestLetterOriginal.files[0]
         );
         console.log("image6");
         image.death_certificate_img = e.target.deathCertificateCopy.files[0]
           ? await handleImageUpload(e.target.deathCertificateCopy.files[0])
-          : "";
+          : "NA";
         console.log("image7");
         image.mark_list_of_previous_year = await handleImageUpload(
           e.target.markListPreviousYear.files[0]
@@ -294,75 +321,8 @@ const EducationIndividual = () => {
           )}
 
           <form onSubmit={handleSubmit}>
-            <VStack align="start" spacing={4} mb={8}>
-              {/* Name of Provincial Superior */}
-              <FormControl isRequired>
-                <FormLabel>Name of Provincial Superior</FormLabel>
-                <Input
-                  type="text"
-                  name="provincialSuperiorName"
-                  onChange={handleChange}
-                  required
-                />
-              </FormControl>
 
-              {/* Contact of Provincial Superior */}
-              <FormControl isRequired>
-                <FormLabel>Contact of Provincial Superior</FormLabel>
-                <Input
-                  type="text"
-                  name="provincialSuperiorContact"
-                  onChange={handleChange}
-                  required
-                />
-              </FormControl>
-            </VStack>
-
-            <VStack align="start" spacing={4} mb={8}>
-              {/* Name of Project Incharge */}
-              <FormControl isRequired>
-                <FormLabel>Name of Project Incharge</FormLabel>
-                <Input
-                  type="text"
-                  name="projectInchargeName"
-                  onChange={handleChange}
-                  required
-                />
-              </FormControl>
-
-              {/* Name of Project Coordinator
-            <FormControl isRequired>
-              <FormLabel>Name of Project Coordinator</FormLabel>
-              <Input
-                type="text"
-                name="projectCoordinatorName"
-                onChange={handleChange}
-                required
-              />
-            </FormControl> */}
-
-              {/* Contact of Project Incharge */}
-              <FormControl isRequired>
-                <FormLabel>Contact of Project Incharge</FormLabel>
-                <Input
-                  type="text"
-                  name="projectInchargeContact"
-                  onChange={handleChange}
-                  required
-                />
-              </FormControl>
-
-              {/* Email of Project Incharge */}
-              <FormControl isRequired>
-                <FormLabel>Email of Project Incharge</FormLabel>
-                <Input
-                  type="email"
-                  name="projectInchargeEmail"
-                  onChange={handleChange}
-                  required
-                />
-              </FormControl>
-            </VStack>
+            
 
             <VStack align="start" spacing={4} mb={8}>
               {/*Personal Information of the Beneficiary */}
@@ -417,13 +377,12 @@ const EducationIndividual = () => {
               </FormControl>
 
               {/* Email */}
-              <FormControl isRequired>
+              <FormControl >
                 <FormLabel>Email</FormLabel>
                 <Input
                   type="email"
                   name="beneficiaryEmail"
                   onChange={handleChange}
-                  required
                 />
               </FormControl>
 
@@ -469,6 +428,16 @@ const EducationIndividual = () => {
                 />
               </FormControl>
 
+              <FormControl isRequired>
+                <FormLabel>Age</FormLabel>
+                <Input
+                  type="Number"
+                  name="age"
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
+
               {/* Name of Father */}
               <FormControl isRequired>
                 <FormLabel>Father's Name</FormLabel>
@@ -503,7 +472,7 @@ const EducationIndividual = () => {
               </FormControl>
 
               {/* Religion */}
-              <FormControl isRequired>
+              {/* <FormControl isRequired>
                 <FormLabel>Religion</FormLabel>
                 <Input
                   type="text"
@@ -511,7 +480,7 @@ const EducationIndividual = () => {
                   onChange={handleChange}
                   required
                 />
-              </FormControl>
+              </FormControl> */}
 
               {/* Caste / Tribe */}
               <FormControl isRequired>
@@ -554,7 +523,7 @@ const EducationIndividual = () => {
               </FormControl>
 
               {/* Occupation of Mother */}
-              <FormControl isRequired>
+              <FormControl >
                 <FormLabel>Occupation of Mother</FormLabel>
                 <Input
                   type="text"
@@ -565,13 +534,28 @@ const EducationIndividual = () => {
               </FormControl>
 
               {/* Monthly Income of Mother */}
-              <FormControl isRequired>
+              <FormControl >
                 <FormLabel>Monthly Income of Mother</FormLabel>
                 <Input
                   type="number"
                   name="motherMonthlyIncome"
                   onChange={handleChange}
-                  required
+                />
+              </FormControl>
+              <FormControl >
+                <FormLabel>Details of other working family members</FormLabel>
+                <Input
+                  type="text"
+                  name="details_other_family_members"
+                  onChange={handleChange}
+                />
+              </FormControl>
+              <FormControl >
+                <FormLabel>Type of Work and Monthly Income</FormLabel>
+                <Input
+                  type="number"
+                  name="type_of_work_monthly_income "
+                  onChange={handleChange}
                 />
               </FormControl>
             </VStack>
@@ -588,6 +572,7 @@ const EducationIndividual = () => {
                   <option value="healthy">Healthy</option>
                   <option value="sick">Sick</option>
                   <option value="dead">Dead</option>
+                  <option value="deserted">Deserted the family</option>
                 </Select>
               </FormControl>
 
@@ -631,7 +616,7 @@ const EducationIndividual = () => {
               </FormControl>
 
               {/* Health Status of Father */}
-              <FormControl isRequired>
+              {formData.fatherStatus === "sick" && <FormControl isRequired>
                 <FormLabel>Health status of Father</FormLabel>
                 <Select
                   name="fatherHealthStatus"
@@ -654,10 +639,10 @@ const EducationIndividual = () => {
                     required
                   />
                 )}
-              </FormControl>
+              </FormControl>}
 
               {/* Health Status of Mother */}
-              <FormControl isRequired>
+              {formData.motherStatus === 'sick' && <FormControl isRequired>
                 <FormLabel>Health status of Mother</FormLabel>
                 <Select
                   name="motherHealthStatus"
@@ -680,7 +665,7 @@ const EducationIndividual = () => {
                     required
                   />
                 )}
-              </FormControl>
+              </FormControl>}
 
               {/* Residential Status */}
               <FormControl isRequired>
@@ -911,14 +896,60 @@ const EducationIndividual = () => {
               </FormControl>
 
               {/* Details of Budget */}
-              <FormControl isRequired>
+              {/* <FormControl isRequired>
                 <FormLabel>Details of budget</FormLabel>
                 <Textarea
                   name="budgetDetails"
                   onChange={handleChange}
                   required
                 />
-              </FormControl>
+              </FormControl> */}
+              <FormControl isRequired>
+              <FormLabel>Details of budget</FormLabel>
+              <Table variant="simple" mb={4}>
+                <Thead>
+                  <Tr>
+                    <Th>Budget</Th>
+                    <Th>Cost</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {budgetDetails.map((ele, index) => (
+                    <Tr key={index}>
+                      <Td>
+                        <Input
+                          type="text"
+                          name="budgter"
+                          value={ele.budget}
+                          onChange={(e) => {
+                            const newBudget = [...budgetDetails];
+                            newBudget[index].budget = e.target.value;
+                            setBudgetDetails(newBudget)
+                          }}
+                          required
+                        />
+                      </Td>
+                      <Td>
+                        <Input
+                          type="number"
+                          name="cost"
+                          value={ele.cost}
+                          onChange={(e) => {
+                            const newBudget = [...budgetDetails];
+                            newBudget[index].cost = parseInt(e.target.value);
+                            setBudgetDetails(newBudget)
+                          }}
+                          required
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+              <Button onClick={handleBudget} colorScheme="teal">
+                Add budget
+              </Button>
+            </FormControl>
 
               {/* Total Cost of the Study */}
               <FormControl isRequired>
@@ -927,6 +958,8 @@ const EducationIndividual = () => {
                   type="number"
                   name="totalCostOfStudy"
                   onChange={handleChange}
+                  value={calculateTotalCost()}
+                  readOnly
                   required
                 />
               </FormControl>
@@ -962,6 +995,7 @@ const EducationIndividual = () => {
                   type="number"
                   name="totalScholarshipAndContribution"
                   onChange={handleChange}
+                  value={(parseInt(formData.familyFinancialContribution) + parseInt(formData.scholarshipExpected) + parseInt(formData.beneficiaryContribution))}
                   required
                 />
               </FormControl>
@@ -973,6 +1007,7 @@ const EducationIndividual = () => {
                   type="number"
                   name="balanceAmountRequested"
                   onChange={handleChange}
+                  value={calculateTotalCost() - (parseInt(formData.familyFinancialContribution) + parseInt(formData.scholarshipExpected) + parseInt(formData.beneficiaryContribution))}
                   required
                 />
               </FormControl>
@@ -1025,7 +1060,7 @@ const EducationIndividual = () => {
               </FormControl>
 
               {/* Medical Confirmation (In Case of Ill Health of Parents) – Original */}
-              <FormControl>
+              {<FormControl >
                 <FormLabel>
                   Medical Confirmation (In Case of Ill Health of Parents) –
                   Original
@@ -1036,7 +1071,7 @@ const EducationIndividual = () => {
                   onChange={handleChange}
                   accept=".pdf, .doc, .docx, .jpeg, .jpg, .png"
                 />
-              </FormControl>
+              </FormControl>}
 
               {/* Caste Certificate (True Copy) */}
               <FormControl isRequired>
@@ -1051,7 +1086,7 @@ const EducationIndividual = () => {
               </FormControl>
 
               {/* Affidavit Proof (In Case of Single Parent - Original) */}
-              <FormControl>
+              { <FormControl >
                 <FormLabel>
                   Affidavit Proof (In Case of Single Parent - Original)
                 </FormLabel>
@@ -1061,7 +1096,7 @@ const EducationIndividual = () => {
                   onChange={handleChange}
                   accept=".pdf, .doc, .docx, .jpeg, .jpg, .png"
                 />
-              </FormControl>
+              </FormControl>}
 
               {/* Request Letter (Original Copy) */}
               <FormControl isRequired>
@@ -1076,7 +1111,7 @@ const EducationIndividual = () => {
               </FormControl>
 
               {/* Death Certificate (In Case of Deceased Parents - True Copy) */}
-              <FormControl>
+              {<FormControl >
                 <FormLabel>
                   Death Certificate (In Case of Deceased Parents - True Copy)
                 </FormLabel>
@@ -1086,7 +1121,7 @@ const EducationIndividual = () => {
                   onChange={handleChange}
                   accept=".pdf, .doc, .docx, .jpeg, .jpg, .png"
                 />
-              </FormControl>
+              </FormControl>}
 
               {/* Mark List of Previous Year */}
               <FormControl isRequired>

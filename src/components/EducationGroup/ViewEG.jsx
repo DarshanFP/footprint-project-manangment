@@ -20,9 +20,11 @@ import {
   Tr,
   Th,
   Td,
+  Flex,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
 import { useParams } from "react-router-dom";
+import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 const ViewEG = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -515,7 +517,11 @@ const ViewEG = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box p={8}  w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading
           as="h1"
           size="xl"
@@ -594,7 +600,7 @@ const ViewEG = () => {
               </Thead>
               <Tbody>
                 {/* Provincial Superior */}
-                <Tr>
+                {/* <Tr>
                   <Td>Provincial Superior</Td>
                   <Td>
                     <Input
@@ -624,7 +630,6 @@ const ViewEG = () => {
                     />
                   </Td>
                 </Tr>
-                {/* Project In-Charge */}
                 <Tr>
                   <Td>Project In-Charge</Td>
                   <Td>
@@ -654,7 +659,7 @@ const ViewEG = () => {
                       readOnly
                     />
                   </Td>
-                </Tr>
+                </Tr> */}
                 {/* Project Coordinators */}
                 <Tr>
                   <Td>Project Coordinator India</Td>
@@ -883,7 +888,7 @@ const ViewEG = () => {
               />
             </FormControl>
 
-            <FormControl isRequired>
+            {/* <FormControl isRequired>
               {formData.projectCoordinators.map((projectCoordinator, index) => (
                 <Box borderWidth={1} p={4} mt={4}>
                   <FormLabel>{`Project Coordinator - ${index + 1}`}</FormLabel>
@@ -922,7 +927,7 @@ const ViewEG = () => {
                   />
                 </Box>
               ))}
-            </FormControl>
+            </FormControl> */}
 
             {/* Amount Approved by Project Coordinator */}
             <FormControl>
@@ -981,6 +986,7 @@ const ViewEG = () => {
           </Button>
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

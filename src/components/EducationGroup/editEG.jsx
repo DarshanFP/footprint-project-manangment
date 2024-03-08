@@ -19,19 +19,24 @@ import {
   Tr,
   Th,
   Td,
+  Flex,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 // Fields editable
 // Same as the previous
 
 const EducationGroup = () => {
+  const navigate = useNavigate();
   const projectData = JSON.parse(decodeURIComponent(useParams().project));
   const [isLoading, setIsLoading] = useState(false);
   const showToast = useToast();
+  console.log(projectData.project_code)
 
   const [formData, setFormData] = useState({
+    projectID: projectData.project_code,
     NAMEOFTHESOCIETY: projectData.NameOfSociety || "",
     dATEOFSUBMISSION: projectData.DateOfSubmission || "",
     TITLEOFTHEPROJECT: projectData.TitleOfProject || "",
@@ -82,9 +87,9 @@ const EducationGroup = () => {
   // Populate tableData from req
   const [tableData, setTableData] = useState(
     projectData.peopleDetails.map((row) => ({
-      class: row.class || "",
-      totalFemale: row.totalFemale || "",
-      totalMale: row.totalMale || "",
+      class: row.class || 1,
+      totalFemale: row.totalFemale || 0,
+      totalMale: row.totalMale || 0,
       total: row.total || 0,
     }))
   );
@@ -123,6 +128,7 @@ const EducationGroup = () => {
     // Add your form submission logic here
     // for Project Coordinator no logic can be written as of now
     const req = {
+      projectID: formData.projectID,
       NameOfSociety: formData.NAMEOFTHESOCIETY,
       DateOfSubmission: formData.dATEOFSUBMISSION,
       TitleOfProject: formData.TITLEOFTHEPROJECT,
@@ -162,10 +168,23 @@ const EducationGroup = () => {
       project_in_charge_agree: {
         agree: true,
       },
+      project_coordinator_agree: {
+        agree: false,
+      },
+      project_coordinator_agree_swz: {
+        agree: false,
+      },
+      provincial_superior_agree: {
+        agree: false,
+      },
+      comment_box_provincial_superior: null,
+      comment_box_project_coordinator: null,
+      comment_box_project_coordinator_swz: null,
+      amount_approved: 0
     };
 
     try {
-      const res = await authAxios.put("/projects/editEGApplicant", req);
+      const res = await authAxios.put("/projects/editEG", req);
       console.log(res);
       setIsLoading(false);
       if (res.data.success) {
@@ -174,10 +193,13 @@ const EducationGroup = () => {
           duration: 5000,
           status: "success",
         });
+        setTimeout(() => {
+          navigate("/myProjects"); 
+        },2000)
         setIsSubmitted(true);
       } else {
         showToast({
-          title: "Unsuccessful submission",
+          title: req.data.msg,
           duration: 5000,
           status: "error",
         });
@@ -517,7 +539,11 @@ const EducationGroup = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box p={8}  w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading
           as="h1"
           size="xl"
@@ -826,6 +852,7 @@ const EducationGroup = () => {
           </Button>
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

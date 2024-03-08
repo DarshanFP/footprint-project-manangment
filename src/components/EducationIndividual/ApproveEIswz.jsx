@@ -24,7 +24,7 @@ import { useParams } from "react-router-dom";
 import authAxios from "../../AuthAxios";
 import DashboardApprover from "../Approver/dashboardApprover";
 
-const ReviewEI = () => {
+const ApproveEIswz = () => {
   const showToast = useToast();
   const navigate = useNavigate();
 
@@ -46,7 +46,7 @@ const ReviewEI = () => {
 
   const [formData, setFormData] = useState({
     ...imageMappings,
-    amountApproved: 0,
+    amountApproved: projectData.amount_approved,
     provincialSuperiorName: projectData.reviewer.name, // Assuming not present in req
     provincialSuperiorEmail: projectData.reviewer.email, // Assuming not present in req
     provincialSuperiorContact: projectData.reviewer.mobile, // Assuming not present in req
@@ -110,7 +110,8 @@ const ReviewEI = () => {
       projectData.project_in_charge_agree.date || "",
     provincialSuperiorAgreement: projectData.provincial_superior_agree.agree, // Assuming not present in req
     provincialSuperiorAgreementDate: projectData.provincial_superior_agree.date, // Assuming not present in req
-    comment: "", // Assuming not present in req
+    comment: projectData.comment_box_project_coordinator, // Assuming not present in req
+    comment_SWZ: "", // Assuming not present in req
     reviewerComment: projectData.comment_box_provincial_superior,
     projectCoordinatorAgree: false,
   });
@@ -134,12 +135,12 @@ const ReviewEI = () => {
       const req = {
         projectID: projectData._id,
         comment_box_project_coordinator: formData.comment,
-        comment_box_project_coordinator_swz: null,
+        comment_box_project_coordinator_swz: formData.comment_SWZ,
         project_coordinator_agree: {
-          agree: formData.projectCoordinatorAgree,
+          agree: true,
         },
         project_coordinator_agree_swz: {
-          agree: false,
+          agree: true,
         },
         amount_approved: formData.amountApproved,
       };
@@ -1160,7 +1161,16 @@ const ReviewEI = () => {
                 <FormLabel>Comment(For Approver)</FormLabel>
                 <Input
                   type="text"
-                  name="comment"
+                  name="reviewerComment"
+                  value={formData.comment}
+                  readOnly
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Comment(For SWZ Approver)</FormLabel>
+                <Input
+                  type="text"
+                  name="comment_SWZ"
                   onChange={handleChange}
                   required
                 />
@@ -1172,7 +1182,7 @@ const ReviewEI = () => {
                   name="amountApproved"
                   value={formData.amountApproved}
                   onChange={handleChange}
-                  required
+                  readOnly
                 />
               </FormControl>
             </VStack>
@@ -1188,7 +1198,7 @@ const ReviewEI = () => {
             >
               Accept
             </Button>
-            <Button
+            {/* <Button
               colorScheme="red"
               type="submit"
               mx={3}
@@ -1197,11 +1207,11 @@ const ReviewEI = () => {
               }}
             >
               Revert
-            </Button>
+            </Button> */}
           </form>
         </Box>
       </Flex>
     </ChakraProvider>
   );
 };
-export default ReviewEI;
+export default ApproveEIswz;

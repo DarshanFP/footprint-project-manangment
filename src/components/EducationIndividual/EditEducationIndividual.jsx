@@ -106,6 +106,7 @@ const EditEI = () => {
     beneficiaryAgreement: projectData.benificary_agree.agree || false,
     beneficiaryAgreementDate: projectData.benificary_agree.date || "",
     approver_cmt : projectData.comment_box_project_coordinator || "",
+    swz_approver_cmt : projectData.comment_box_project_coordinator_swz || "",
     reviewer_cmt : projectData.comment_box_provincial_superior || "",
   });
   // Populate formData from req
@@ -276,6 +277,10 @@ const EditEI = () => {
         // comment_box_provincial_superior: formData.commentBoxProvincialSuperior,
         comment_box_project_coordinator: null,
         comment_box_provincial_superior: null,
+        comment_box_project_coordinator_swz: null,
+        project_coordinator_agree_swz: {
+          agree: false,
+        },
         project_coordinator_agree: { agree: false },
         provincial_superior_agree: { agree: false },
       };
@@ -294,7 +299,7 @@ const EditEI = () => {
         }, 2000)
       } else {
         showToast({
-          title: "Unsuccessful form submission",
+          title: req.data.msg,
           duration: 5000,
           status: "error",
         });
@@ -350,6 +355,16 @@ const EditEI = () => {
             </Heading>
             
             {/* Name */}
+            <FormControl>
+              <FormLabel color={'red'}>## SWZ Approver Comment *</FormLabel>
+              <Input
+                type="text"
+                name="approver_cmt"
+                value={formData.swz_approver_cmt}
+                readOnly
+                color={'red'}
+              />
+            </FormControl>
             <FormControl>
               <FormLabel color={'red'}>## Approver Comment *</FormLabel>
               <Input
