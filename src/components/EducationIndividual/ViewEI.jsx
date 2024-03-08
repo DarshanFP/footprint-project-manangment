@@ -20,10 +20,13 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
+import { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 import authAxios from "../../AuthAxios";
 import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 const ViewEI = () => {
+  const PDF = useRef();
   const showToast = useToast();
   const projectData = JSON.parse(decodeURIComponent(useParams().project));
   console.log(projectData);
@@ -40,6 +43,14 @@ const ViewEI = () => {
     deathCertificateCopy: projectData.death_certificate_img,
     markListPreviousYear: projectData.mark_list_of_previous_year,
   };
+
+
+
+  const generatePDF = useReactToPrint({
+    content: () => PDF.current,
+    documentTitle: "Education Individual",
+    onAfterPrint: () => alert("Data saved in PDF"),
+  });
 
   const [formData, setFormData] = useState({
     ...imageMappings,
@@ -175,6 +186,7 @@ const ViewEI = () => {
         </VStack>
       <Box p={8} w={"70%"}
           overflowY={"scroll"}
+          ref={PDF}
           overflowX={"hidden"}
           h={"100vh"}>
         <Heading
@@ -1186,10 +1198,10 @@ const ViewEI = () => {
               />
             </FormControl>
           </VStack>
-          <Heading as="h2" size="lg" mb={4} textAlign="center">
+          {/* <Heading as="h2" size="lg" mb={4} textAlign="center">
                 Manual Signatures
-              </Heading>
-          <HStack align="start" spacing={8} mb={8}>            
+              </Heading> */}
+          {/* <HStack align="start" spacing={8} mb={8}>            
             <Box borderWidth="3px" p={8} borderRadius="lg" width="100%" mb={4} borderColor="black" borderStyle="solid">
               <Heading as="h5" size="sm" mb={7} textAlign="center" color="grey">
                 Project Executor
@@ -1220,11 +1232,11 @@ const ViewEI = () => {
               </Heading>
             </Box>
 
-          </HStack>
+          </HStack> */}
           
           {/* Print Button */}
           <Button
-              onClick={() => window.print()}
+              onClick={generatePDF}
               colorScheme="blue"
               type="submit"
             >
