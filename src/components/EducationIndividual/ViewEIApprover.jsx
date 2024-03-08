@@ -110,7 +110,9 @@ const ViewEIApprover = () => {
     provincialSuperiorAgreementDate: projectData.provincial_superior_agree.date, // Assuming not present in req
     reviewerComment : projectData.comment_box_provincial_superior,
     comment: projectData.comment_box_project_coordinator,
+    comment_SWZ: projectData.comment_box_project_coordinator_swz,// NEWly added
     projectCoordinatorAgreement: projectData.project_coordinator_agree,
+    projectCoordinatorAgreement_SWZ: projectData.project_coordinator_agree_swz, // NEWly Added
     projectCoordinatorAgreementDate:projectData.project_coordinator_agree.date,
   });
   console.log(formData);
@@ -1172,6 +1174,16 @@ const ViewEIApprover = () => {
                 name="comment"
                 onChange={handleChange}
                 value={formData.comment}
+                readOnly
+              />
+            </FormControl>
+            <FormControl >
+              <FormLabel>Comment(For SWZ Approver)</FormLabel>
+              <Input
+                type="text"
+                name="comment"
+                onChange={handleChange}
+                value={formData.comment_SWZ}
                 readOnly
               />
             </FormControl>

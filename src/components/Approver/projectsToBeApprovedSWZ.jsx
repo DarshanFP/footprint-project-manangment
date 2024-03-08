@@ -15,7 +15,7 @@ import {
 import { Link } from "react-router-dom";
 import DashboardApprover from "./dashboardApprover";
 
-const ProjectsToBeApproved = () => {
+const ProjectsToBeApprovedSWZ = () => {
   const showToast = useToast();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +67,7 @@ const ProjectsToBeApproved = () => {
           overflowX={"hidden"}
         >
           <Heading as="h1" size="xl" mb={6} textAlign="center" color="blue.500">
-            Projects to Be Approved
+            Projects to Be Approved by swz
           </Heading>
 
           <VStack spacing={6} align="stretch">
@@ -109,9 +109,10 @@ const ProjectsToBeApproved = () => {
                   {ele.data.map((project, k) => {
                     // console.log(ele.name + '    ' + project.project_code + '   ' + project.project_coordinator_agree)
                     if (
-                      project.project_coordinator_agree.agree !== true &&
-                      project.provincial_superior_agree.agree === true &&
-                      project.comment_box_project_coordinator === null
+                      project.project_coordinator_agree.agree === true &&
+                      project.comment_box_project_coordinator !== null && 
+                      project.project_coordinator_agree_swz.agree === false && 
+                      project.comment_box_project_coordinator_swz === null
                     ) {
                       projectCount = projectCount + 1;
                       return (
@@ -142,15 +143,15 @@ const ProjectsToBeApproved = () => {
                             </Heading>
 
                             <Button
-                              colorScheme="blue"
+                              colorScheme="green"
                               as={Link}
-                              to={`/Approve${ele.name}/${encodeURIComponent(
+                              to={`/Approve${ele.name}swz/${encodeURIComponent(
                                 JSON.stringify(project)
                               )}`} // Update this route as needed
                               mb={2}
                               borderRadius="full"
                             >
-                              Review
+                              Approve
                             </Button>
                           </Box>
                         </Center>
@@ -176,4 +177,4 @@ const ProjectsToBeApproved = () => {
   );
 };
 
-export default ProjectsToBeApproved;
+export default ProjectsToBeApprovedSWZ;

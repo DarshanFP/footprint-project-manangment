@@ -56,7 +56,7 @@ const LoginPage = () => {
         setAuthToken();
         await Promise.resolve(setTimeout(() => {}, 10000000));
         console.log("Logging out");
-        navigate("/login");
+        navigate("/");
       }
       // token expires after one hour
     }, 3600000);

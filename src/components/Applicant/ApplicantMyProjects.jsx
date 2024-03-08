@@ -140,7 +140,7 @@ const MyProjects = () => {
                             </Heading>
 
                             <Box>
-                              {project.project_coordinator_agree.agree !== true && <Button
+                              {project.project_coordinator_agree_swz.agree !== true && <Button
                                 colorScheme="blue"
                                 as={Link}
                                 to={`/View${ele.name}/${encodeURIComponent(
@@ -165,7 +165,7 @@ const MyProjects = () => {
                                 Edit
                               </Button>}
 
-                              {project.project_coordinator_agree.agree === true && <Button
+                              {project.project_coordinator_agree_swz.agree === true && <Button
                                 colorScheme="green"
                                 as={Link}
                                 to={`/View${ele.name}/${encodeURIComponent(

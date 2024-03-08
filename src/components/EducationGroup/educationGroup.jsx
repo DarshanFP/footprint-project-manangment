@@ -21,8 +21,10 @@ import {
   Tr,
   Th,
   Td,
+  Flex,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
+import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 const EducationGroup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -175,6 +177,15 @@ const EducationGroup = () => {
       project_in_charge_agree: {
         agree: true,
       },
+      // project_coordinator_agree: {
+      //   agree: false,
+      // },
+      // project_coordinator_agree_swz: {
+      //   agree: false,
+      // },
+      // provincial_superior_agree: {
+      //   agree: false,
+      // },
     };
 
     try {
@@ -188,11 +199,12 @@ const EducationGroup = () => {
           status: "success",
         });
         setIsSubmitted(true);
-        navigate("/dashboardApplicant");  
-
+        setTimeout(() => {
+          navigate("/myProjects");  
+        },[2000])
       } else {
         showToast({
-          title: "Unsuccessful submission",
+          title: res.data.msg,
           duration: 5000,
           status: "error",
         });
@@ -201,7 +213,7 @@ const EducationGroup = () => {
       console.log(e);
       setIsLoading(false);
       showToast({
-        title: "Unsuccessful submission",
+        title: e.msg,
         duration: 5000,
         status: "error",
       });
@@ -234,6 +246,7 @@ const EducationGroup = () => {
     };
 
     return (
+      
       <Box p={4}>
         <Heading as="h1" size="l" mb={6}>
           People Details Table
@@ -534,7 +547,11 @@ const EducationGroup = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box p={8}  w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading
           as="h1"
           size="xl"
@@ -836,6 +853,7 @@ const EducationGroup = () => {
           </Button>
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };

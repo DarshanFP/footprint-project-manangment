@@ -102,6 +102,8 @@ import ForgetPassword from "./components/Auth/ForgetPassword";
 import EditSocialIndividual from "./components/SocialIndividual/editSocialIndividual";
 import AllProjects from "./components/Applicant/AllProjects";
 import ViewEIApprover from "./components/EducationIndividual/ViewEIApprover";
+import ProjectsToBeApprovedSWZ from "./components/Approver/projectsToBeApprovedSWZ";
+import ApproveEIswz from "./components/EducationIndividual/ApproveEIswz";
 
 // Token checking in protected
 // Token expiry - 1 hour
@@ -224,6 +226,10 @@ const App = () => {
             path="/ProjectsToBeApproved"
             element={<ProjectsToBeApproved />}
           />
+          <Route
+            path="/ProjectsToBeApprovedSWZ"
+            element={<ProjectsToBeApprovedSWZ />}
+          />
           <Route path="/MyReviewedProject" element={<MyReviewedProject />} />
           <Route path="/ApprovedProjects" element={<ApprovedProjects />} />
           
@@ -252,6 +258,7 @@ const App = () => {
           />
           <Route path="/ReviewEI/:project" element={<ReviewEI />} />
           <Route path="/ApproveEI/:project" element={<ApproveEI />} />
+          <Route path="/ApproveEIswz/:project" element={<ApproveEIswz/>} />
           <Route
             path="/ApproveWHFC/:project"
             element={<ApproveWelfareHomeForChildren />}
@@ -288,7 +295,7 @@ const App = () => {
             element={<EditEducationIndividual />}
           />
 
-          <Route path="/EditEG" element={<EditEG />} />
+          <Route path="/EditEG/:project" element={<EditEG />} />
 
           <Route path="ViewEOI/:project" element={<ViewEIO />} />
           <Route path="/ViewHOI/:project" element={<ViewProject />} />
@@ -297,7 +304,7 @@ const App = () => {
           <Route path="/viewNPDP/:project" element={<ViewNPDP />} />
           <Route path="/ViewEI/:project" element={<ViewEI />} />
           <Route path="/ViewEIApprover/:project" element={<ViewEIApprover />} />
-          <Route path="/ViewEG" element={<ViewEG />} />
+          <Route path="/ViewEG/:project" element={<ViewEG />} />
           <Route path="/ViewDPLG/:project" element={<ViewDPLG />} />
           <Route path="/ViewHIV/:project" element={<ViewHIV />} />
           <Route path="/ViewSG/:project" element={<ViewISG />} />

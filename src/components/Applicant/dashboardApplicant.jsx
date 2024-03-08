@@ -50,7 +50,7 @@ const DashboardApplicant = () => {
     return () => {};
   } , []);
   
-  console.log("userDetails", userDetails);
+  // console.log("userDetails", userDetails);
   return (
     <ChakraProvider>
       <Box p={8} maxW="xl" bg="gray.100" borderRadius="lg" w='100%'>
