@@ -16,54 +16,54 @@ const AllProjects = () => {
   const navigate = useNavigate();
 
   const AllProjects = [
-    // {
-    //   projectName: "HIV effected outreach welfare - (hiv_affected_outreaches)",
-    //   formPath: "/HIVAffectedOutreach",
-    // },
-    // {
-    //   projectName: "Education group Support-rural,urban,tribal - (education_group_support)",
-    //   formPath: "/EducationRuralUrbanTribalGroup",
-    // },
+    {
+      projectName: "HIV effected outreach welfare - (hiv_affected_outreaches)",
+      formPath: "/HIVAffectedOutreach",
+    },
+    {
+      projectName: "Education group Support-rural,urban,tribal - (education_group_support)",
+      formPath: "/EducationRuralUrbanTribalGroup",
+    },
     {
       projectName: "Institutional Group Educational Support - (EGS)",
       formPath: "/educationGroup",
     },
-    // {
-    //   projectName: "Development Projects - (cgs) - common group development projects",
-    //   formPath: "/common",
-    // },
-    // {
-    //   projectName: "Next phase developmental proposal - (npdp)",
-    //   formPath: "/nextPhaseDevelopmentProject",
-    // },
-    // {
-    //   projectName: "Residential skill training -(isg) International support group",
-    //   formPath: "/common",
-    // },
-    // {
-    //   projectName: "Development Liveihood support (DPLG) - Development Project LG",
-    //   formPath: "/devProjLivliGroup",
-    // },
-    // {
-    //   projectName: "Welfare home for chlidren ongoing - (waelfare_home_childrens)",
-    //   formPath: "/WelfareHomeGroup",
-    // },
+    {
+      projectName: "Development Projects - (cgs) - common group development projects",
+      formPath: "/common",
+    },
+    {
+      projectName: "Next phase developmental proposal - (npdp)",
+      formPath: "/nextPhaseDevelopmentProject",
+    },
+    {
+      projectName: "Residential skill training -(isg) International support group",
+      formPath: "/common",
+    },
+    {
+      projectName: "Development Liveihood support (DPLG) - Development Project LG",
+      formPath: "/devProjLivliGroup",
+    },
+    {
+      projectName: "Welfare home for chlidren ongoing - (waelfare_home_childrens)",
+      formPath: "/WelfareHomeGroup",
+    },
     {
       projectName: "Educational Support - (eis) - Educational Individual",
       formPath: "/educationIndividual",
     },
-    // {
-    //   projectName: "Ongoing Educational Support - (EOI) - Educational onging Individual",
-    //   formPath: "/educationIndividualOngoing",
-    // },
-    // {
-    //   projectName: "Access to helth. - (hoi) - Helth ongoning individual",
-    //   formPath: "/healthIndividualOngoing",
-    // },
-    // {
-    //   projectName: "Livelihood Support - (sis) - social individual",
-    //   formPath: "/socialIndividual",
-    // },
+    {
+      projectName: "Ongoing Educational Support - (EOI) - Educational onging Individual",
+      formPath: "/educationIndividualOngoing",
+    },
+    {
+      projectName: "Access to helth. - (hoi) - Helth ongoning individual",
+      formPath: "/healthIndividualOngoing",
+    },
+    {
+      projectName: "Livelihood Support - (sis) - social individual",
+      formPath: "/socialIndividual",
+    },
   ];
 
   return (

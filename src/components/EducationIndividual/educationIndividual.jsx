@@ -153,11 +153,11 @@ const EducationIndividual = () => {
     };
     e.preventDefault();
 
-    // setIsLoading(true);
+    setIsLoading(true);
 
     try {
-      // const image = await convertImagesToUrls(e);
-      // console.log(image);
+      const image = await convertImagesToUrls(e);
+      console.log(image);
 
       const req = {
         name: e.target.beneficiaryName.value,
@@ -171,6 +171,7 @@ const EducationIndividual = () => {
         father: e.target.fatherName.value,
         mother: e.target.motherName.value,
         mother_tongue: e.target.motherTongue.value,
+        religion: e.target.religion.value,
         caste: e.target.casteTribe.value,
         occupation_of_father: e.target.fatherOccupation.value,
         monthly_income_of_father: parseInt(e.target.fatherMonthlyIncome.value),
@@ -182,15 +183,15 @@ const EducationIndividual = () => {
         fatherIs: e.target.fatherStatus.value,
         grandmother_support: e.target.grandmotherSupport.value,
         grandfather_support: e.target.grandfatherSupport.value,
-        health_status_of_father: e.target.fatherHealthStatus ? e.target.fatherHealthStatus.value : "NA" ,
+        health_status_of_father: e.target.fatherHealthStatus.value,
         health_status_of_father_others: e.target.fatherHealthStatusOthers
           ? e.target.fatherHealthStatusOthers.value
-          : "NA",
-        health_status_of_mother: e.target.motherHealthStatus ? e.target.motherHealthStatus.value : "NA",
+          : "",
+        health_status_of_mother: e.target.motherHealthStatus.value,
         health_status_of_mother_others: e.target.motherHealthStatusOthers
           ? e.target.motherHealthStatusOthers.value
-          : "NA",
-        residential_status: e.target.residentialStatus?.value ?? "NA",
+          : "",
+        residential_status: e.target.residentialStatus?.value ?? "",
         residential_status_others: e.target.residentialStatusOthers
           ? e.target.residentialStatusOthers.value
           : "NA",
@@ -232,31 +233,31 @@ const EducationIndividual = () => {
         project_in_charge_agree: {
           agree: true,
         },
-        // ...image,
+        ...image,
       };
 
       console.log(req);
 
-      // const res = await authAxios.post("projects/createEI", req);
-      // console.log(res.data);
-      // setIsLoading(false);
-      // if (res.data.success) {
-      //   showToast({
-      //     title: "Successfull form submission",
-      //     duration: 2000,
-      //     status: "success",
-      //   });
-      //   setTimeout(() => {
-      //     setIsSubmitted(true);
-      //     navigate("/myProjects");
-      //   }, 2000)
-      // } else {
-      //   showToast({
-      //     title: req.data.msg,
-      //     duration: 5000,
-      //     status: "error",
-      //   });
-      // }
+      const res = await authAxios.post("projects/createEI", req);
+      console.log(res.data);
+      setIsLoading(false);
+      if (res.data.success) {
+        showToast({
+          title: "Successfull form submission",
+          duration: 2000,
+          status: "success",
+        });
+        setTimeout(() => {
+          setIsSubmitted(true);
+          navigate("/myProjects");
+        }, 2000)
+      } else {
+        showToast({
+          title: req.data.msg,
+          duration: 5000,
+          status: "error",
+        });
+      }
     } catch (error) {
       setIsLoading(false);
       console.log(error);
@@ -266,7 +267,6 @@ const EducationIndividual = () => {
         status: "error",
       });
     }
-    // Add your form submission logic here
   };
 
   return (
@@ -371,7 +371,7 @@ const EducationIndividual = () => {
               <FormControl isRequired>
                 <FormLabel>Contact</FormLabel>
                 <Input
-                  type="tel"
+                  type="Number"
                   name="beneficiaryContact"
                   onChange={handleChange}
                   required
