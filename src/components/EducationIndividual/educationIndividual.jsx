@@ -153,11 +153,11 @@ const EducationIndividual = () => {
     };
     e.preventDefault();
 
-    setIsLoading(true);
+    // setIsLoading(true);
 
     try {
-      const image = await convertImagesToUrls(e);
-      console.log(image);
+      // const image = await convertImagesToUrls(e);
+      // console.log(image);
 
       const req = {
         name: e.target.beneficiaryName.value,
@@ -167,31 +167,33 @@ const EducationIndividual = () => {
         aadhar_no: parseInt(e.target.aadharCardNo.value),
         gender: e.target.gender.value,
         DOB: e.target.dob.value,
+        age: e.target.age.value,
         father: e.target.fatherName.value,
         mother: e.target.motherName.value,
         mother_tongue: e.target.motherTongue.value,
-        religion: e.target.religion.value,
         caste: e.target.casteTribe.value,
         occupation_of_father: e.target.fatherOccupation.value,
         monthly_income_of_father: parseInt(e.target.fatherMonthlyIncome.value),
-        monthly_income_of_mother: parseInt(e.target.motherMonthlyIncome.value),
+        monthly_income_of_mother: e.target.motherMonthlyIncome ? parseInt(e.target.motherMonthlyIncome.value): 0,
         occupation_of_mother: e.target.motherOccupation.value,
+        details_other_family_members: e.target.details_other_family_members ? e.target.details_other_family_members.value : "NA" ,
+        type_of_work_monthly_income : e.target.type_of_work_monthly_income ? e.target.type_of_work_monthly_income.value : "NA",
         motherIs: e.target.motherStatus.value,
         fatherIs: e.target.fatherStatus.value,
         grandmother_support: e.target.grandmotherSupport.value,
         grandfather_support: e.target.grandfatherSupport.value,
-        health_status_of_father: e.target.fatherHealthStatus.value,
+        health_status_of_father: e.target.fatherHealthStatus ? e.target.fatherHealthStatus.value : "NA" ,
         health_status_of_father_others: e.target.fatherHealthStatusOthers
           ? e.target.fatherHealthStatusOthers.value
-          : "",
-        health_status_of_mother: e.target.motherHealthStatus.value,
+          : "NA",
+        health_status_of_mother: e.target.motherHealthStatus ? e.target.motherHealthStatus.value : "NA",
         health_status_of_mother_others: e.target.motherHealthStatusOthers
           ? e.target.motherHealthStatusOthers.value
-          : "",
-        residential_status: e.target.residentialStatus?.value ?? "",
+          : "NA",
+        residential_status: e.target.residentialStatus?.value ?? "NA",
         residential_status_others: e.target.residentialStatusOthers
           ? e.target.residentialStatusOthers.value
-          : "",
+          : "NA",
         family_situation_of_the_beneficiary:
           e.target.familySituationDetails.value,
         financialSupportDetails: e.target.financialSupportDetails.value,
@@ -214,7 +216,7 @@ const EducationIndividual = () => {
         ),
         noFamilySupportReasons: e.target.noFamilySupportReasons.value,
         presentStudy: e.target.presentStudy.value,
-        budgetDetails: e.target.budgetDetails.value,
+        budgetDetails: budgetDetails,
         totalCostOfStudy: parseInt(e.target.totalCostOfStudy.value),
         scholarshipExpected: parseInt(e.target.scholarshipExpected.value),
         beneficiaryContribution: parseInt(
@@ -230,36 +232,36 @@ const EducationIndividual = () => {
         project_in_charge_agree: {
           agree: true,
         },
-        ...image,
+        // ...image,
       };
 
       console.log(req);
 
-      const res = await authAxios.post("projects/createEI", req);
-      console.log(res.data);
-      setIsLoading(false);
-      if (res.data.success) {
-        showToast({
-          title: "Successfull form submission",
-          duration: 2000,
-          status: "success",
-        });
-        setTimeout(() => {
-          setIsSubmitted(true);
-          navigate("/myProjects");
-        }, 2000)
-      } else {
-        showToast({
-          title: "Unsuccessful form submission",
-          duration: 5000,
-          status: "error",
-        });
-      }
+      // const res = await authAxios.post("projects/createEI", req);
+      // console.log(res.data);
+      // setIsLoading(false);
+      // if (res.data.success) {
+      //   showToast({
+      //     title: "Successfull form submission",
+      //     duration: 2000,
+      //     status: "success",
+      //   });
+      //   setTimeout(() => {
+      //     setIsSubmitted(true);
+      //     navigate("/myProjects");
+      //   }, 2000)
+      // } else {
+      //   showToast({
+      //     title: req.data.msg,
+      //     duration: 5000,
+      //     status: "error",
+      //   });
+      // }
     } catch (error) {
       setIsLoading(false);
       console.log(error);
       showToast({
-        title: "Unsuccessful form submission",
+        title: error.response.data.msg,
         duration: 5000,
         status: "error",
       });
@@ -529,7 +531,6 @@ const EducationIndividual = () => {
                   type="text"
                   name="motherOccupation"
                   onChange={handleChange}
-                  required
                 />
               </FormControl>
 
@@ -544,17 +545,15 @@ const EducationIndividual = () => {
               </FormControl>
               <FormControl >
                 <FormLabel>Details of other working family members</FormLabel>
-                <Input
-                  type="text"
+                <Textarea
                   name="details_other_family_members"
                   onChange={handleChange}
                 />
               </FormControl>
               <FormControl >
                 <FormLabel>Type of Work and Monthly Income</FormLabel>
-                <Input
-                  type="number"
-                  name="type_of_work_monthly_income "
+                <Textarea
+                  name="type_of_work_monthly_income"
                   onChange={handleChange}
                 />
               </FormControl>

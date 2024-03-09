@@ -17,6 +17,12 @@ import {
   InputGroup,
   useToast,
   Flex,
+  Td,
+  Tr,
+  Tbody,
+  Th,
+  Thead,
+  Table,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import authAxios from "../../AuthAxios";
@@ -49,6 +55,23 @@ const EditEI = () => {
     markListPreviousYear: projectData.mark_list_of_previous_year,
   };
 
+  console.log(projectData)
+  const [budgetDetails, setBudgetDetails] = useState(projectData.budgetDetails || []);
+  const calculateTotalCost = () => {
+    return budgetDetails.reduce((total, ele) => {
+      return total + ele.cost;
+    }, 0)
+  }
+  const handleBudget = () => {
+    setBudgetDetails([
+      ...budgetDetails,
+      {
+        budget : "",
+        cost : 0
+      }
+    ])
+  }
+
   const [formData, setFormData] = useState({
     ...imageMappings,
     projectInchargeName: projectData.applicant.name,
@@ -61,10 +84,10 @@ const EditEI = () => {
     aadharCardNo: projectData.aadhar_no || "",
     gender: projectData.gender || "male", // Assuming 'male' is the default value
     dob: projectData.DOB || "",
+    age: projectData.age || 0,
     fatherName: projectData.father || "",
     motherName: projectData.mother || "",
     motherTongue: projectData.mother_tongue || "",
-    religion: projectData.religion || "",
     casteTribe: projectData.caste || "",
     fatherOccupation: projectData.occupation_of_father || "",
     fatherMonthlyIncome: projectData.monthly_income_of_father || 0, // Assuming 0 as the default value
@@ -78,6 +101,8 @@ const EditEI = () => {
     fatherHealthStatusOthers: projectData.health_status_of_father_others || "",
     motherHealthStatus: projectData.health_status_of_mother || "",
     motherHealthStatusOthers: projectData.health_status_of_mother_others || "",
+    details_other_family_members: projectData.details_other_family_members || "NA",
+    type_of_work_monthly_income: projectData.type_of_work_monthly_income || "NA",
     residentialStatus: projectData.residential_status || "",
     residentialStatusOthers: projectData.residential_status_others || "",
     familySituationDetails:
@@ -96,7 +121,7 @@ const EditEI = () => {
     familyFinancialContribution: projectData.familyFinancialContribution || 0, // Assuming 0 as the default value
     noFamilySupportReasons: projectData.noFamilySupportReasons || "",
     presentStudy: projectData.presentStudy || "",
-    budgetDetails: projectData.budgetDetails || "",
+    budgetDetails: projectData.budgetDetails || [],
     totalCostOfStudy: projectData.totalCostOfStudy || 0, // Assuming 0 as the default value
     scholarshipExpected: projectData.scholarshipExpected || 0, // Assuming 0 as the default value
     beneficiaryContribution: projectData.beneficiaryContribution || 0, // Assuming 0 as the default value
@@ -132,7 +157,7 @@ const EditEI = () => {
   const handleSubmit = async (e) => {
     const handleImageUpload = async (file) => {
       try {
-        console.log("try");
+        // console.log("try");
         const form = new FormData();
         form.append("file", file);
         form.append("upload_preset", process.env.REACT_APP_UPLOAD_PRESET);
@@ -222,10 +247,10 @@ const EditEI = () => {
         aadhar_no: parseInt(formData.aadharCardNo),
         gender: formData.gender,
         DOB: formData.dob,
+        age : formData.age,
         father: formData.fatherName,
         mother: formData.motherName,
         mother_tongue: formData.motherTongue,
-        religion: formData.religion,
         caste: formData.casteTribe,
         occupation_of_father: formData.fatherOccupation,
         monthly_income_of_father: parseInt(formData.fatherMonthlyIncome),
@@ -235,10 +260,12 @@ const EditEI = () => {
         fatherIs: formData.fatherIs,
         grandmother_support: formData.grandmotherSupport ?? "Supportive",
         grandfather_support: formData.grandfatherSupport,
-        health_status_of_father: formData.fatherHealthStatus,
-        health_status_of_father_others: formData.fatherHealthStatus,
-        health_status_of_mother: formData.motherHealthStatus,
-        health_status_of_mother_others: formData.motherHealthStatusOthers,
+        health_status_of_father: formData.fatherHealthStatus || "NA",
+        health_status_of_father_others: formData.fatherHealthStatus || "NA",
+        health_status_of_mother: formData.motherHealthStatus || "NA",
+        health_status_of_mother_others: formData.motherHealthStatusOthers || "NA",
+        details_other_family_members: formData.details_other_family_members || "NA",
+        type_of_work_monthly_income: formData.type_of_work_monthly_income || "NA",
         residential_status: formData.residentialStatus,
         residential_status_others: formData.residentialStatusOthers,
         family_situation_of_the_beneficiary: formData.familySituationDetails,
@@ -258,14 +285,19 @@ const EditEI = () => {
         ),
         noFamilySupportReasons: formData.noFamilySupportReasons,
         presentStudy: formData.presentStudy,
-        budgetDetails: formData.budgetDetails,
-        totalCostOfStudy: formData.totalCostOfStudy,
+        budgetDetails: budgetDetails.map((ele) => {
+          return({
+            "budget": ele.budget,
+            "cost" : ele.cost,
+          })
+        }),
+        totalCostOfStudy: calculateTotalCost(),
         scholarshipExpected: parseInt(formData.scholarshipExpected),
         beneficiaryContribution: parseInt(formData.beneficiaryContribution),
         totalScholarshipAndContribution: parseInt(
-          formData.totalScholarshipAndContribution
+          parseInt(formData.familyFinancialContribution)+ parseInt(formData.beneficiaryContribution) + parseInt(formData.scholarshipExpected)
         ),
-        balanceAmountRequested: parseInt(formData.balanceAmountRequested),
+        balanceAmountRequested: parseInt((calculateTotalCost() - ( parseInt(formData.familyFinancialContribution)+ parseInt(formData.beneficiaryContribution) + parseInt(formData.scholarshipExpected) ))),
         benificary_agree: {
           agree: true,
         },
@@ -285,6 +317,8 @@ const EditEI = () => {
         provincial_superior_agree: { agree: false },
       };
 
+      console.log( req );
+
       const res = await authAxios.put("projects/editEI", req);
       console.log(res.data);
       setIsLoading(false);
@@ -299,7 +333,7 @@ const EditEI = () => {
         }, 2000)
       } else {
         showToast({
-          title: req.data.msg,
+          title: res.data.msg,
           duration: 5000,
           status: "error",
         });
@@ -308,7 +342,7 @@ const EditEI = () => {
       setIsLoading(false);
       console.log(error);
       showToast({
-        title: "Unsuccessful form submission",
+        title: error.response.data.msg,
         duration: 5000,
         status: "error",
       });
@@ -507,6 +541,17 @@ const EditEI = () => {
               />
             </FormControl>
 
+            <FormControl isRequired>
+                <FormLabel>Age</FormLabel>
+                <Input
+                  type="Number"
+                  name="age"
+                  onChange={handleChange}
+                  value={formData.age}
+                  required
+                />
+              </FormControl>
+
             {/* Name of Father */}
             <FormControl>
               <FormLabel>Father's Name</FormLabel>
@@ -544,7 +589,7 @@ const EditEI = () => {
             </FormControl>
 
             {/* Religion */}
-            <FormControl>
+            {/* <FormControl>
               <FormLabel>Religion</FormLabel>
               <Input
                 type="text"
@@ -553,7 +598,7 @@ const EditEI = () => {
                 value={formData.religion}
                 required
               />
-            </FormControl>
+            </FormControl> */}
 
             {/* Caste / Tribe */}
             <FormControl>
@@ -621,6 +666,22 @@ const EditEI = () => {
                 required
               />
             </FormControl>
+            <FormControl >
+                <FormLabel>Details of other working family members</FormLabel>
+                <Textarea
+                  name="details_other_family_members"
+                  onChange={handleChange}
+                  value={formData.details_other_family_members}
+                />
+              </FormControl>
+              <FormControl >
+                <FormLabel>Type of Work and Monthly Income</FormLabel>
+                <Textarea
+                  name="type_of_work_monthly_income"
+                  onChange={handleChange}
+                  value={formData.type_of_work_monthly_income}
+                />
+              </FormControl>
           </VStack>
           <VStack align="start" spacing={4} mb={8}>
             {/* Details about Mother and Father */}
@@ -690,7 +751,7 @@ const EditEI = () => {
             </FormControl>
 
             {/* Health Status of Father */}
-            <FormControl>
+            {formData.fatherIs === 'sick' && <FormControl>
               <FormLabel>Health status of Father</FormLabel>
               <Select
                 name="fatherHealthStatus"
@@ -715,10 +776,10 @@ const EditEI = () => {
                   required
                 />
               )}
-            </FormControl>
+            </FormControl>}
 
             {/* Health Status of Mother */}
-            <FormControl>
+            {formData.motherIs === 'sick' && <FormControl>
               <FormLabel>Health status of Mother</FormLabel>
               <Select
                 name="motherHealthStatus"
@@ -743,7 +804,7 @@ const EditEI = () => {
                   required
                 />
               )}
-            </FormControl>
+            </FormControl>}
 
             {/* Residential Status */}
             <FormControl>
@@ -992,7 +1053,7 @@ const EditEI = () => {
             </FormControl>
 
             {/* Details of Budget */}
-            <FormControl>
+            {/* <FormControl>
               <FormLabel>Details of budget</FormLabel>
               <Textarea
                 name="budgetDetails"
@@ -1000,6 +1061,52 @@ const EditEI = () => {
                 value={formData.budgetDetails}
                 required
               />
+            </FormControl> */}
+            <FormControl isRequired>
+              <FormLabel>Details of budget</FormLabel>
+              <Table variant="simple" mb={4}>
+                <Thead>
+                  <Tr>
+                    <Th>Budget</Th>
+                    <Th>Cost</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {budgetDetails.map((ele, index) => (
+                    <Tr key={index}>
+                      <Td>
+                        <Input
+                          type="text"
+                          name="budgter"
+                          value={ele.budget}
+                          onChange={(e) => {
+                            const newBudget = [...budgetDetails];
+                            newBudget[index].budget = e.target.value;
+                            setBudgetDetails(newBudget)
+                          }}
+                          required
+                        />
+                      </Td>
+                      <Td>
+                        <Input
+                          type="number"
+                          name="cost"
+                          value={ele.cost}
+                          onChange={(e) => {
+                            const newBudget = [...budgetDetails];
+                            newBudget[index].cost = parseInt(e.target.value);
+                            setBudgetDetails(newBudget)
+                          }}
+                          required
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+              <Button onClick={handleBudget} colorScheme="teal">
+                Add budget
+              </Button>
             </FormControl>
 
             {/* Total Cost of the Study */}
@@ -1009,7 +1116,7 @@ const EditEI = () => {
                 type="number"
                 name="totalCostOfStudy"
                 onChange={handleChange}
-                value={formData.totalCostOfStudy}
+                value={calculateTotalCost()}
                 required
               />
             </FormControl>
@@ -1047,7 +1154,7 @@ const EditEI = () => {
                 type="number"
                 name="totalScholarshipAndContribution"
                 onChange={handleChange}
-                value={formData.totalScholarshipAndContribution}
+                value={parseInt(formData.familyFinancialContribution)+ parseInt(formData.beneficiaryContribution) + parseInt(formData.scholarshipExpected)}
                 required
               />
             </FormControl>
@@ -1059,7 +1166,7 @@ const EditEI = () => {
                 type="number"
                 name="balanceAmountRequested"
                 onChange={handleChange}
-                value={formData.balanceAmountRequested}
+                value={(calculateTotalCost() - ( parseInt(formData.familyFinancialContribution)+ parseInt(formData.beneficiaryContribution) + parseInt(formData.scholarshipExpected) ))}
                 required
               />
             </FormControl>
