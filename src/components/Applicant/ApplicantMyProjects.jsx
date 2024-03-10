@@ -108,10 +108,12 @@ const MyProjects = () => {
                   {/* {console.log(ele.data[0].provincial_superior_agree)} */}
                   {ele.data.map((project, k) => {
                     // console.log(ele.name + '    ' + project.project_code + '   ' + project.project_coordinator_agree)
+                    console.log( (project.provincial_superior_agree.agree === false && project.comment_box_provincial_superior !== null) || (project.project_coordinator_agree.agree === false && project.comment_box_project_coordinator !== null ) )
                     if ((project.provincial_superior_agree.agree === false && project.comment_box_provincial_superior !== null) || (project.project_coordinator_agree.agree === false && project.comment_box_project_coordinator !== null )) {
-                      return <Box key={k}></Box>;
+                      return <></>;
                     } else {
                       projectCount = projectCount + 1;
+                      console.log( projectCount )
                       return (
                         <Center>
                           <Box

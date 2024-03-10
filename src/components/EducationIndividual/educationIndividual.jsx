@@ -171,26 +171,25 @@ const EducationIndividual = () => {
         father: e.target.fatherName.value,
         mother: e.target.motherName.value,
         mother_tongue: e.target.motherTongue.value,
-        religion: e.target.religion.value,
         caste: e.target.casteTribe.value,
         occupation_of_father: e.target.fatherOccupation.value,
         monthly_income_of_father: parseInt(e.target.fatherMonthlyIncome.value),
         monthly_income_of_mother: e.target.motherMonthlyIncome ? parseInt(e.target.motherMonthlyIncome.value): 0,
         occupation_of_mother: e.target.motherOccupation.value,
-        details_other_family_members: e.target.details_other_family_members ? e.target.details_other_family_members.value : "NA" ,
-        type_of_work_monthly_income : e.target.type_of_work_monthly_income ? e.target.type_of_work_monthly_income.value : "NA",
+        details_other_family_members: e.target.details_other_family_members.value !== "" ? e.target.details_other_family_members.value : "NA" ,
+        type_of_work_monthly_income : e.target.type_of_work_monthly_income.value !== "" ? e.target.type_of_work_monthly_income.value : "NA",
         motherIs: e.target.motherStatus.value,
         fatherIs: e.target.fatherStatus.value,
         grandmother_support: e.target.grandmotherSupport.value,
         grandfather_support: e.target.grandfatherSupport.value,
-        health_status_of_father: e.target.fatherHealthStatus.value,
+        health_status_of_father: e.target.fatherHealthStatus ? e.target.fatherHealthStatus.value : "NA",
         health_status_of_father_others: e.target.fatherHealthStatusOthers
           ? e.target.fatherHealthStatusOthers.value
-          : "",
-        health_status_of_mother: e.target.motherHealthStatus.value,
+          : "NA",
+        health_status_of_mother: e.target.motherHealthStatus ? e.target.motherHealthStatus.value : "NA",
         health_status_of_mother_others: e.target.motherHealthStatusOthers
           ? e.target.motherHealthStatusOthers.value
-          : "",
+          : "NA",
         residential_status: e.target.residentialStatus?.value ?? "",
         residential_status_others: e.target.residentialStatusOthers
           ? e.target.residentialStatusOthers.value
@@ -262,7 +261,7 @@ const EducationIndividual = () => {
       setIsLoading(false);
       console.log(error);
       showToast({
-        title: error.response.data.msg,
+        title: error?.response?.data?.msg || "Unsucessfull Submission",
         duration: 5000,
         status: "error",
       });

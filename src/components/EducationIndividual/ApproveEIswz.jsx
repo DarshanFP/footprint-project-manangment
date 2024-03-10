@@ -19,6 +19,12 @@ import {
   InputGroup,
   useToast,
   Flex,
+  Td,
+  Tr,
+  Th,
+  Tbody,
+  Thead,
+  Table,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import authAxios from "../../AuthAxios";
@@ -60,15 +66,17 @@ const ApproveEIswz = () => {
     aadharCardNo: projectData.aadhar_no || "",
     gender: projectData.gender || "male", // Assuming 'male' is the default value
     dob: projectData.DOB || "",
+    age: projectData.age || 0,
     fatherName: projectData.father || "",
     motherName: projectData.mother || "",
     motherTongue: projectData.mother_tongue || "",
-    religion: projectData.religion || "",
     casteTribe: projectData.caste || "",
     fatherOccupation: projectData.occupation_of_father || "",
     fatherMonthlyIncome: projectData.monthly_income_of_father || 0, // Assuming 0 as the default value
     motherOccupation: projectData.occupation_of_mother || "",
     motherMonthlyIncome: projectData.monthly_income_of_mother || 0, // Assuming 0 as the default value
+    details_other_family_members : projectData.details_other_family_members?.value || "" ,
+    type_of_work_monthly_income : projectData.type_of_work_monthly_income?.value || "",
     motherIs: projectData.motherIs || "",
     fatherIs: projectData.fatherIs || "",
     grandmotherSupport: projectData.grandmother_support || "",
@@ -95,7 +103,7 @@ const ApproveEIswz = () => {
     familyFinancialContribution: projectData.familyFinancialContribution || 0, // Assuming 0 as the default value
     noFamilySupportReasons: projectData.noFamilySupportReasons || "",
     presentStudy: projectData.presentStudy || "",
-    budgetDetails: projectData.budgetDetails || "",
+    budgetDetails: projectData.budgetDetails || [],
     totalCostOfStudy: projectData.totalCostOfStudy || 0, // Assuming 0 as the default value
     scholarshipExpected: projectData.scholarshipExpected || 0, // Assuming 0 as the default value
     beneficiaryContribution: projectData.beneficiaryContribution || 0, // Assuming 0 as the default value
@@ -390,6 +398,16 @@ const ApproveEIswz = () => {
                   readOnly
                 />
               </FormControl>
+              <FormControl>
+                <FormLabel>Age</FormLabel>
+                <Input
+                  type="number"
+                  name="age"
+                  onChange={handleChange}
+                  value={formData.age}
+                  readOnly
+                />
+              </FormControl>
 
               {/* Name of Father */}
               <FormControl>
@@ -428,7 +446,7 @@ const ApproveEIswz = () => {
               </FormControl>
 
               {/* Religion */}
-              <FormControl isRequired>
+              {/* <FormControl isRequired>
                 <FormLabel>Religion</FormLabel>
                 <Input
                   type="text"
@@ -437,7 +455,7 @@ const ApproveEIswz = () => {
                   value={formData.religion}
                   readOnly
                 />
-              </FormControl>
+              </FormControl> */}
 
               {/* Caste / Tribe */}
               <FormControl>
@@ -502,6 +520,24 @@ const ApproveEIswz = () => {
                   name="motherMonthlyIncome"
                   onChange={handleChange}
                   value={formData.motherMonthlyIncome}
+                  readOnly
+                />
+              </FormControl>
+              <FormControl >
+                <FormLabel>Details of other working family members</FormLabel>
+                <Textarea
+                  name="details_other_family_members"
+                  onChange={handleChange}
+                  value={formData.details_other_family_members}
+                  readOnly
+                />
+              </FormControl>
+              <FormControl >
+                <FormLabel>Type of Work and Monthly Income</FormLabel>
+                <Textarea
+                  name="type_of_work_monthly_income"
+                  onChange={handleChange}
+                  value={formData.type_of_work_monthly_income}
                   readOnly
                 />
               </FormControl>
@@ -574,61 +610,87 @@ const ApproveEIswz = () => {
               </FormControl>
 
               {/* Health Status of Father */}
-              <FormControl>
-                <FormLabel>Health status of Father</FormLabel>
-                <Select
-                  name="fatherHealthStatus"
+              {formData.fatherIs === 'sick' && <FormControl>
+              <FormLabel>Health status of Father</FormLabel>
+              <Select
+                name="fatherHealthStatus"
+                onChange={handleChange}
+                value={formData.fatherHealthStatus}
+                readOnly
+              >
+                <option value="chronicallySick">Chronically Sick</option>
+                <option value="hivPositive">HIV/AIDS positive</option>
+                <option value="disabled">Disabled</option>
+                <option value="alcoholic">Alcoholic</option>
+                <option value="others">Others</option>
+              </Select>
+              {/* Conditional input for 'Others' */}
+              {formData.fatherHealthStatus === "others" && (
+                <Input
+                  type="text"
+                  name="fatherHealthStatusOthers"
                   onChange={handleChange}
-                  value={formData.fatherHealthStatus}
+                  placeholder="Specify other health status"
+                  value={formData.fatherHealthStatusOthers}
+                  readOnly
+                />
+              )}
+            </FormControl>}
+
+            {/* Health Status of Mother */}
+            { formData.motherIs === 'sick' && <FormControl>
+              <FormLabel>Health status of Mother</FormLabel>
+              <Select
+                name="motherHealthStatus"
+                onChange={handleChange}
+                value={formData.motherHealthStatus}
+                readOnly
+              >
+                <option value="chronicallySick">Chronically Sick</option>
+                <option value="hivPositive">HIV/AIDS positive</option>
+                <option value="disabled">Disabled</option>
+                <option value="alcoholic">Alcoholic</option>
+                <option value="others">Others</option>
+              </Select>
+              {/* Conditional input for 'Others' */}
+              {formData.motherHealthStatus === "others" && (
+                <Input
+                  type="text"
+                  name="motherHealthStatusOthers"
+                  onChange={handleChange}
+                  placeholder="Specify other health status"
+                  value={formData.motherHealthStatusOthers}
+                  readOnly
+                />
+              )}
+            </FormControl>}
+
+              {/* Residential Status */}
+              <FormControl>
+                <FormLabel>Residential Status</FormLabel>
+                <Select
+                  name="residentialStatus"
+                  onChange={handleChange}
+                  value={formData.residentialStatus}
                   readOnly
                 >
-                  <option value="chronicallySick">Chronically Sick</option>
-                  <option value="hivPositive">HIV/AIDS positive</option>
-                  <option value="disabled">Disabled</option>
-                  <option value="alcoholic">Alcoholic</option>
+                  <option value="houseOwner">House Owner</option>
+                  <option value="landOwner">Land Owner</option>
+                  <option value="rentedHouse">Rented House</option>
                   <option value="others">Others</option>
                 </Select>
                 {/* Conditional input for 'Others' */}
-                {formData.fatherHealthStatus === "others" && (
+                {formData.residentialStatus === "others" && (
                   <Input
                     type="text"
-                    name="fatherHealthStatusOthers"
+                    name="residentialStatusOthers"
                     onChange={handleChange}
-                    placeholder="Specify other health status"
-                    value={formData.fatherHealthStatusOthers}
+                    placeholder="Specify other residential status"
+                    value={formData.residentialStatusOthers}
                     readOnly
                   />
                 )}
               </FormControl>
-
-              {/* Health Status of Mother */}
-              <FormControl>
-                <FormLabel>Health status of Mother</FormLabel>
-                <Select
-                  name="motherHealthStatus"
-                  onChange={handleChange}
-                  value={formData.motherHealthStatus}
-                  readOnly
-                >
-                  <option value="chronicallySick">Chronically Sick</option>
-                  <option value="hivPositive">HIV/AIDS positive</option>
-                  <option value="disabled">Disabled</option>
-                  <option value="alcoholic">Alcoholic</option>
-                  <option value="others">Others</option>
-                </Select>
-                {/* Conditional input for 'Others' */}
-                {formData.motherHealthStatus === "others" && (
-                  <Input
-                    type="text"
-                    name="motherHealthStatusOthers"
-                    onChange={handleChange}
-                    placeholder="Specify other health status"
-                    value={formData.motherHealthStatusOthers}
-                    readOnly
-                  />
-                )}
-              </FormControl>
-
               {/* Residential Status */}
               <FormControl>
                 <FormLabel>Residential Status</FormLabel>
@@ -877,7 +939,7 @@ const ApproveEIswz = () => {
               </FormControl>
 
               {/* Details of Budget */}
-              <FormControl>
+              {/* <FormControl>
                 <FormLabel>Details of budget</FormLabel>
                 <Textarea
                   name="budgetDetails"
@@ -885,7 +947,55 @@ const ApproveEIswz = () => {
                   value={formData.budgetDetails}
                   readOnly
                 />
-              </FormControl>
+              </FormControl> */}
+              <FormControl isRequired>
+              <FormLabel>Details of budget</FormLabel>
+              <Table variant="simple" mb={4}>
+                <Thead>
+                  <Tr>
+                    <Th>Budget</Th>
+                    <Th>Cost</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {formData.budgetDetails.map((ele, index) => (
+                    <Tr key={index}>
+                      <Td>
+                        <Input
+                          type="text"
+                          name="budgter"
+                          value={ele.budget}
+                          // onChange={(e) => {
+                          //   const newBudget = [...budgetDetails];
+                          //   newBudget[index].budget = e.target.value;
+                          //   setBudgetDetails(newBudget)
+                          // }}
+                          
+                          readOnly
+                        />
+                      </Td>
+                      <Td>
+                        <Input
+                          type="number"
+                          name="cost"
+                          value={ele.cost}
+                          // onChange={(e) => {
+                          //   const newBudget = [...budgetDetails];
+                          //   newBudget[index].cost = parseInt(e.target.value);
+                          //   setBudgetDetails(newBudget)
+                          // }}
+                          
+                          readOnly
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+              {/* <Button onClick={handleBudget} colorScheme="teal">
+                Add budget
+              </Button> */}
+            </FormControl>
 
               {/* Total Cost of the Study */}
               <FormControl>

@@ -18,6 +18,12 @@ import {
   InputGroup,
   useToast,
   Flex,
+  Td,
+  Tr,
+  Tbody,
+  Th,
+  Thead,
+  Table,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import authAxios from "../../AuthAxios";
@@ -58,15 +64,17 @@ const ViewEIApprover = () => {
     aadharCardNo: projectData.aadhar_no || "",
     gender: projectData.gender || "male", // Assuming 'male' is the default value
     dob: projectData.DOB || "",
+    age: projectData.age || 0,
     fatherName: projectData.father || "",
     motherName: projectData.mother || "",
     motherTongue: projectData.mother_tongue || "",
-    religion: projectData.religion || "",
     casteTribe: projectData.caste || "",
     fatherOccupation: projectData.occupation_of_father || "",
     fatherMonthlyIncome: projectData.monthly_income_of_father || 0, // Assuming 0 as the default value
     motherOccupation: projectData.occupation_of_mother || "",
     motherMonthlyIncome: projectData.monthly_income_of_mother || 0, // Assuming 0 as the default value
+    details_other_family_members : projectData.details_other_family_members?.value || "" ,
+    type_of_work_monthly_income : projectData.type_of_work_monthly_income?.value || "",
     motherIs: projectData.motherIs || "",
     fatherIs: projectData.fatherIs || "",
     grandmotherSupport: projectData.grandmother_support || "",
@@ -93,7 +101,7 @@ const ViewEIApprover = () => {
     familyFinancialContribution: projectData.familyFinancialContribution || 0, // Assuming 0 as the default value
     noFamilySupportReasons: projectData.noFamilySupportReasons || "",
     presentStudy: projectData.presentStudy || "",
-    budgetDetails: projectData.budgetDetails || "",
+    budgetDetails: projectData.budgetDetails || [],
     totalCostOfStudy: projectData.totalCostOfStudy || 0, // Assuming 0 as the default value
     scholarshipExpected: projectData.scholarshipExpected || 0, // Assuming 0 as the default value
     beneficiaryContribution: projectData.beneficiaryContribution || 0, // Assuming 0 as the default value
@@ -382,6 +390,16 @@ const ViewEIApprover = () => {
                 readOnly
               />
             </FormControl>
+            <FormControl>
+              <FormLabel>Age</FormLabel>
+              <Input
+                type="number"
+                name="age"
+                onChange={handleChange}
+                value={formData.age}
+                readOnly
+              />
+            </FormControl>
 
             {/* Name of Father */}
             <FormControl>
@@ -420,7 +438,7 @@ const ViewEIApprover = () => {
             </FormControl>
 
             {/* Religion */}
-            <FormControl isRequired>
+            {/* <FormControl isRequired>
               <FormLabel>Religion</FormLabel>
               <Input
                 type="text"
@@ -429,7 +447,7 @@ const ViewEIApprover = () => {
                 value={formData.religion}
                 readOnly
               />
-            </FormControl>
+            </FormControl> */}
 
             {/* Caste / Tribe */}
             <FormControl>
@@ -497,6 +515,24 @@ const ViewEIApprover = () => {
                 readOnly
               />
             </FormControl>
+            <FormControl >
+                <FormLabel>Details of other working family members</FormLabel>
+                <Textarea
+                  name="details_other_family_members"
+                  onChange={handleChange}
+                  value={formData.details_other_family_members}
+                  readOnly
+                />
+              </FormControl>
+              <FormControl >
+                <FormLabel>Type of Work and Monthly Income</FormLabel>
+                <Textarea
+                  name="type_of_work_monthly_income"
+                  onChange={handleChange}
+                  value={formData.type_of_work_monthly_income}
+                  readOnly
+                />
+              </FormControl>
           </VStack>
           <VStack align="start" spacing={4} mb={8}>
             {/* Details about Mother and Father */}
@@ -566,7 +602,7 @@ const ViewEIApprover = () => {
             </FormControl>
 
             {/* Health Status of Father */}
-            <FormControl>
+            {formData.fatherIs === 'sick' && <FormControl>
               <FormLabel>Health status of Father</FormLabel>
               <Select
                 name="fatherHealthStatus"
@@ -591,10 +627,10 @@ const ViewEIApprover = () => {
                   readOnly
                 />
               )}
-            </FormControl>
+            </FormControl>}
 
             {/* Health Status of Mother */}
-            <FormControl>
+            { formData.motherIs === 'sick' && <FormControl>
               <FormLabel>Health status of Mother</FormLabel>
               <Select
                 name="motherHealthStatus"
@@ -619,7 +655,7 @@ const ViewEIApprover = () => {
                   readOnly
                 />
               )}
-            </FormControl>
+            </FormControl>}
 
             {/* Residential Status */}
             <FormControl>
@@ -869,7 +905,7 @@ const ViewEIApprover = () => {
             </FormControl>
 
             {/* Details of Budget */}
-            <FormControl>
+            {/* <FormControl>
               <FormLabel>Details of budget</FormLabel>
               <Textarea
                 name="budgetDetails"
@@ -877,6 +913,55 @@ const ViewEIApprover = () => {
                 value={formData.budgetDetails}
                 readOnly
               />
+            </FormControl> */}
+
+<FormControl isRequired>
+              <FormLabel>Details of budget</FormLabel>
+              <Table variant="simple" mb={4}>
+                <Thead>
+                  <Tr>
+                    <Th>Budget</Th>
+                    <Th>Cost</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {formData.budgetDetails.map((ele, index) => (
+                    <Tr key={index}>
+                      <Td>
+                        <Input
+                          type="text"
+                          name="budgter"
+                          value={ele.budget}
+                          // onChange={(e) => {
+                          //   const newBudget = [...budgetDetails];
+                          //   newBudget[index].budget = e.target.value;
+                          //   setBudgetDetails(newBudget)
+                          // }}
+                          
+                          readOnly
+                        />
+                      </Td>
+                      <Td>
+                        <Input
+                          type="number"
+                          name="cost"
+                          value={ele.cost}
+                          // onChange={(e) => {
+                          //   const newBudget = [...budgetDetails];
+                          //   newBudget[index].cost = parseInt(e.target.value);
+                          //   setBudgetDetails(newBudget)
+                          // }}
+                          
+                          readOnly
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+              {/* <Button onClick={handleBudget} colorScheme="teal">
+                Add budget
+              </Button> */}
             </FormControl>
 
             {/* Total Cost of the Study */}

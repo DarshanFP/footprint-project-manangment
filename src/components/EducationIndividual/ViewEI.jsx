@@ -18,10 +18,16 @@ import {
   InputGroup,
   useToast,
   Flex,
+  Td,
+  Tr,
+  Tbody,
+  Th,
+  Thead,
+  Table,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+// import { useReactToPrint } from "react-to-print";
 import authAxios from "../../AuthAxios";
 import DashboardApplicant from "../Applicant/dashboardApplicant";
 
@@ -46,11 +52,11 @@ const ViewEI = () => {
 
 
 
-  const generatePDF = useReactToPrint({
-    content: () => PDF.current,
-    documentTitle: "Education Individual",
-    onAfterPrint: () => alert("Data saved in PDF"),
-  });
+  // const generatePDF = useReactToPrint({
+  //   content: () => PDF.current,
+  //   documentTitle: "Education Individual",
+  //   onAfterPrint: () => alert("Data saved in PDF"),
+  // });
 
   const [formData, setFormData] = useState({
     ...imageMappings,
@@ -69,15 +75,18 @@ const ViewEI = () => {
     aadharCardNo: projectData.aadhar_no || "",
     gender: projectData.gender || "male", // Assuming 'male' is the default value
     dob: projectData.DOB || "",
+    age: projectData.age || 0,
     fatherName: projectData.father || "",
     motherName: projectData.mother || "",
     motherTongue: projectData.mother_tongue || "",
-    religion: projectData.religion || "",
     casteTribe: projectData.caste || "",
     fatherOccupation: projectData.occupation_of_father || "",
     fatherMonthlyIncome: projectData.monthly_income_of_father || 0, // Assuming 0 as the default value
     motherOccupation: projectData.occupation_of_mother || "",
-    motherMonthlyIncome: projectData.monthly_income_of_mother || 0, // Assuming 0 as the default value
+    motherMonthlyIncome: projectData.monthly_income_of_mother || 0,
+     // Assuming 0 as the default value
+    details_other_family_members : projectData.details_other_family_members.value || "" ,
+    type_of_work_monthly_income : projectData.type_of_work_monthly_income.value || "",
     motherIs: projectData.motherIs || "",
     fatherIs: projectData.fatherIs || "",
     grandmotherSupport: projectData.grandmother_support || "",
@@ -104,7 +113,7 @@ const ViewEI = () => {
     familyFinancialContribution: projectData.familyFinancialContribution || 0, // Assuming 0 as the default value
     noFamilySupportReasons: projectData.noFamilySupportReasons || "",
     presentStudy: projectData.presentStudy || "",
-    budgetDetails: projectData.budgetDetails || "",
+    budgetDetails: projectData.budgetDetails || [],
     totalCostOfStudy: projectData.totalCostOfStudy || 0, // Assuming 0 as the default value
     scholarshipExpected: projectData.scholarshipExpected || 0, // Assuming 0 as the default value
     beneficiaryContribution: projectData.beneficiaryContribution || 0, // Assuming 0 as the default value
@@ -141,42 +150,42 @@ const ViewEI = () => {
     e.preventDefault();
     console.log("submit");
     // Add your form submission logic here
-    try {
-      const req = {
-        projectID: projectData._id,
-        comment_box_project_coordinator: formData.comment,
-        project_coordinator_agree: {
-          agree: formData.projectCoordinatorAgree,
-        },
-        amount_approved: formData.amountApproved,
-      };
-      const res = await authAxios.put("/projects/editapproverEI/", req);
-      console.log(res);
-      if (res.data.success) {
-        showToast(
-          {
-            title: 'Successfully submitted the document' , 
-            duration: '5000'
-          }
-        )
-        setIsSubmitted(true)}
-      else {
-        showToast({
-          title: "Error submitting the approved doc",
-          status: "error",
-          duration: 5000,
-        });
-        console.log(res.data);
-      }
-    } catch (e) {
-      console.log(e);
-      showToast({
-        title: "Error submitting the approved doc",
-        description: e,
-        status: "error",
-        duration: 5000,
-      });
-    }
+    // try {
+    //   const req = {
+    //     projectID: projectData._id,
+    //     comment_box_project_coordinator: formData.comment,
+    //     project_coordinator_agree: {
+    //       agree: formData.projectCoordinatorAgree,
+    //     },
+    //     amount_approved: formData.amountApproved,
+    //   };
+    //   const res = await authAxios.put("/projects/editapproverEI/", req);
+    //   console.log(res);
+    //   if (res.data.success) {
+    //     showToast(
+    //       {
+    //         title: 'Successfully submitted the document' , 
+    //         duration: '5000'
+    //       }
+    //     )
+    //     setIsSubmitted(true)}
+    //   else {
+    //     showToast({
+    //       title: "Error submitting the approved doc",
+    //       status: "error",
+    //       duration: 5000,
+    //     });
+    //     console.log(res.data);
+    //   }
+    // } catch (e) {
+    //   console.log(e);
+    //   showToast({
+    //     title: "Error submitting the approved doc",
+    //     description: e,
+    //     status: "error",
+    //     duration: 5000,
+    //   });
+    // }
   };
 
   return (
@@ -200,12 +209,12 @@ const ViewEI = () => {
           Education individual Project Application Form
         </Heading>
 
-        {isSubmitted && (
+        {/* {isSubmitted && (
           <Alert status="success" mb={4}>
             <AlertIcon />
             Form submitted successfully!
           </Alert>
-        )}
+        )} */}
 
         <form onSubmit={handleSubmit}>
           <VStack align="start" spacing={4} mb={8}>
@@ -394,6 +403,17 @@ const ViewEI = () => {
               />
             </FormControl>
 
+            <FormControl isRequired>
+              <FormLabel>Age</FormLabel>
+              <Input
+                type="number"
+                name="age"
+                onChange={handleChange}
+                value={formData.age}
+                readOnly
+              />
+            </FormControl>
+
             {/* Name of Father */}
             <FormControl>
               <FormLabel>Father's Name</FormLabel>
@@ -431,7 +451,7 @@ const ViewEI = () => {
             </FormControl>
 
             {/* Religion */}
-            <FormControl isRequired>
+            {/* <FormControl isRequired>
               <FormLabel>Religion</FormLabel>
               <Input
                 type="text"
@@ -440,7 +460,7 @@ const ViewEI = () => {
                 value={formData.religion}
                 readOnly
               />
-            </FormControl>
+            </FormControl> */}
 
             {/* Caste / Tribe */}
             <FormControl>
@@ -508,6 +528,24 @@ const ViewEI = () => {
                 readOnly
               />
             </FormControl>
+            <FormControl >
+                <FormLabel>Details of other working family members</FormLabel>
+                <Textarea
+                  name="details_other_family_members"
+                  onChange={handleChange}
+                  value={formData.details_other_family_members}
+                  readOnly
+                />
+              </FormControl>
+              <FormControl >
+                <FormLabel>Type of Work and Monthly Income</FormLabel>
+                <Textarea
+                  name="type_of_work_monthly_income"
+                  onChange={handleChange}
+                  value={formData.type_of_work_monthly_income}
+                  readOnly
+                />
+              </FormControl>
           </VStack>
           <VStack align="start" spacing={4} mb={8}>
             {/* Details about Mother and Father */}
@@ -577,7 +615,7 @@ const ViewEI = () => {
             </FormControl>
 
             {/* Health Status of Father */}
-            <FormControl>
+            {formData.fatherIs === 'sick' && <FormControl>
               <FormLabel>Health status of Father</FormLabel>
               <Select
                 name="fatherHealthStatus"
@@ -602,10 +640,10 @@ const ViewEI = () => {
                   readOnly
                 />
               )}
-            </FormControl>
+            </FormControl>}
 
             {/* Health Status of Mother */}
-            <FormControl>
+            {formData.motherIs === 'sick' && <FormControl>
               <FormLabel>Health status of Mother</FormLabel>
               <Select
                 name="motherHealthStatus"
@@ -630,7 +668,7 @@ const ViewEI = () => {
                   readOnly
                 />
               )}
-            </FormControl>
+            </FormControl>}
 
             {/* Residential Status */}
             <FormControl>
@@ -880,7 +918,7 @@ const ViewEI = () => {
             </FormControl>
 
             {/* Details of Budget */}
-            <FormControl>
+            {/* <FormControl>
               <FormLabel>Details of budget</FormLabel>
               <Textarea
                 name="budgetDetails"
@@ -888,6 +926,54 @@ const ViewEI = () => {
                 value={formData.budgetDetails}
                 readOnly
               />
+            </FormControl> */}
+            <FormControl isRequired>
+              <FormLabel>Details of budget</FormLabel>
+              <Table variant="simple" mb={4}>
+                <Thead>
+                  <Tr>
+                    <Th>Budget</Th>
+                    <Th>Cost</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {formData.budgetDetails.map((ele, index) => (
+                    <Tr key={index}>
+                      <Td>
+                        <Input
+                          type="text"
+                          name="budgter"
+                          value={ele.budget}
+                          // onChange={(e) => {
+                          //   const newBudget = [...budgetDetails];
+                          //   newBudget[index].budget = e.target.value;
+                          //   setBudgetDetails(newBudget)
+                          // }}
+                          
+                          readOnly
+                        />
+                      </Td>
+                      <Td>
+                        <Input
+                          type="number"
+                          name="cost"
+                          value={ele.cost}
+                          // onChange={(e) => {
+                          //   const newBudget = [...budgetDetails];
+                          //   newBudget[index].cost = parseInt(e.target.value);
+                          //   setBudgetDetails(newBudget)
+                          // }}
+                          
+                          readOnly
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+              {/* <Button onClick={handleBudget} colorScheme="teal">
+                Add budget
+              </Button> */}
             </FormControl>
 
             {/* Total Cost of the Study */}
@@ -1249,7 +1335,7 @@ const ViewEI = () => {
           
           {/* Print Button */}
           <Button
-              onClick={generatePDF}
+              // onClick={generatePDF}
               colorScheme="blue"
               type="submit"
             >

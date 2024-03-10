@@ -693,9 +693,9 @@ const EditEI = () => {
             <FormControl>
               <FormLabel>Mother is</FormLabel>
               <Select
-                name="motherStatus"
+                name="fatherIs"
                 onChange={handleChange}
-                value={formData.motherStatus}
+                value={formData.motherIs}
                 required
               >
                 <option value="healthy">Healthy</option>
@@ -708,9 +708,9 @@ const EditEI = () => {
             <FormControl>
               <FormLabel>Father is</FormLabel>
               <Select
-                name="fatherStatus"
+                name="fatherIs"
                 onChange={handleChange}
-                value={formData.fatherStatus}
+                value={formData.fatherIs}
                 required
               >
                 <option value="healthy">Healthy</option>
