@@ -249,7 +249,7 @@ const EducationGroup = () => {
       
       <Box p={4}>
         <Heading as="h1" size="l" mb={6}>
-          People Details Table
+          Number of beneficiaries to be supported this year
         </Heading>
 
         <Table variant="simple">
@@ -690,6 +690,7 @@ const EducationGroup = () => {
               </FormLabel>
               <Textarea
                 name="outcomeImpact"
+                placeholder="Don't write general statements. Written information to be maintained in the institutuin about passed-out supported project students of bygone years and present year"
                 onChange={handleChange}
                 value={formData.outcomeImpact}
                 required

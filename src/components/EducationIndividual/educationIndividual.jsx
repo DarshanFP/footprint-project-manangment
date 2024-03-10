@@ -174,8 +174,8 @@ const EducationIndividual = () => {
         caste: e.target.casteTribe.value,
         occupation_of_father: e.target.fatherOccupation.value,
         monthly_income_of_father: parseInt(e.target.fatherMonthlyIncome.value),
-        monthly_income_of_mother: e.target.motherMonthlyIncome ? parseInt(e.target.motherMonthlyIncome.value): 0,
-        occupation_of_mother: e.target.motherOccupation.value,
+        monthly_income_of_mother: e.target.motherMonthlyIncome.value !== "" ? parseInt(e.target.motherMonthlyIncome.value): 0,
+        occupation_of_mother: e.target.motherOccupation.value !== "" ? e.target.motherOccupation : "NA" ,
         details_other_family_members: e.target.details_other_family_members.value !== "" ? e.target.details_other_family_members.value : "NA" ,
         type_of_work_monthly_income : e.target.type_of_work_monthly_income.value !== "" ? e.target.type_of_work_monthly_income.value : "NA",
         motherIs: e.target.motherStatus.value,
@@ -261,7 +261,7 @@ const EducationIndividual = () => {
       setIsLoading(false);
       console.log(error);
       showToast({
-        title: error?.response?.data?.msg || "Unsucessfull Submission",
+        title: error?.response?.data?.msg || "Unsucessfull Submission here",
         duration: 5000,
         status: "error",
       });
