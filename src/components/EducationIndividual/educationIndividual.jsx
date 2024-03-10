@@ -252,7 +252,7 @@ const EducationIndividual = () => {
         }, 2000)
       } else {
         showToast({
-          title: req.data.msg,
+          title: res.data.msg,
           duration: 5000,
           status: "error",
         });
