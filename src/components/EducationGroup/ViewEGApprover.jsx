@@ -25,8 +25,9 @@ import {
 import authAxios from "../../AuthAxios";
 import { useParams } from "react-router-dom";
 import DashboardApplicant from "../Applicant/dashboardApplicant";
+import DashboardApprover from "../Approver/dashboardApprover";
 
-const ViewEG = () => {
+const ViewEGApprover = () => {
   const [isLoading, setIsLoading] = useState(false);
   const showToast = useToast;
   const [formData, setFormData] = useState({
@@ -677,7 +678,7 @@ const ViewEG = () => {
     <ChakraProvider>
       <Flex w="100vw" h="full" >
         <VStack w="30%" h="100vh" overflowY="scroll">
-          <DashboardApplicant></DashboardApplicant>
+          <DashboardApprover></DashboardApprover>
         </VStack>
       <Box p={8}  w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading
@@ -1133,4 +1134,4 @@ const ViewEG = () => {
     </ChakraProvider>
   );
 };
-export default ViewEG;
+export default ViewEGApprover;

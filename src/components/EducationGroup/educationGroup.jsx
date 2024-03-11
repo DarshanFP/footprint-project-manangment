@@ -50,6 +50,7 @@ const EducationGroup = () => {
 
     // Overall Project Information
     overallProjectPeriod: "",
+    currentPhase: "",
     overallProjectBudget: "",
     beneficiariesSupported: "",
     outcomeImpact: "",
@@ -85,6 +86,8 @@ const EducationGroup = () => {
       serialNo: 1,
       name: "",
       studyProposed: "",
+      college_fee:"",
+      hostel_fee: "",
       totalExpense: "",
       contribution: "",
       scholarshipEligibility: "",
@@ -104,6 +107,9 @@ const EducationGroup = () => {
   const [tableData, setTableData] = useState([
     { class: "", totalFemale: "", totalMale: "", total: 0 },
   ]);
+  const [ongoingBeneficiary, setOngoingBeneficiary] = useState([
+    { name: "", cast_address: "", year_of_study: "", performance: 0}
+  ])
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -131,6 +137,12 @@ const EducationGroup = () => {
       objectives: [...formData.objectives, ""], // Add a new empty objective
     });
   };
+  const handleDeleteObjective = (index) => {
+    setFormData({
+      ...formData,
+      objectives: formData.objectives.filter((ele, ind) => ind !== index), // Add a new empty objective
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -143,6 +155,7 @@ const EducationGroup = () => {
       TitleOfProject: formData.TITLEOFTHEPROJECT,
       address: formData.address,
       OverallProjectPeriod: formData.overallProjectPeriod,
+      currentPhase: formData.currentPhase,
       OverallProjectBudget: formData.overallProjectBudget,
       beneficiariesSupported: formData.beneficiariesSupported,
       outcomeImpact: formData.outcomeImpact,
@@ -150,8 +163,8 @@ const EducationGroup = () => {
       objectives: formData.objectives,
       peopleDetails: tableData.map((row) => ({
         class: row.class,
-        totalFemale: row.totalFemale,
-        totalMale: row.totalMale,
+        totalFemale: parseInt(row.totalFemale),
+        totalMale: parseInt(row.totalMale),
         total: row.total,
       })),
       targetGroupInformation: informationTableData.map((row) => ({
@@ -165,10 +178,18 @@ const EducationGroup = () => {
         serialNo: row.serialNo,
         name: row.name,
         studyProposed: row.studyProposed,
-        totalExpense: row.totalExpense,
-        contribution: row.contribution,
-        scholarshipEligibility: row.scholarshipEligibility,
-        expectedAmount: row.expectedAmount,
+        college_fee: parseInt(row.college_fee),
+        hostel_fee: parseInt(row.hostel_fee),
+        totalExpense: parseInt(row.college_fee) + parseInt(row.hostel_fee),
+        contribution: parseInt(row.contribution),
+        scholarshipEligibility: parseInt(row.scholarshipEligibility),
+        expectedAmount: parseInt(row.expectedAmount),
+      })),
+      ongoingBeneficiary: ongoingBeneficiary.map((row) => ({
+        name: row.name,
+        cast_address: row.cast_address,
+        year_of_study: row.year_of_study,
+        performance: parseInt(row.performance)
       })),
       otherActivities: formData.otherActivities,
       monitoringMethods: formData.monitoringMethods,
@@ -188,6 +209,7 @@ const EducationGroup = () => {
       // },
     };
 
+    // console.log( req );
     try {
       const res = await authAxios.post("/projects/createEG", req);
       console.log(res);
@@ -213,7 +235,7 @@ const EducationGroup = () => {
       console.log(e);
       setIsLoading(false);
       showToast({
-        title: e.msg,
+        title: e.response.data.msg,
         duration: 5000,
         status: "error",
       });
@@ -244,6 +266,9 @@ const EducationGroup = () => {
         { class: "", totalFemale: "", totalMale: "", total: 0 },
       ]);
     };
+    const handleDeleteRow = (index) => {
+      setTableData(tableData.filter((ele, ind) => ind !== index) );
+    };
 
     return (
       
@@ -259,6 +284,7 @@ const EducationGroup = () => {
               <Th>Total Female</Th>
               <Th>Total Male</Th>
               <Th>Total</Th>
+              <Th>Delete</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -271,6 +297,7 @@ const EducationGroup = () => {
                     onChange={(e) =>
                       handleInputChange(index, "class", e.target.value)
                     }
+                    required
                   />
                 </Td>
                 <Td>
@@ -280,6 +307,7 @@ const EducationGroup = () => {
                     onChange={(e) =>
                       handleInputChange(index, "totalFemale", e.target.value)
                     }
+                    required
                   />
                 </Td>
                 <Td>
@@ -289,9 +317,13 @@ const EducationGroup = () => {
                     onChange={(e) =>
                       handleInputChange(index, "totalMale", e.target.value)
                     }
+                    required
                   />
                 </Td>
                 <Td>{row.total}</Td>
+                <Td>
+                  <Button my={2} bg={'red.500'} onClick={() => handleDeleteRow(index)}>Delete</Button>
+                </Td>
               </Tr>
             ))}
           </Tbody>
@@ -325,6 +357,14 @@ const EducationGroup = () => {
         },
       ]);
     };
+    const handleDeleteInformation = (index) => {
+      const newData = informationTableData.filter((ele, ind) => {
+        return ind !== index;
+      })
+      setInformationTableData(newData.map((ele, ind) => {
+        return {...ele, serialNo: ind+1 }
+      }))
+    }
 
     return (
       <Box p={4}>
@@ -340,6 +380,7 @@ const EducationGroup = () => {
               <Th>Caste & Address</Th>
               <Th>Who Recommended</Th>
               <Th>Family Background & Need of Support</Th>
+              <Th>Delete</Th>
             </Tr>
 
             
@@ -410,6 +451,9 @@ const EducationGroup = () => {
                     }
                   />
                 </Td>
+                <Td>
+                  <Button my={2} bg={'red.500'} onClick={() => handleDeleteInformation(index)}>Delete</Button>
+                </Td>
               </Tr>
             ))}
           </Tbody>
@@ -419,7 +463,6 @@ const EducationGroup = () => {
       </Box>
     );
   };
-
   const TargetGroupStudiesTable = () => {
     const handleStudiesInputChange = (index, field, value) => {
       const newData = [...studiesTableData];
@@ -434,6 +477,8 @@ const EducationGroup = () => {
           serialNo: studiesTableData.length + 1,
           name: "",
           studyProposed: "",
+          college_fee: "",
+          hostel_fee: "",
           totalExpense: "",
           contribution: "",
           scholarshipEligibility: "",
@@ -441,6 +486,16 @@ const EducationGroup = () => {
         },
       ]);
     };
+
+    const handleDeleteStudies = (index) => {
+      const newData = studiesTableData.filter((ele, ind) => {
+        return ind !== index;
+      })
+      setStudiesTableData(newData.map((ele, ind) => {
+        return {...ele, serialNo: ind+1 }
+      }))
+    }
+    
 
     return (
       <Box p={4} overflowX="auto" maxW="100%">
@@ -464,6 +519,7 @@ const EducationGroup = () => {
                     handleStudiesInputChange(index, "name", e.target.value)
                   }
                   placeholder="Name"
+                  required
                 />
               </Box>
               <Box>
@@ -478,12 +534,43 @@ const EducationGroup = () => {
                     )
                   }
                   placeholder="Study Proposed"
+                  required
                 />
               </Box>
               <Box>
                 <Input
                   type="number"
-                  value={row.totalExpense}
+                  value={row.college_fee}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "college_fee",
+                      parseInt(e.target.value)
+                    )
+                  }
+                  placeholder="College Fees"
+                  required
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  value={row.hostel_fee}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "hostel_fee",
+                      parseInt(e.target.value)
+                    )
+                  }
+                  placeholder="Hostel Fees"
+                  required
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  value={parseInt(row.college_fee) + parseInt(row.hostel_fee)}
                   onChange={(e) =>
                     handleStudiesInputChange(
                       index,
@@ -492,6 +579,7 @@ const EducationGroup = () => {
                     )
                   }
                   placeholder="Total Expense"
+                  required
                 />
               </Box>
               <Box>
@@ -506,6 +594,7 @@ const EducationGroup = () => {
                     )
                   }
                   placeholder="Contribution"
+                  required
                 />
               </Box>
               <Box>
@@ -520,6 +609,7 @@ const EducationGroup = () => {
                     )
                   }
                   placeholder="Scholarship Eligibility"
+                  required
                 />
               </Box>
               <Box>
@@ -534,13 +624,117 @@ const EducationGroup = () => {
                     )
                   }
                   placeholder="Expected Amount"
+                  required
                 />
+              </Box>
+              <Box >
+                <Button my={2} bg={'red.500'} onClick={() => handleDeleteStudies(index)}>Delete Row</Button>
               </Box>
             </Box>
           ))}
         </Box>
 
         <Button onClick={handleAddStudiesRow}>Add Row</Button>
+      </Box>
+    );
+  };
+  const TargetGroupOngoing = () => {
+    const handleOngoingInputChange = (index, field, value) => {
+      const newData = [...ongoingBeneficiary];
+      newData[index][field] = value;
+      setOngoingBeneficiary(newData);
+    };
+
+    const handleAddOngoingRow = () => {
+      setOngoingBeneficiary([
+        ...ongoingBeneficiary,
+        {
+          name: "", cast_address: "", year_of_study: "", performance: 0
+        },
+      ]);
+    };
+
+    const handleDeleteOngoing = (index) => {
+      setOngoingBeneficiary(ongoingBeneficiary.filter((ele, ind) => ind !== index));
+    };
+
+    return (
+      <Box p={4} overflowX="auto" maxW="100%">
+        <Heading as="h1" size="l" mb={6}>
+          Ongoing Beneficiaries - Student were supported..
+        </Heading>
+
+        <Box
+          display="grid"
+          gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+          gap={4}
+        >
+          {ongoingBeneficiary.map((row, index) => (
+            <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
+              <Box>S.No: {index+1}</Box>
+              <Box>
+                <Input
+                  type="text"
+                  value={row.name}
+                  onChange={(e) =>
+                    handleOngoingInputChange(index, "name", e.target.value)
+                  }
+                  placeholder="Name"
+                  required
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="text"
+                  value={row.cast_address}
+                  onChange={(e) =>
+                    handleOngoingInputChange(
+                      index,
+                      "cast_address",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Cast and Address"
+                  required
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="text"
+                  value={row.year_of_study}
+                  onChange={(e) =>
+                    handleOngoingInputChange(
+                      index,
+                      "year_of_study",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Present Group/ Year of study"
+                  required
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  onChange={(e) =>
+                    handleOngoingInputChange(
+                      index,
+                      "performance",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Performance of the student in %"
+                  required
+                />
+              </Box>
+              <Box>
+                <Button my={2} bg={'red.500'} onClick={() => handleDeleteOngoing(index)}>Delete Row</Button>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+
+        <Button onClick={handleAddOngoingRow}>Add Row</Button>
       </Box>
     );
   };
@@ -657,6 +851,17 @@ const EducationGroup = () => {
               />
             </FormControl>
 
+            <FormControl isRequired>
+              <FormLabel>Current Phase</FormLabel>
+              <Input
+                type="text"
+                name="currentPhase"
+                value={formData.currentPhase}
+                onChange={handleChange}
+                required
+              />
+            </FormControl>
+
             {/* Overall Project Budget */}
             <FormControl isRequired>
               <FormLabel>Overall Project Budget</FormLabel>
@@ -714,6 +919,7 @@ const EducationGroup = () => {
                 <Thead>
                   <Tr>
                     <Th>Objective</Th>
+                    <Th>Delete</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -728,6 +934,9 @@ const EducationGroup = () => {
                           required
                         />
                       </Td>
+                      <Td>
+                  <Button my={2} bg={'red.500'} onClick={() => handleDeleteObjective(index)}>Delete</Button>
+                </Td>
                     </Tr>
                   ))}
                 </Tbody>
@@ -740,8 +949,10 @@ const EducationGroup = () => {
             <Heading as="h1" size="xl" mb={6}>
               TARGET GROUP
             </Heading>
+            {TargetGroupOngoing()}
             {TargetGroupInformationTable()}
             {TargetGroupStudiesTable()}
+
             {/* Other Proposed Activities */}
             <FormControl isRequired>
               <FormLabel>

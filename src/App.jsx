@@ -104,6 +104,8 @@ import AllProjects from "./components/Applicant/AllProjects";
 import ViewEIApprover from "./components/EducationIndividual/ViewEIApprover";
 import ProjectsToBeApprovedSWZ from "./components/Approver/projectsToBeApprovedSWZ";
 import ApproveEIswz from "./components/EducationIndividual/ApproveEIswz";
+import ApproveEGswz from "./components/EducationGroup/ApproveEGswz";
+import ViewEGApprover from "./components/EducationGroup/ViewEGApprover";
 
 // Token checking in protected
 // Token expiry - 1 hour
@@ -276,6 +278,7 @@ const App = () => {
           <Route path="/ReviewCG/:project" element={<ReviewCG />} />
           <Route path="/ApproveCG/:project" element={<ApproveCG />} />
           <Route path="/ApproveEG/:project" element={<ApproveEG />} />
+          <Route path="/ApproveEGswz/:project" element={<ApproveEGswz />} />
           <Route path="/ReviewEG/:project" element={<ReviewEG />} />
           <Route path="/ReviewISG/:project" element={<ReviewISG />} />
           <Route path="/ApproveISG/:project" element={<ApproveISG />} />
@@ -305,6 +308,7 @@ const App = () => {
           <Route path="/ViewEI/:project" element={<ViewEI />} />
           <Route path="/ViewEIApprover/:project" element={<ViewEIApprover />} />
           <Route path="/ViewEG/:project" element={<ViewEG />} />
+          <Route path="/ViewEGApprover/:project" element={<ViewEGApprover />} />
           <Route path="/ViewDPLG/:project" element={<ViewDPLG />} />
           <Route path="/ViewHIV/:project" element={<ViewHIV />} />
           <Route path="/ViewSG/:project" element={<ViewISG />} />

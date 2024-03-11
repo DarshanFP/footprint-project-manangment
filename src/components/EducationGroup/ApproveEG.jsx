@@ -21,9 +21,11 @@ import {
   Tr,
   Th,
   Td,
+  Flex,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
 import { useParams } from "react-router-dom";
+import DashboardApprover from "../Approver/dashboardApprover";
 
 const ApproveEG = () => {
   const projectData = JSON.parse(decodeURIComponent(useParams().project));
@@ -45,6 +47,7 @@ const ApproveEG = () => {
     projectInChargeCellNumber: projectData.applicant.mobile || "",
     projectInChargeEmail: projectData.applicant.email || "",
     overallProjectPeriod: projectData.OverallProjectPeriod || "",
+    currentPhase: projectData.currentPhase || "",
     overallProjectBudget: projectData.OverallProjectBudget || "",
     beneficiariesSupported: projectData.beneficiariesSupported || "",
     outcomeImpact: projectData.outcomeImpact || "",
@@ -66,6 +69,8 @@ const ApproveEG = () => {
       serialNo: row.serialNo || "",
       name: row.name || "",
       studyProposed: row.studyProposed || "",
+      college_fee: row.college_fee || "",
+      hostel_fee: row.hostel_fee || "",
       totalExpense: row.totalExpense || "",
       contribution: row.contribution || "",
       scholarshipEligibility: row.scholarshipEligibility || "",
@@ -83,6 +88,14 @@ const ApproveEG = () => {
       familyBackground: row.familyBackground || "",
     }))
   );
+  const [ongoingBeneficiary, setOngoingBeneficiary] = useState(
+    projectData.ongoingBeneficiary.map((row) => ({
+      name: row.name || "",
+      cast_address: row.cast_address || "",
+      year_of_study : row.year_of_study || "",
+      performance : row.performance || 0
+    }))
+  )
 
   // Populate tableData from req
   const [tableData, setTableData] = useState(
@@ -131,8 +144,14 @@ const ApproveEG = () => {
       const res = await authAxios.put("projects/editEGApprover", {
         projectID: projectData._id,
         comment_box_project_coordinator: formData.comment,
-        project_coordinator_agree: formData.projectCoordinatorAgreement,
-        amount_approved: formData.amountApproved,
+        comment_box_project_coordinator_swz: null,
+        project_coordinator_agree:{
+          agree: formData.projectCoordinatorAgreement
+        },
+        project_coordinator_agree_swz:{
+          agree: false
+        },
+        amount_approved: parseInt(formData.amountApproved),
       });
       setIsLoading(false);
       if (res.data.success) {
@@ -142,11 +161,13 @@ const ApproveEG = () => {
           status: "success",
         });
         setIsSubmitted(true);
-        navigate("/dashboardApplicant");  
+        setTimeout(() => {
+          navigate("/ApprovedProjects"); 
+        }, 2000) 
 
       } else {
         showToast({
-          title: "Unsuccessful submission",
+          title: res?.data?.msg || "Unsuccessful submission",
           duration: 5000,
           status: "error",
         });
@@ -370,131 +391,262 @@ const ApproveEG = () => {
           serialNo: studiesTableData.length + 1,
           name: "",
           studyProposed: "",
-          totalExpense: "",
+          totalExpense:"",
           contribution: "",
           scholarshipEligibility: "",
           expectedAmount: "",
         },
       ]);
     };
+    const handleDeleteStudies = (index) => {
+      const newData = studiesTableData.filter((ele, ind) => {
+        return ind !== index;
+      })
+      setStudiesTableData(newData.map((ele, ind) => {
+        return {...ele, serialNo: ind+1 }
+      }))
+    }
+    
 
     return (
-      <Box p={4}>
+      <Box p={4} overflowX="auto" maxW="100%">
         <Heading as="h1" size="l" mb={6}>
           Target Group - Studies and Finance Details
         </Heading>
 
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>S.No</Th>
-              <Th>Name</Th>
-              <Th>Study Proposed to be Supported</Th>
-              <Th>Total Expense of Studies</Th>
-              <Th>Contribution from Family / Others</Th>
-              <Th>Eligibility of Scholarship</Th>
-              <Th>Expected Amount</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {studiesTableData.map((row, index) => (
-              <Tr key={index}>
-                <Td>
-                  <Input type="number" value={row.serialNo} readOnly />
-                </Td>
-                <Td>
-                  <Input
-                    type="text"
-                    value={row.name}
-                    onChange={(e) =>
-                      handleStudiesInputChange(index, "name", e.target.value)
-                    }
-                    readOnly
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="text"
-                    value={row.studyProposed}
-                    onChange={(e) =>
-                      handleStudiesInputChange(
-                        index,
-                        "studyProposed",
-                        e.target.value
-                      )
-                    }
-                    readOnly
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={row.totalExpense}
-                    onChange={(e) =>
-                      handleStudiesInputChange(
-                        index,
-                        "totalExpense",
-                        e.target.value
-                      )
-                    }
-                    readOnly
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={row.contribution}
-                    onChange={(e) =>
-                      handleStudiesInputChange(
-                        index,
-                        "contribution",
-                        e.target.value
-                      )
-                    }
-                    readOnly
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="text"
-                    value={row.scholarshipEligibility}
-                    onChange={(e) =>
-                      handleStudiesInputChange(
-                        index,
-                        "scholarshipEligibility",
-                        e.target.value
-                      )
-                    }
-                    readOnly
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={row.expectedAmount}
-                    onChange={(e) =>
-                      handleStudiesInputChange(
-                        index,
-                        "expectedAmount",
-                        e.target.value
-                      )
-                    }
-                    readOnly
-                  />
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+        <Box
+          display="grid"
+          gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+          gap={4}
+        >
+          {studiesTableData.map((row, index) => (
+            <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
+              <Box>S.No: {row.serialNo}</Box>
+              <Box>
+                <Input
+                  type="text"
+                  value={row.name}
+                  onChange={(e) =>
+                    handleStudiesInputChange(index, "name", e.target.value)
+                  }
+                  placeholder="Name"
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="text"
+                  value={row.studyProposed}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "studyProposed",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Study Proposed"
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  value={row.totalExpense}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "totalExpense",
+                      e.target.value
+                    )
+                  }
+                  placeholder="College fees"
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  value={row.totalExpense}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "totalExpense",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Total Expense"
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  value={row.contribution}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "contribution",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Contribution"
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  value={row.scholarshipEligibility}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "scholarshipEligibility",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Scholarship Eligibility"
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  value={row.expectedAmount}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "expectedAmount",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Expected Amount"
+                />
+              </Box>
+              {/* <Box >
+                <Button my={2} bg={'red.500'} onClick={() => handleDeleteStudies(index)}>Delete Row</Button>
+              </Box> */}
+            </Box>
+          ))}
+        </Box>
 
         {/* <Button onClick={handleAddStudiesRow}>Add Row</Button> */}
       </Box>
     );
   };
 
+  const TargetGroupOngoing = () => {
+    const handleOngoingInputChange = (index, field, value) => {
+      const newData = [...ongoingBeneficiary];
+      newData[index][field] = value;
+      setOngoingBeneficiary(newData);
+    };
+
+    const handleAddOngoingRow = () => {
+      setOngoingBeneficiary([
+        ...ongoingBeneficiary,
+        {
+          name: "", cast_address: "", year_of_study: "", performance: 0
+        },
+      ]);
+    };
+
+    const handleDeleteOngoing = (index) => {
+      setOngoingBeneficiary(ongoingBeneficiary.filter((ele, ind) => ind !== index));
+    };
+
+    return (
+      <Box p={4} overflowX="auto" maxW="100%">
+        <Heading as="h1" size="l" mb={6}>
+          Ongoing Beneficiaries - Student were supported..
+        </Heading>
+
+        <Box
+          display="grid"
+          gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+          gap={4}
+        >
+          {ongoingBeneficiary.map((row, index) => (
+            <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
+              <Box>S.No: {index+1}</Box>
+              <Box>
+                <Input
+                  type="text"
+                  value={row.name}
+                  onChange={(e) =>
+                    handleOngoingInputChange(index, "name", e.target.value)
+                  }
+                  placeholder="Name"
+                  required
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="text"
+                  value={row.cast_address}
+                  onChange={(e) =>
+                    handleOngoingInputChange(
+                      index,
+                      "cast_address",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Cast and Address"
+                  required
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="text"
+                  value={row.year_of_study}
+                  onChange={(e) =>
+                    handleOngoingInputChange(
+                      index,
+                      "year_of_study",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Present Group/ Year of study"
+                  required
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  value={row.performance}
+                  onChange={(e) =>
+                    handleOngoingInputChange(
+                      index,
+                      "performance",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Performance of the student in %"
+                  required
+                  readOnly
+                />
+              </Box>
+              {/* <Box>
+                <Button my={2} bg={'red.500'} onClick={() => handleDeleteOngoing(index)}>Delete Row</Button>
+              </Box> */}
+            </Box>
+          ))}
+        </Box>
+
+        {/* <Button onClick={handleAddOngoingRow}>Add Row</Button> */}
+      </Box>
+    );
+  };
+
   return (
     <ChakraProvider>
-      <Box p={4}>
+      <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApprover></DashboardApprover>
+        </VStack>
+      <Box p={8}  w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading
           as="h1"
           size="xl"
@@ -641,6 +793,16 @@ const ApproveEG = () => {
                 readOnly
               />
             </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Current Phase</FormLabel>
+              <Input
+                type="text"
+                name="currentPhase"
+                value={formData.currentPhase}
+                onChange={handleChange}
+                required
+              />
+            </FormControl>
 
             {/* Number of Beneficiaries supported in the previous years */}
             <FormControl>
@@ -711,6 +873,7 @@ const ApproveEG = () => {
             <Heading as="h1" size="xl" mb={6}>
               TARGET GROUP
             </Heading>
+            {TargetGroupOngoing()}
             {TargetGroupInformationTable()}
             {TargetGroupStudiesTable()}
             {/* Other Proposed Activities */}
@@ -861,6 +1024,7 @@ const ApproveEG = () => {
           </Button>
         </form>
       </Box>
+      </Flex>
     </ChakraProvider>
   );
 };
