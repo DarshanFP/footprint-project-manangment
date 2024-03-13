@@ -53,9 +53,9 @@ const DashboardApplicant = () => {
   // console.log("userDetails", userDetails);
   return (
     <ChakraProvider>
-      <Box p={8} maxW="xl" bg="gray.100" borderRadius="lg" w='100%'>
+      <Box p={6} maxW="xl" bg="gray.100" h={'100vh'} w='100%'>
         
-        <Heading as="h2" size="xl" mb={6} textAlign="center" color="teal.500">
+        <Heading as="h2" size="xl" mb={4} textAlign="center" color="teal.500">
           Welcome, Applicant!
         </Heading>
 
@@ -73,14 +73,12 @@ const DashboardApplicant = () => {
             <Heading size="md" mb={4} color="teal.500">
               All projects
             </Heading>
-            <Text fontSize="md" color="gray.600">
-              Choose to apply projects
-            </Text>
+            
             <Button
               as={Link}
               to="/allApplicantProjects"
               colorScheme="teal"
-              mt={4}
+              mt={2}
               borderRadius="full"
             >
               Choose Projects
@@ -97,14 +95,14 @@ const DashboardApplicant = () => {
             <Heading size="md" mb={4} color="teal.500">
               My Projects
             </Heading>
-            <Text fontSize="md" color="gray.600">
+            {/* <Text fontSize="md" color="gray.600">
               Explore and manage your personal projects.
-            </Text>
+            </Text> */}
             <Button
               as={Link}
               to="/myProjects"
               colorScheme="teal"
-              mt={4}
+              mt={2}
               borderRadius="full"
             >
               Go to My Projects
@@ -175,14 +173,14 @@ const DashboardApplicant = () => {
             <Heading size="md" mb={4} color="teal.500">
               Profile
             </Heading>
-            <Text fontSize="md" color="gray.600">
+            {/* <Text fontSize="md" color="gray.600">
               Update your personal information.
-            </Text>
+            </Text> */}
             <Button
               as={Link}
               to={`/profileApplicant/${JSON.stringify(userDetails)}`}
               colorScheme="teal"
-              mt={4}
+              mt={2}
               borderRadius="full"
               onTouchMoveCapture={()=>{
                 console.log(userDetails);
@@ -203,14 +201,14 @@ const DashboardApplicant = () => {
             <Heading size="md" mb={4} color="red.500">
               Reverted Projects
             </Heading>
-            <Text fontSize="md" color="gray.600">
+            {/* <Text fontSize="md" color="gray.600">
               Update your personal information.
-            </Text>
+            </Text> */}
             <Button
               as={Link}
               to={`/revertedProjects`}
               colorScheme="red"
-              mt={4}
+              mt={2}
               borderRadius="full"
               onTouchMoveCapture={()=>{
                 console.log(userDetails);
@@ -221,9 +219,6 @@ const DashboardApplicant = () => {
           </Box>
         </VStack>
 
-        <Text mt={8} textAlign="center" color="gray.600">
-          Explore and manage your projects with ease.
-        </Text>
       </Box>
     </ChakraProvider>
   );
