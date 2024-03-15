@@ -287,6 +287,7 @@ const EducationRuralUrbanTribalGroup = () => {
     const updatedData = { ...formData };
     updatedData.logicalFramework.objectives[index].results.push("");
     setFormData(updatedData);
+    console.log(updatedData);
   };
 
   const handleChangeObjective = (e, index, subIndex) => {
@@ -1009,21 +1010,21 @@ const EducationRuralUrbanTribalGroup = () => {
 
                                   <Textarea
                                     name="activity"
-                                    //  value={activity.activity}
-                                    //  onChange={(e) =>
-                                    //    handleChangeObjective(e, index, subIndex)
-                                    //  }
+                                     value={activity.activity}
+                                     onChange={(e) =>
+                                       handleChangeObjective(e, index, subIndex)
+                                     }
                                     required
                                   />
                                 </FormControl>
                                 <FormControl isRequired>
                                   <FormLabel>MEANS OF VERIFICATION</FormLabel>
                                   <Textarea
-                                    name="activity"
-                                    //  value={activity.activity}
-                                    //  onChange={(e) =>
-                                    //    handleChangeObjective(e, index, subIndex)
-                                    //  }
+                                    name="verification"
+                                     value={activity.verification}
+                                     onChange={(e) =>
+                                       handleChangeObjective(e, index, subIndex)
+                                     }
                                     required
                                   />
                                 </FormControl>

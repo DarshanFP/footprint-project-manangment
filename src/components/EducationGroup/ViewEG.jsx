@@ -484,6 +484,36 @@ const ViewEG = () => {
               <Box>
                 <Input
                   type="number"
+                  value={row.college_fee}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "college_fee",
+                      e.target.value
+                    )
+                  }
+                  placeholder="College fees"
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
+                  value={row.hostel_fee}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "hostel_fee",
+                      e.target.value
+                    )
+                  }
+                  placeholder="hostel_fee"
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Input
+                  type="number"
                   value={row.totalExpense}
                   onChange={(e) =>
                     handleStudiesInputChange(

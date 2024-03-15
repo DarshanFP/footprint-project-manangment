@@ -22,6 +22,8 @@ import {
   Th,
   Td,
   Flex,
+  Select,
+  Text,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
 import DashboardApplicant from "../Applicant/dashboardApplicant";
@@ -31,10 +33,9 @@ const EducationGroup = () => {
   const showToast = useToast();
   const navigate = useNavigate();
 
-
-
-  
   const [formData, setFormData] = useState({
+    insOrNot: "Institutional",
+    childOrYouth: "Child",
     NAMEOFTHESOCIETY: "", // Name of the Society
     dATEOFSUBMISSION: "", // Date of Submission
     TITLEOFTHEPROJECT: "", // Title of the Project
@@ -81,12 +82,15 @@ const EducationGroup = () => {
     provincialSuperiorAgreement: false,
     provincialSuperiorAgreementDate: "",
   });
+
+
+  
   const [studiesTableData, setStudiesTableData] = useState([
     {
       serialNo: 1,
       name: "",
       studyProposed: "",
-      college_fee:"",
+      college_fee: "",
       hostel_fee: "",
       totalExpense: "",
       contribution: "",
@@ -99,8 +103,9 @@ const EducationGroup = () => {
     {
       serialNo: 1,
       name: "",
-      casteAddress: "",
-      recommendedBy: "",
+      caste: "",
+      address: "",
+      year_of_study: "",
       familyBackground: "",
     },
   ]);
@@ -108,13 +113,13 @@ const EducationGroup = () => {
     { class: "", totalFemale: "", totalMale: "", total: 0 },
   ]);
   const [ongoingBeneficiary, setOngoingBeneficiary] = useState([
-    { name: "", cast_address: "", year_of_study: "", performance: 0}
-  ])
+    { name: "", caste: "", address: "", year_of_study: "", performance: 0 },
+  ]);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (e, index) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     const { name, value } = e.target;
 
     if (name === "objectives") {
@@ -146,10 +151,12 @@ const EducationGroup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    // setIsLoading(true);
 
     // Add your form submission logic here
     const req = {
+      insOrNot: formData.insOrNot,
+      childOrYouth: formData.childOrYouth,
       NameOfSociety: formData.NAMEOFTHESOCIETY,
       DateOfSubmission: formData.dATEOFSUBMISSION,
       TitleOfProject: formData.TITLEOFTHEPROJECT,
@@ -170,8 +177,9 @@ const EducationGroup = () => {
       targetGroupInformation: informationTableData.map((row) => ({
         serialNo: row.serialNo,
         name: row.name,
-        casteAddress: row.casteAddress,
-        recommendedBy: row.recommendedBy,
+        caste: row.caste,
+        address: row.address,
+        year_of_study: row.year_of_study,
         familyBackground: row.familyBackground,
       })),
       targetGroupStudies: studiesTableData.map((row) => ({
@@ -183,13 +191,14 @@ const EducationGroup = () => {
         totalExpense: parseInt(row.college_fee) + parseInt(row.hostel_fee),
         contribution: parseInt(row.contribution),
         scholarshipEligibility: parseInt(row.scholarshipEligibility),
-        expectedAmount: parseInt(row.expectedAmount),
+        expectedAmount: (parseInt(row.college_fee) + parseInt(row.hostel_fee)) - (parseInt(row.contribution) + parseInt(row.scholarshipEligibility)),
       })),
       ongoingBeneficiary: ongoingBeneficiary.map((row) => ({
         name: row.name,
-        cast_address: row.cast_address,
+        caste: row.caste,
+        address: row.address,
         year_of_study: row.year_of_study,
-        performance: parseInt(row.performance)
+        performance: parseInt(row.performance),
       })),
       otherActivities: formData.otherActivities,
       monitoringMethods: formData.monitoringMethods,
@@ -209,7 +218,7 @@ const EducationGroup = () => {
       // },
     };
 
-    // console.log( req );
+    // console.log(req);
     try {
       const res = await authAxios.post("/projects/createEG", req);
       console.log(res);
@@ -222,7 +231,7 @@ const EducationGroup = () => {
         });
         setIsSubmitted(true);
         setTimeout(() => {
-          navigate("/myProjects");  
+          navigate("/myProjects");
         },[2000])
       } else {
         showToast({
@@ -256,7 +265,7 @@ const EducationGroup = () => {
           parseInt(newData[index].totalMale) || 0
         );
       }
-      console.log(tableData);
+      // console.log(tableData);
       setTableData(newData);
     };
 
@@ -267,11 +276,10 @@ const EducationGroup = () => {
       ]);
     };
     const handleDeleteRow = (index) => {
-      setTableData(tableData.filter((ele, ind) => ind !== index) );
+      setTableData(tableData.filter((ele, ind) => ind !== index));
     };
 
     return (
-      
       <Box p={4}>
         <Heading as="h1" size="l" mb={6}>
           Number of beneficiaries to be supported this year
@@ -292,7 +300,7 @@ const EducationGroup = () => {
               <Tr key={index}>
                 <Td>
                   <Input
-                    type="number"
+                    type="text"
                     value={row.class}
                     onChange={(e) =>
                       handleInputChange(index, "class", e.target.value)
@@ -322,7 +330,13 @@ const EducationGroup = () => {
                 </Td>
                 <Td>{row.total}</Td>
                 <Td>
-                  <Button my={2} bg={'red.500'} onClick={() => handleDeleteRow(index)}>Delete</Button>
+                  <Button
+                    my={2}
+                    bg={"red.500"}
+                    onClick={() => handleDeleteRow(index)}
+                  >
+                    Delete
+                  </Button>
                 </Td>
               </Tr>
             ))}
@@ -351,8 +365,9 @@ const EducationGroup = () => {
         {
           serialNo: informationTableData.length + 1,
           name: "",
-          casteAddress: "",
-          recommendedBy: "",
+          caste: "",
+          address: "",
+          year_of_study: "",
           familyBackground: "",
         },
       ]);
@@ -360,104 +375,97 @@ const EducationGroup = () => {
     const handleDeleteInformation = (index) => {
       const newData = informationTableData.filter((ele, ind) => {
         return ind !== index;
-      })
-      setInformationTableData(newData.map((ele, ind) => {
-        return {...ele, serialNo: ind+1 }
-      }))
-    }
+      });
+      setInformationTableData(
+        newData.map((ele, ind) => {
+          return { ...ele, serialNo: ind + 1 };
+        })
+      );
+    };
 
     return (
-      <Box p={4}>
+      <Box p={4} width={"100%"}>
         <Heading as="h1" size="l" mb={6}>
-          Target Group - Information of the Beneficiaries
+          NEW BENEFICIARIES FOR THE CURRENT YEAR PROPOSED 
         </Heading>
 
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>S.No</Th>
-              <Th>Name of the Beneficiary</Th>
-              <Th>Caste & Address</Th>
-              <Th>Who Recommended</Th>
-              <Th>Family Background & Need of Support</Th>
-              <Th>Delete</Th>
-            </Tr>
-
-            
-          </Thead>
-          <Tbody>
-            {informationTableData.map((row, index) => (
-              <Tr key={index}>
-                <Td>
-                  <Input
-                    type="number"
-                    isRequired
-                    value={row.serialNo}
-                    readOnly
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="text"
-                    isRequired
-                    value={row.name}
-                    onChange={(e) =>
-                      handleInformationInputChange(
-                        index,
-                        "name",
-                        e.target.value
-                      )
-                    }
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="text"
-                    isRequired
-                    value={row.casteAddress}
-                    onChange={(e) =>
-                      handleInformationInputChange(
-                        index,
-                        "casteAddress",
-                        e.target.value
-                      )
-                    }
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="text"
-                    isRequired
-                    value={row.recommendedBy}
-                    onChange={(e) =>
-                      handleInformationInputChange(
-                        index,
-                        "recommendedBy",
-                        e.target.value
-                      )
-                    }
-                  />
-                </Td>
-                <Td>
-                  <Textarea
-                    value={row.familyBackground}
-                    isRequired
-                    onChange={(e) =>
-                      handleInformationInputChange(
-                        index,
-                        "familyBackground",
-                        e.target.value
-                      )
-                    }
-                  />
-                </Td>
-                <Td>
-                  <Button my={2} bg={'red.500'} onClick={() => handleDeleteInformation(index)}>Delete</Button>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+        <Box width={"60%"}>
+          {informationTableData.map((row, index) => (
+            <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
+              <Box mx={2} color={"red.300"}>
+                S.No: {row.serialNo}
+              </Box>
+              <Box>
+                <Text mx={2}>Name **</Text>
+                <Input
+                  type="text"
+                  value={row.name}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "name", e.target.value)
+                  }
+                  placeholder="Name"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Caste **</Text>
+                <Input
+                  type="text"
+                  value={row.caste}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "caste", e.target.value)
+                  }
+                  placeholder="Caste"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Address **</Text>
+                <Input
+                  type="text"
+                  value={row.address}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "address", e.target.value)
+                  }
+                  placeholder="Address"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Year of study **</Text>
+                <Input
+                  type="text"
+                  value={row.year_of_study}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "year_of_study", e.target.value)
+                  }
+                  placeholder="Year of study"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Family background and need support</Text>
+                <Textarea
+                  value={row.familyBackground}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "familyBackground", e.target.value)
+                  }
+                  placeholder="familyBackground"
+                  required
+                />
+              </Box>
+              <Box>
+                <Button
+                  my={2}
+                  bg={"red.500"}
+                  onClick={() => handleDeleteInformation(index)}
+                >
+                  Delete Row
+                </Button>
+              </Box>
+            </Box>
+          ))}
+        </Box>
 
         <Button onClick={handleAddInformationRow}>Add Row</Button>
       </Box>
@@ -490,28 +498,28 @@ const EducationGroup = () => {
     const handleDeleteStudies = (index) => {
       const newData = studiesTableData.filter((ele, ind) => {
         return ind !== index;
-      })
-      setStudiesTableData(newData.map((ele, ind) => {
-        return {...ele, serialNo: ind+1 }
-      }))
-    }
-    
+      });
+      setStudiesTableData(
+        newData.map((ele, ind) => {
+          return { ...ele, serialNo: ind + 1 };
+        })
+      );
+    };
 
     return (
-      <Box p={4} overflowX="auto" maxW="100%">
+      <Box p={4} overflowX="auto" w="100%">
         <Heading as="h1" size="l" mb={6}>
-          Target Group - Studies and Finance Details
+            BUDGET FOR CCURRENT YEAR
         </Heading>
 
         <Box
-          display="grid"
-          gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-          gap={4}
+          width={'60%'}
         >
           {studiesTableData.map((row, index) => (
             <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
-              <Box>S.No: {row.serialNo}</Box>
+              <Box mx={2} color={'red.300'}>S.No: {row.serialNo}</Box>
               <Box>
+                <Text mx={2}>Name **</Text>
                 <Input
                   type="text"
                   value={row.name}
@@ -523,6 +531,7 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
+              <Text mx={2}>Study proposed **</Text>
                 <Input
                   type="text"
                   value={row.studyProposed}
@@ -538,6 +547,7 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
+              <Text mx={2}>College Fees **</Text>
                 <Input
                   type="number"
                   value={row.college_fee}
@@ -553,6 +563,7 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
+              <Text mx={2}>Hostel Fees **</Text>
                 <Input
                   type="number"
                   value={row.hostel_fee}
@@ -568,6 +579,7 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
+              <Text mx={2}>Total expense **</Text>
                 <Input
                   type="number"
                   value={parseInt(row.college_fee) + parseInt(row.hostel_fee)}
@@ -583,6 +595,7 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
+              <Text mx={2}>Contribution from family**</Text>
                 <Input
                   type="number"
                   value={row.contribution}
@@ -598,6 +611,7 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
+              <Text mx={2}>Scholarship Elegibility **</Text>
                 <Input
                   type="text"
                   value={row.scholarshipEligibility}
@@ -613,9 +627,10 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
+              <Text mx={2}>Expected Amount **</Text>
                 <Input
                   type="number"
-                  value={row.expectedAmount}
+                  value={(parseInt(row.college_fee) + parseInt(row.hostel_fee)) - (parseInt(row.scholarshipEligibility) + parseInt(row.contribution))}
                   onChange={(e) =>
                     handleStudiesInputChange(
                       index,
@@ -627,11 +642,22 @@ const EducationGroup = () => {
                   required
                 />
               </Box>
-              <Box >
-                <Button my={2} bg={'red.500'} onClick={() => handleDeleteStudies(index)}>Delete Row</Button>
+              <Box>
+                <Button
+                  my={2}
+                  bg={"red.500"}
+                  onClick={() => handleDeleteStudies(index)}
+                >
+                  Delete Row
+                </Button>
               </Box>
             </Box>
           ))}
+        </Box>
+        <Box>
+          Total Budget : <span color="green">{studiesTableData.reduce((total, row) => {
+            return ((parseInt(row.college_fee) + parseInt(row.hostel_fee)) - (parseInt(row.scholarshipEligibility) + parseInt(row.contribution))) + total;
+          }, 0)}</span>
         </Box>
 
         <Button onClick={handleAddStudiesRow}>Add Row</Button>
@@ -649,30 +675,40 @@ const EducationGroup = () => {
       setOngoingBeneficiary([
         ...ongoingBeneficiary,
         {
-          name: "", cast_address: "", year_of_study: "", performance: 0
+          name: "",
+          caste: "",
+          address: "",
+          year_of_study: "",
+          performance: 0,
         },
       ]);
     };
 
     const handleDeleteOngoing = (index) => {
-      setOngoingBeneficiary(ongoingBeneficiary.filter((ele, ind) => ind !== index));
+      setOngoingBeneficiary(
+        ongoingBeneficiary.filter((ele, ind) => ind !== index)
+      );
+      // console.log(ongoingBeneficiary.filter((ele, ind) => ind !== index))
     };
 
     return (
-      <Box p={4} overflowX="auto" maxW="100%">
-        <Heading as="h1" size="l" mb={6}>
-          Ongoing Beneficiaries - Student were supported..
+      <Box p={4} overflowX="auto" w={"100%"}>
+        <Heading as="h1" size="2" mb={6}>
+          Ongoing Beneficiaries -
+        </Heading>
+        <Heading as="h2" size="l" mb={6}>
+          - Students who were supported previous year and requesting support
+          this academic year
         </Heading>
 
-        <Box
-          display="grid"
-          gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-          gap={4}
-        >
+        <Box w={"60%"}>
           {ongoingBeneficiary.map((row, index) => (
             <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
-              <Box>S.No: {index+1}</Box>
+              <Box mx={2} color={"red.300"}>
+                S.No: {index + 1}
+              </Box>
               <Box>
+                <Text mx={2}>Name **</Text>
                 <Input
                   type="text"
                   value={row.name}
@@ -684,21 +720,31 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
+                <Text mx={2}>Caste **</Text>
                 <Input
                   type="text"
-                  value={row.cast_address}
+                  value={row.caste}
                   onChange={(e) =>
-                    handleOngoingInputChange(
-                      index,
-                      "cast_address",
-                      e.target.value
-                    )
+                    handleOngoingInputChange(index, "caste", e.target.value)
                   }
-                  placeholder="Cast and Address"
+                  placeholder="Caste"
                   required
                 />
               </Box>
               <Box>
+                <Text mx={2}>Address **</Text>
+                <Input
+                  type="text"
+                  value={row.address}
+                  onChange={(e) =>
+                    handleOngoingInputChange(index, "address", e.target.value)
+                  }
+                  placeholder="Address"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Present Group/ Year of study ** </Text>
                 <Input
                   type="text"
                   value={row.year_of_study}
@@ -714,8 +760,10 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
+                <Text mx={2}>Performance of the student in % ** </Text>
                 <Input
                   type="number"
+                  value={row.performance}
                   onChange={(e) =>
                     handleOngoingInputChange(
                       index,
@@ -728,7 +776,13 @@ const EducationGroup = () => {
                 />
               </Box>
               <Box>
-                <Button my={2} bg={'red.500'} onClick={() => handleDeleteOngoing(index)}>Delete Row</Button>
+                <Button
+                  my={2}
+                  bg={"red.500"}
+                  onClick={() => handleDeleteOngoing(index)}
+                >
+                  Delete Row
+                </Button>
               </Box>
             </Box>
           ))}
@@ -741,278 +795,308 @@ const EducationGroup = () => {
 
   return (
     <ChakraProvider>
-      <Flex w="100vw" h="full" >
+      <Flex w="100vw" h="full">
         <VStack w="30%" h="100vh" overflowY="scroll">
           <DashboardApplicant></DashboardApplicant>
         </VStack>
-      <Box p={8}  w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
-        <Heading
-          as="h1"
-          size="xl"
-          mb={6}
-          align="center"
-          justifyContent="center"
-        >
-          Education Group Project Application Form
-        </Heading>
+        <Box p={8} w="70%" h="100vh" overflowY={"scroll"} overflowX={"hidden"}>
+          <Heading
+            as="h1"
+            size="xl"
+            mb={6}
+            align="center"
+            justifyContent="center"
+          >
+            PROJECT PROPOSAL FOR GROUP EDUCATION - INSTITUTIONAL (ONGOING)
+          </Heading>
 
-        {isSubmitted && (
-          <Alert status="success" mb={4}>
-            <AlertIcon />
-            Form submitted successfully!
-          </Alert>
-        )}
+          {isSubmitted && (
+            <Alert status="success" mb={4}>
+              <AlertIcon />
+              Form submitted successfully!
+            </Alert>
+          )}
 
-        <form onSubmit={handleSubmit}>
-          <VStack align="start" spacing={4} mb={8}>
-            {/* NAME OF THE SOCIETY */}
-            <FormControl isRequired>
-              <FormLabel>NAME OF THE SOCIETY</FormLabel>
-              <Input
-                type="text"
-                name="NAMEOFTHESOCIETY"
-                value={formData.NAMEOFTHESOCIETY}
-                onChange={handleChange}
-                required
-              />
-            </FormControl>
+          <form onSubmit={handleSubmit}>
+            <VStack align="start" spacing={4} mb={8}>
+              {/* Select One */}
+              <FormControl isRequired>
+                <FormLabel>Select One</FormLabel>
+                <Select
+                  name="insOrNot"
+                  value={formData.insOrNot}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="Institutional">Institutional</option>
+                  <option value="Non-Institutional">Non-Institutional</option>
+                </Select>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Select One</FormLabel>
+                <Select
+                  name="childOrYouth"
+                  value={formData.childOrYouth}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="Child">Child</option>
+                  <option value="Youth">Youth</option>
+                </Select>
+              </FormControl>
+              {/* NAME OF THE SOCIETY */}
+              <FormControl isRequired>
+                <FormLabel>NAME OF THE SOCIETY</FormLabel>
+                <Input
+                  type="text"
+                  name="NAMEOFTHESOCIETY"
+                  value={formData.NAMEOFTHESOCIETY}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
 
-            {/* DATE OF SUBMISSION */}
-            <FormControl isRequired>
-              <FormLabel>DATE OF SUBMISSION</FormLabel>
-              <Input
-                type="date"
-                name="dATEOFSUBMISSION"
-                value={formData.dATEOFSUBMISSION}
-                onChange={handleChange}
-                required
-              />
-            </FormControl>
+              {/* DATE OF SUBMISSION */}
+              <FormControl isRequired>
+                <FormLabel>DATE OF SUBMISSION</FormLabel>
+                <Input
+                  type="date"
+                  name="dATEOFSUBMISSION"
+                  value={formData.dATEOFSUBMISSION}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
 
-            {/* TITLE OF THE PROJECT */}
-            <FormControl isRequired>
-              <FormLabel>TITLE OF THE PROJECT </FormLabel>
-              <Input
-                type="text"
-                name="TITLEOFTHEPROJECT"
-                value={formData.TITLEOFTHEPROJECT}
-                onChange={handleChange}
-                required
-              />
-            </FormControl>
+              {/* TITLE OF THE PROJECT */}
+              <FormControl isRequired>
+                <FormLabel>TITLE OF THE PROJECT </FormLabel>
+                <Input
+                  type="text"
+                  name="TITLEOFTHEPROJECT"
+                  value={formData.TITLEOFTHEPROJECT}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
 
-            {/* ADDRESS*/}
-            <FormControl isRequired>
-              <FormLabel>ADDRESS</FormLabel>
-              <Input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                required
-              />
-            </FormControl>
+              {/* ADDRESS*/}
+              <FormControl isRequired>
+                <FormLabel>ADDRESS</FormLabel>
+                <Input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
 
-            {/* Contacts Table */}
-            <Table variant="simple" mb={4}>
-              <Thead>
-                <Tr>
-                  <Th>Role</Th>
-                  <Th>Name</Th>
-                  <Th>Cell Number</Th>
-                  <Th>Email</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {/* Project Coordinators */}
-                <Tr>
-                  <Td>Project Coordinator India</Td>
-                  <Td>Sr. Nirmala Mathew</Td>
-                  <Td>Not Available</Td>
-                  <Td>micostannsindia@gmail.com</Td>
-                </Tr>
-                <Tr>
-                  <Td>Project Coordinator Luzern, Switzerland</Td>
-                  <Td>Mr. Samuel Imbach</Td>
-                  <Td>Not Available</Td>
-                  <Td>s.imbach@mission-stanna.ch</Td>
-                </Tr>
-              </Tbody>
-            </Table>
-            {/* Overall Project Period */}
-            <FormControl isRequired>
-              <FormLabel>Overall Project Period (in months)</FormLabel>
-              <Input
-                type="number"
-                name="overallProjectPeriod"
-                value={formData.overallProjectPeriod}
-                onChange={handleChange}
-                required
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Current Phase</FormLabel>
-              <Input
-                type="text"
-                name="currentPhase"
-                value={formData.currentPhase}
-                onChange={handleChange}
-                required
-              />
-            </FormControl>
-
-            {/* Overall Project Budget */}
-            <FormControl isRequired>
-              <FormLabel>Overall Project Budget</FormLabel>
-              <Input
-                type="number"
-                name="overallProjectBudget"
-                value={formData.overallProjectBudget}
-                onChange={handleChange}
-                required
-              />
-            </FormControl>
-
-            {/* Number of Beneficiaries supported in the previous years */}
-            <FormControl isRequired>
-              <FormLabel>
-                Number of Beneficiaries supported in the previous years
-              </FormLabel>
-              <Input
-                type="number"
-                name="beneficiariesSupported"
-                value={formData.beneficiariesSupported}
-                onChange={handleChange}
-                required
-              />
-            </FormControl>
-
-            {/* Outcome / Impact in the lives of the passed-out students */}
-            <FormControl isRequired>
-              <FormLabel>
-                Outcome / Impact in the lives of the passed-out students
-              </FormLabel>
-              <Textarea
-                name="outcomeImpact"
-                placeholder="Don't write general statements. Written information to be maintained in the institutuin about passed-out supported project students of bygone years and present year"
-                onChange={handleChange}
-                value={formData.outcomeImpact}
-                required
-              />
-            </FormControl>
-
-            {/* Goal of the project */}
-            <FormControl isRequired>
-              <FormLabel>Goal of the project</FormLabel>
-              <Textarea
-                name="projectGoal"
-                onChange={handleChange}
-                value={formData.projectGoal}
-                required
-              />
-            </FormControl>
-            {/* Objectives of the project */}
-            <FormControl isRequired>
-              <FormLabel>Objectives of the project</FormLabel>
+              {/* Contacts Table */}
               <Table variant="simple" mb={4}>
                 <Thead>
                   <Tr>
-                    <Th>Objective</Th>
-                    <Th>Delete</Th>
+                    <Th>Role</Th>
+                    <Th>Name</Th>
+                    <Th>Cell Number</Th>
+                    <Th>Email</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {formData.objectives.map((objective, index) => (
-                    <Tr key={index}>
-                      <Td>
-                        <Input
-                          type="text"
-                          name="objectives"
-                          value={objective}
-                          onChange={(e) => handleChange(e, index)}
-                          required
-                        />
-                      </Td>
-                      <Td>
-                  <Button my={2} bg={'red.500'} onClick={() => handleDeleteObjective(index)}>Delete</Button>
-                </Td>
-                    </Tr>
-                  ))}
+                  {/* Project Coordinators */}
+                  <Tr>
+                    <Td>Project Coordinator India</Td>
+                    <Td>Sr. Nirmala Mathew</Td>
+                    <Td>Not Available</Td>
+                    <Td>micostannsindia@gmail.com</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Project Coordinator Luzern, Switzerland</Td>
+                    <Td>Mr. Samuel Imbach</Td>
+                    <Td>Not Available</Td>
+                    <Td>s.imbach@mission-stanna.ch</Td>
+                  </Tr>
                 </Tbody>
               </Table>
-              <Button onClick={handleAddObjective} colorScheme="teal">
-                Add Objective
-              </Button>
-            </FormControl>
-            {PeopleDetailsTable()}
-            <Heading as="h1" size="xl" mb={6}>
-              TARGET GROUP
-            </Heading>
-            {TargetGroupOngoing()}
-            {TargetGroupInformationTable()}
-            {TargetGroupStudiesTable()}
+              {/* Overall Project Period */}
+              <FormControl isRequired>
+                <FormLabel>Overall Project Period (in months)</FormLabel>
+                <Input
+                  type="number"
+                  name="overallProjectPeriod"
+                  value={formData.overallProjectPeriod}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
 
-            {/* Other Proposed Activities */}
-            <FormControl isRequired>
-              <FormLabel>
-                Apart from academic studies, what are the other proposed
-                activities for the overall development of the beneficiary
-                individually and as a group?
-              </FormLabel>
-              <Textarea
-                name="otherActivities"
-                onChange={handleChange}
-                value={formData.otherActivities}
-                required
-              />
-            </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Current Phase</FormLabel>
+                <Input
+                  type="text"
+                  name="currentPhase"
+                  value={formData.currentPhase}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
 
-            {/* Monitoring Methods */}
-            <FormControl isRequired>
-              <FormLabel>
-                Propose the methods of monitoring the beneficiary's overall
-                growth and development:
-              </FormLabel>
-              <Textarea
-                name="monitoringMethods"
-                onChange={handleChange}
-                value={formData.monitoringMethods}
-                required
-              />
-            </FormControl>
+              {/* Overall Project Budget */}
+              <FormControl isRequired>
+                <FormLabel>Overall Project Budget</FormLabel>
+                <Input
+                  type="number"
+                  name="overallProjectBudget"
+                  value={formData.overallProjectBudget}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
 
-            {/* Evaluation Process and Responsible Person */}
-            <FormControl isRequired>
-              <FormLabel>
-                Mention the process of evaluation of the growth of the
-                beneficiaries and who would be responsible.
-              </FormLabel>
-              <Textarea
-                name="evaluationProcess"
-                onChange={handleChange}
-                value={formData.evaluationProcess}
-                required
-              />
-            </FormControl>
+              {/* Number of Beneficiaries supported in the previous years */}
+              <FormControl isRequired>
+                <FormLabel>
+                  Number of Beneficiaries supported in the previous years
+                </FormLabel>
+                <Input
+                  type="number"
+                  name="beneficiariesSupported"
+                  value={formData.beneficiariesSupported}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
 
-            {/* Conclusion */}
-            <FormControl isRequired>
-              <FormLabel>Conclusion</FormLabel>
-              <Textarea
-                name="conclusion"
-                onChange={handleChange}
-                value={formData.conclusion}
-                required
-              />
-            </FormControl>
+              {/* Outcome / Impact in the lives of the passed-out students */}
+              <FormControl isRequired>
+                <FormLabel>
+                  Outcome / Impact in the lives of the passed-out students
+                </FormLabel>
+                <Textarea
+                  name="outcomeImpact"
+                  placeholder="Don't write general statements. Written information to be maintained in the institutuin about passed-out supported project students of bygone years and present year"
+                  onChange={handleChange}
+                  value={formData.outcomeImpact}
+                  required
+                />
+              </FormControl>
 
-            <Heading as="h1" size="xl" mb={6}>
-              Signatures
-            </Heading>
+              {/* Goal of the project */}
+              <FormControl isRequired>
+                <FormLabel>Goal of the project</FormLabel>
+                <Textarea
+                  name="projectGoal"
+                  onChange={handleChange}
+                  value={formData.projectGoal}
+                  required
+                />
+              </FormControl>
+              {/* Objectives of the project */}
+              <FormControl isRequired>
+                <FormLabel>Objectives of the project</FormLabel>
+                <Table variant="simple" mb={4}>
+                  <Thead>
+                    <Tr>
+                      <Th>Sl No.</Th>
+                      <Th>Objective</Th>
+                      <Th>Delete</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {formData.objectives.map((objective, index) => (
+                      <Tr key={index}>
+                        <Td>{index + 1}</Td>
+                        <Td>
+                          <Input
+                            type="text"
+                            name="objectives"
+                            value={objective}
+                            onChange={(e) => handleChange(e, index)}
+                            required
+                          />
+                        </Td>
+                        <Td>
+                          <Button
+                            my={2}
+                            bg={"red.500"}
+                            onClick={() => handleDeleteObjective(index)}
+                          >
+                            Delete
+                          </Button>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+                <Button onClick={handleAddObjective} colorScheme="teal">
+                  Add Objective
+                </Button>
+              </FormControl>
+              {PeopleDetailsTable()}
+              <Heading as="h1" size="xl" mb={6}>
+                TARGET GROUP
+              </Heading>
+              {TargetGroupOngoing()}
+              {TargetGroupInformationTable()}
+              {TargetGroupStudiesTable()}
 
-            {/* Project Coordinator agreement */}
-            {/* <FormControl isRequired>
+              {/* Other Proposed Activities */}
+              <FormControl isRequired>
+                <FormLabel>
+                  Apart from academic studies, what are the other proposed
+                  activities for the overall development of the beneficiary
+                  individually and as a group?
+                </FormLabel>
+                <Textarea
+                  name="otherActivities"
+                  onChange={handleChange}
+                  value={formData.otherActivities}
+                  required
+                />
+              </FormControl>
+
+              {/* Monitoring Methods */}
+              <FormControl isRequired>
+                <FormLabel>
+                  Propose the methods of monitoring the beneficiary's overall
+                  growth and development:
+                </FormLabel>
+                <Textarea
+                  name="monitoringMethods"
+                  onChange={handleChange}
+                  value={formData.monitoringMethods}
+                  required
+                />
+              </FormControl>
+
+              {/* Evaluation Process and Responsible Person */}
+              <FormControl isRequired>
+                <FormLabel>
+                  Mention the process of evaluation of the growth of the
+                  beneficiaries and who would be responsible.
+                </FormLabel>
+                <Textarea
+                  name="evaluationProcess"
+                  onChange={handleChange}
+                  value={formData.evaluationProcess}
+                  required
+                />
+              </FormControl>
+
+              {/* Conclusion */}
+              <FormControl isRequired>
+                <FormLabel>Conclusion</FormLabel>
+                <Textarea
+                  name="conclusion"
+                  onChange={handleChange}
+                  value={formData.conclusion}
+                  required
+                />
+              </FormControl>
+
+
+              {/* Project Coordinator agreement */}
+              {/* <FormControl isRequired>
     <Checkbox
       name="projectCoordinatorAgreement"
       onChange={handleChange}
@@ -1028,20 +1112,20 @@ const EducationGroup = () => {
     />
   </FormControl> */}
 
-            {/* Project-In-Charge agreement */}
-            <FormControl isRequired>
-            <FormLabel>Project In Charge Agrees</FormLabel>
-              <Input
-                type="date"
-                name="projectInChargeAgreementDate"
-                onChange={handleChange}
-                value={formData.projectInChargeAgreementDate}
-                required
-              />
-            </FormControl>
+              {/* Project-In-Charge agreement */}
+              <FormControl isRequired>
+                <FormLabel>Set date</FormLabel>
+                <Input
+                  type="date"
+                  name="projectInChargeAgreementDate"
+                  onChange={handleChange}
+                  value={formData.projectInChargeAgreementDate}
+                  required
+                />
+              </FormControl>
 
-            {/* Provincial Superior agreement */}
-            {/* <FormControl isRequired>
+              {/* Provincial Superior agreement */}
+              {/* <FormControl isRequired>
     <Checkbox
       name="provincialSuperiorAgreement"
       onChange={handleChange}
@@ -1057,14 +1141,18 @@ const EducationGroup = () => {
     />
   </FormControl>
            */}
-          </VStack>
+            </VStack>
 
-          {/* Submit Button */}
-          <Button colorScheme="blue" type="submit" onClick={() => (formData.projectInChargeAgreement = true)}>
-            Submit
-          </Button>
-        </form>
-      </Box>
+            {/* Submit Button */}
+            <Button
+              colorScheme="blue"
+              type="submit"
+              onClick={() => (formData.projectInChargeAgreement = true)}
+            >
+              Submit
+            </Button>
+          </form>
+        </Box>
       </Flex>
     </ChakraProvider>
   );
