@@ -151,7 +151,7 @@ const EducationGroup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // setIsLoading(true);
+    setIsLoading(true);
 
     // Add your form submission logic here
     const req = {

@@ -22,6 +22,8 @@ import {
   Th,
   Td,
   Flex,
+  Select,
+  Text,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
 import { useParams } from "react-router-dom";
@@ -36,6 +38,8 @@ const ApproveEGswz = () => {
 
   // Populate formData from req
   const [formData, setFormData] = useState({
+    insOrNot: projectData.insOrNot || "Institutional",
+    childOrYouth: projectData.childOrYouth || "Child",
     provincialSuperiorAgreementDate: projectData.provincial_superior_agree.date,
     provincialSuperiorAgreement: projectData.provincial_superior_agree.agree,
     commentReviewer: projectData.comment_box_provincial_superior,
@@ -79,25 +83,27 @@ const ApproveEGswz = () => {
       expectedAmount: row.expectedAmount || "",
     }))
   );
+  const [ongoingBeneficiary, setOngoingBeneficiary] = useState(
+    projectData.ongoingBeneficiary.map((row) => ({
+      name: row.name || "",
+      caste: row.caste || "",
+      address: row.address || "",
+      year_of_study : row.year_of_study || "",
+      performance : row.performance || 0
+    }))
+  )
 
   // Populate informationTableData from req
   const [informationTableData, setInformationTableData] = useState(
     projectData.targetGroupInformation.map((row) => ({
       serialNo: row.serialNo || "",
       name: row.name || "",
-      casteAddress: row.casteAddress || "",
-      recommendedBy: row.recommendedBy || "",
+      caste: row.caste || "",
+      address: row.address || "",
+      year_of_study: row.year_of_study || "",
       familyBackground: row.familyBackground || "",
     }))
   );
-  const [ongoingBeneficiary, setOngoingBeneficiary] = useState(
-    projectData.ongoingBeneficiary.map((row) => ({
-      name: row.name || "",
-      cast_address: row.cast_address || "",
-      year_of_study : row.year_of_study || "",
-      performance : row.performance || 0
-    }))
-  )
 
   // Populate tableData from req
   const [tableData, setTableData] = useState(
@@ -198,7 +204,7 @@ const ApproveEGswz = () => {
           parseInt(newData[index].totalMale) || 0
         );
       }
-      console.log(tableData);
+      // console.log(tableData);
       setTableData(newData);
     };
 
@@ -208,11 +214,14 @@ const ApproveEGswz = () => {
         { class: "", totalFemale: "", totalMale: "", total: 0 },
       ]);
     };
+    const handleDeleteRow = (index) => {
+      setTableData(tableData.filter((ele, ind) => ind !== index));
+    };
 
     return (
       <Box p={4}>
         <Heading as="h1" size="l" mb={6}>
-          People Details Table
+          Number of beneficiaries to be supported this year
         </Heading>
 
         <Table variant="simple">
@@ -222,6 +231,7 @@ const ApproveEGswz = () => {
               <Th>Total Female</Th>
               <Th>Total Male</Th>
               <Th>Total</Th>
+              {/* <Th>Delete</Th> */}
             </Tr>
           </Thead>
           <Tbody>
@@ -229,11 +239,12 @@ const ApproveEGswz = () => {
               <Tr key={index}>
                 <Td>
                   <Input
-                    type="number"
+                    type="text"
                     value={row.class}
                     onChange={(e) =>
                       handleInputChange(index, "class", e.target.value)
                     }
+                    required
                     readOnly
                   />
                 </Td>
@@ -244,6 +255,7 @@ const ApproveEGswz = () => {
                     onChange={(e) =>
                       handleInputChange(index, "totalFemale", e.target.value)
                     }
+                    required
                     readOnly
                   />
                 </Td>
@@ -254,10 +266,20 @@ const ApproveEGswz = () => {
                     onChange={(e) =>
                       handleInputChange(index, "totalMale", e.target.value)
                     }
+                    required
                     readOnly
                   />
                 </Td>
                 <Td>{row.total}</Td>
+                {/* <Td>
+                  <Button
+                    my={2}
+                    bg={"red.500"}
+                    onClick={() => handleDeleteRow(index)}
+                  >
+                    Delete
+                  </Button>
+                </Td> */}
               </Tr>
             ))}
           </Tbody>
@@ -285,100 +307,117 @@ const ApproveEGswz = () => {
         {
           serialNo: informationTableData.length + 1,
           name: "",
-          casteAddress: "",
-          recommendedBy: "",
+          caste: "",
+          address: "",
+          year_of_study: "",
           familyBackground: "",
         },
       ]);
     };
+    const handleDeleteInformation = (index) => {
+      const newData = informationTableData.filter((ele, ind) => {
+        return ind !== index;
+      });
+      setInformationTableData(
+        newData.map((ele, ind) => {
+          return { ...ele, serialNo: ind + 1 };
+        })
+      );
+    };
 
     return (
-      <Box p={4}>
+      <Box p={4} width={"100%"}>
         <Heading as="h1" size="l" mb={6}>
-          Target Group - Information of the Beneficiaries
+          NEW BENEFICIARIES FOR THE CURRENT YEAR PROPOSED 
         </Heading>
 
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>S.No</Th>
-              <Th>Name of the Beneficiary</Th>
-              <Th>Caste & Address</Th>
-              <Th>Who Recommended</Th>
-              <Th>Family Background & Need of Support</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {informationTableData.map((row, index) => (
-              <Tr key={index}>
-                <Td>
-                  <Input type="number" value={row.serialNo} readOnly />
-                </Td>
-                <Td>
-                  <Input
-                    type="text"
-                    value={row.name}
-                    onChange={(e) =>
-                      handleInformationInputChange(
-                        index,
-                        "name",
-                        e.target.value
-                      )
-                    }
-                    readOnly
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="text"
-                    value={row.casteAddress}
-                    onChange={(e) =>
-                      handleInformationInputChange(
-                        index,
-                        "casteAddress",
-                        e.target.value
-                      )
-                    }
-                    readOnly
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="text"
-                    value={row.recommendedBy}
-                    onChange={(e) =>
-                      handleInformationInputChange(
-                        index,
-                        "recommendedBy",
-                        e.target.value
-                      )
-                    }
-                    readOnly
-                  />
-                </Td>
-                <Td>
-                  <Textarea
-                    value={row.familyBackground}
-                    onChange={(e) =>
-                      handleInformationInputChange(
-                        index,
-                        "familyBackground",
-                        e.target.value
-                      )
-                    }
-                    readOnly
-                  />
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+        <Box width={"60%"}>
+          {informationTableData.map((row, index) => (
+            <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
+              <Box mx={2} color={"red.300"}>
+                S.No: {row.serialNo}
+              </Box>
+              <Box>
+                <Text mx={2}>Name **</Text>
+                <Input
+                  type="text"
+                  value={row.name}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "name", e.target.value)
+                  }
+                  placeholder="Name"
+                  required
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Caste **</Text>
+                <Input
+                  type="text"
+                  value={row.caste}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "caste", e.target.value)
+                  }
+                  placeholder="Caste"
+                  required
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Address **</Text>
+                <Input
+                  type="text"
+                  value={row.address}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "address", e.target.value)
+                  }
+                  placeholder="Address"
+                  required
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Year of study **</Text>
+                <Input
+                  type="text"
+                  value={row.year_of_study}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "year_of_study", e.target.value)
+                  }
+                  placeholder="Year of study"
+                  required
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Family background and need support</Text>
+                <Textarea
+                  value={row.familyBackground}
+                  onChange={(e) =>
+                    handleInformationInputChange(index, "familyBackground", e.target.value)
+                  }
+                  placeholder="familyBackground"
+                  required
+                  readOnly
+                />
+              </Box>
+              {/* <Box>
+                <Button
+                  my={2}
+                  bg={"red.500"}
+                  onClick={() => handleDeleteInformation(index)}
+                >
+                  Delete Row
+                </Button>
+              </Box> */}
+            </Box>
+          ))}
+        </Box>
 
         {/* <Button onClick={handleAddInformationRow}>Add Row</Button> */}
       </Box>
     );
   };
-
   const TargetGroupStudiesTable = () => {
     const handleStudiesInputChange = (index, field, value) => {
       const newData = [...studiesTableData];
@@ -393,38 +432,41 @@ const ApproveEGswz = () => {
           serialNo: studiesTableData.length + 1,
           name: "",
           studyProposed: "",
-          totalExpense:"",
+          college_fee: "",
+          hostel_fee: "",
+          totalExpense: "",
           contribution: "",
           scholarshipEligibility: "",
           expectedAmount: "",
         },
       ]);
     };
+
     const handleDeleteStudies = (index) => {
       const newData = studiesTableData.filter((ele, ind) => {
         return ind !== index;
-      })
-      setStudiesTableData(newData.map((ele, ind) => {
-        return {...ele, serialNo: ind+1 }
-      }))
-    }
-    
+      });
+      setStudiesTableData(
+        newData.map((ele, ind) => {
+          return { ...ele, serialNo: ind + 1 };
+        })
+      );
+    };
 
     return (
-      <Box p={4} overflowX="auto" maxW="100%">
+      <Box p={4} overflowX="auto" w="100%">
         <Heading as="h1" size="l" mb={6}>
-          Target Group - Studies and Finance Details
+            BUDGET FOR CCURRENT YEAR
         </Heading>
 
         <Box
-          display="grid"
-          gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-          gap={4}
+          width={'60%'}
         >
           {studiesTableData.map((row, index) => (
             <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
-              <Box>S.No: {row.serialNo}</Box>
+              <Box mx={2} color={'red.300'}>S.No: {row.serialNo}</Box>
               <Box>
+                <Text mx={2}>Name **</Text>
                 <Input
                   type="text"
                   value={row.name}
@@ -432,10 +474,12 @@ const ApproveEGswz = () => {
                     handleStudiesInputChange(index, "name", e.target.value)
                   }
                   placeholder="Name"
+                  required
                   readOnly
                 />
               </Box>
               <Box>
+              <Text mx={2}>Study proposed **</Text>
                 <Input
                   type="text"
                   value={row.studyProposed}
@@ -447,28 +491,49 @@ const ApproveEGswz = () => {
                     )
                   }
                   placeholder="Study Proposed"
+                  required
                   readOnly
                 />
               </Box>
               <Box>
+              <Text mx={2}>College Fees **</Text>
                 <Input
                   type="number"
-                  value={row.totalExpense}
+                  value={row.college_fee}
                   onChange={(e) =>
                     handleStudiesInputChange(
                       index,
-                      "totalExpense",
-                      e.target.value
+                      "college_fee",
+                      parseInt(e.target.value)
                     )
                   }
-                  placeholder="College fees"
+                  placeholder="College Fees"
+                  required
                   readOnly
                 />
               </Box>
               <Box>
+              <Text mx={2}>Hostel Fees **</Text>
                 <Input
                   type="number"
-                  value={row.totalExpense}
+                  value={row.hostel_fee}
+                  onChange={(e) =>
+                    handleStudiesInputChange(
+                      index,
+                      "hostel_fee",
+                      parseInt(e.target.value)
+                    )
+                  }
+                  placeholder="Hostel Fees"
+                  required
+                  readOnly
+                />
+              </Box>
+              <Box>
+              <Text mx={2}>Total expense **</Text>
+                <Input
+                  type="number"
+                  value={parseInt(row.college_fee) + parseInt(row.hostel_fee)}
                   onChange={(e) =>
                     handleStudiesInputChange(
                       index,
@@ -477,10 +542,12 @@ const ApproveEGswz = () => {
                     )
                   }
                   placeholder="Total Expense"
+                  required
                   readOnly
                 />
               </Box>
               <Box>
+              <Text mx={2}>Contribution from family**</Text>
                 <Input
                   type="number"
                   value={row.contribution}
@@ -492,12 +559,14 @@ const ApproveEGswz = () => {
                     )
                   }
                   placeholder="Contribution"
+                  required
                   readOnly
                 />
               </Box>
               <Box>
+              <Text mx={2}>Scholarship Elegibility **</Text>
                 <Input
-                  type="number"
+                  type="text"
                   value={row.scholarshipEligibility}
                   onChange={(e) =>
                     handleStudiesInputChange(
@@ -507,13 +576,15 @@ const ApproveEGswz = () => {
                     )
                   }
                   placeholder="Scholarship Eligibility"
+                  required
                   readOnly
                 />
               </Box>
               <Box>
+              <Text mx={2}>Expected Amount **</Text>
                 <Input
                   type="number"
-                  value={row.expectedAmount}
+                  value={(parseInt(row.college_fee) + parseInt(row.hostel_fee)) - (parseInt(row.scholarshipEligibility) + parseInt(row.contribution))}
                   onChange={(e) =>
                     handleStudiesInputChange(
                       index,
@@ -522,20 +593,32 @@ const ApproveEGswz = () => {
                     )
                   }
                   placeholder="Expected Amount"
+                  required
+                  readOnly
                 />
               </Box>
-              {/* <Box >
-                <Button my={2} bg={'red.500'} onClick={() => handleDeleteStudies(index)}>Delete Row</Button>
+              {/* <Box>
+                <Button
+                  my={2}
+                  bg={"red.500"}
+                  onClick={() => handleDeleteStudies(index)}
+                >
+                  Delete Row
+                </Button>
               </Box> */}
             </Box>
           ))}
+        </Box>
+        <Box>
+          Total Budget : <span color="green">{studiesTableData.reduce((total, row) => {
+            return ((parseInt(row.college_fee) + parseInt(row.hostel_fee)) - (parseInt(row.scholarshipEligibility) + parseInt(row.contribution))) + total;
+          }, 0)}</span>
         </Box>
 
         {/* <Button onClick={handleAddStudiesRow}>Add Row</Button> */}
       </Box>
     );
   };
-
   const TargetGroupOngoing = () => {
     const handleOngoingInputChange = (index, field, value) => {
       const newData = [...ongoingBeneficiary];
@@ -547,30 +630,40 @@ const ApproveEGswz = () => {
       setOngoingBeneficiary([
         ...ongoingBeneficiary,
         {
-          name: "", cast_address: "", year_of_study: "", performance: 0
+          name: "",
+          caste: "",
+          address: "",
+          year_of_study: "",
+          performance: 0,
         },
       ]);
     };
 
     const handleDeleteOngoing = (index) => {
-      setOngoingBeneficiary(ongoingBeneficiary.filter((ele, ind) => ind !== index));
+      setOngoingBeneficiary(
+        ongoingBeneficiary.filter((ele, ind) => ind !== index)
+      );
+      // console.log(ongoingBeneficiary.filter((ele, ind) => ind !== index))
     };
 
     return (
-      <Box p={4} overflowX="auto" maxW="100%">
-        <Heading as="h1" size="l" mb={6}>
-          Ongoing Beneficiaries - Student were supported..
+      <Box p={4} overflowX="auto" w={"100%"}>
+        <Heading as="h1" size="2" mb={6}>
+          Ongoing Beneficiaries -
+        </Heading>
+        <Heading as="h2" size="l" mb={6}>
+          - Students who were supported previous year and requesting support
+          this academic year
         </Heading>
 
-        <Box
-          display="grid"
-          gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-          gap={4}
-        >
+        <Box w={"60%"}>
           {ongoingBeneficiary.map((row, index) => (
             <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
-              <Box>S.No: {index+1}</Box>
+              <Box mx={2} color={"red.300"}>
+                S.No: {index + 1}
+              </Box>
               <Box>
+                <Text mx={2}>Name **</Text>
                 <Input
                   type="text"
                   value={row.name}
@@ -583,22 +676,33 @@ const ApproveEGswz = () => {
                 />
               </Box>
               <Box>
+                <Text mx={2}>Caste **</Text>
                 <Input
                   type="text"
-                  value={row.cast_address}
+                  value={row.caste}
                   onChange={(e) =>
-                    handleOngoingInputChange(
-                      index,
-                      "cast_address",
-                      e.target.value
-                    )
+                    handleOngoingInputChange(index, "caste", e.target.value)
                   }
-                  placeholder="Cast and Address"
+                  placeholder="Caste"
                   required
                   readOnly
                 />
               </Box>
               <Box>
+                <Text mx={2}>Address **</Text>
+                <Input
+                  type="text"
+                  value={row.address}
+                  onChange={(e) =>
+                    handleOngoingInputChange(index, "address", e.target.value)
+                  }
+                  placeholder="Address"
+                  required
+                  readOnly
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Present Group/ Year of study ** </Text>
                 <Input
                   type="text"
                   value={row.year_of_study}
@@ -615,6 +719,7 @@ const ApproveEGswz = () => {
                 />
               </Box>
               <Box>
+                <Text mx={2}>Performance of the student in % ** </Text>
                 <Input
                   type="number"
                   value={row.performance}
@@ -626,12 +731,17 @@ const ApproveEGswz = () => {
                     )
                   }
                   placeholder="Performance of the student in %"
-                  required
                   readOnly
                 />
               </Box>
               {/* <Box>
-                <Button my={2} bg={'red.500'} onClick={() => handleDeleteOngoing(index)}>Delete Row</Button>
+                <Button
+                  my={2}
+                  bg={"red.500"}
+                  onClick={() => handleDeleteOngoing(index)}
+                >
+                  Delete Row
+                </Button>
               </Box> */}
             </Box>
           ))}
@@ -668,6 +778,33 @@ const ApproveEGswz = () => {
 
         <form onSubmit={handleSubmit}>
           <VStack align="start" spacing={4} mb={8}>
+
+          <FormControl isRequired>
+                <FormLabel>Select One</FormLabel>
+                <Select
+                  name="insOrNot"
+                  value={formData.insOrNot}
+                  onChange={handleChange}
+                  required
+                  readOnly
+                >
+                  <option value="Institutional">Institutional</option>
+                  <option value="Non-Institutional">Non-Institutional</option>
+                </Select>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Select One</FormLabel>
+                <Select
+                  name="childOrYouth"
+                  value={formData.childOrYouth}
+                  onChange={handleChange}
+                  required
+                  readOnly
+                >
+                  <option value="Child">Child</option>
+                  <option value="Youth">Youth</option>
+                </Select>
+              </FormControl>
             {/* NAME OF THE SOCIETY */}
             <FormControl>
               <FormLabel>NAME OF THE SOCIETY</FormLabel>
@@ -849,22 +986,35 @@ const ApproveEGswz = () => {
               <Table variant="simple" mb={4}>
                 <Thead>
                   <Tr>
+                  <Th>Sl No.</Th>
                     <Th>Objective</Th>
+                      {/* <Th>Delete</Th> */}
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {formData.objectives.map((objective, index) => (
-                    <Tr key={index}>
-                      <Td>
-                        <Input
-                          type="text"
-                          value={objective}
-                          onChange={(e) => handleChange(e, index)}
-                          readOnly
-                        />
-                      </Td>
-                    </Tr>
-                  ))}
+                {formData.objectives.map((objective, index) => (
+                      <Tr key={index}>
+                        <Td>{index + 1}</Td>
+                        <Td>
+                          <Input
+                            type="text"
+                            name="objectives"
+                            value={objective}
+                            onChange={(e) => handleChange(e, index)}
+                            required
+                          />
+                        </Td>
+                        <Td>
+                          {/* <Button
+                            my={2}
+                            bg={"red.500"}
+                            onClick={() => handleDeleteObjective(index)}
+                          >
+                            Delete
+                          </Button> */}
+                        </Td>
+                      </Tr>
+                    ))}
                 </Tbody>
               </Table>
               {/* <Button onClick={handleAddObjective} colorScheme="teal">
