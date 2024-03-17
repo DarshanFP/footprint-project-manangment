@@ -33,27 +33,29 @@ const EducationRuralUrbanTribalGroup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    presentProjectYear: "",
     projectTitle: "",
-    projectRegion: "",
+    insOrNot: "",
+    childOrYouth: "",
     projectNumber: 0,
     overallProjectPeriod: "",
-    overallProjectBudget: "",
+    current_phase: "",
+    // overallProjectBudget: "",
     address: "",
-    provincialSuperiorName: "",
-    provincialSuperiorEmail: "",
-    projectInchargeName: "",
-    projectInchargeEmail: "",
+    projectExecutorName: "",
+    projectExecutorEmail: "",
+    projectExecutorMobile: "",
+
     projectSummary: {
+      category: "", //new
       projectLocation: "",
       workOfSisters: "",
       socioEconomicConditions: "",
       identifiedProblems: "",
       needOfProject: "",
       beneficiarySelection: "",
-      evaluation: "",
-      monitoringProcess: "",
-      sustainability: "",
+      // evaluation: "",
+      // monitoringProcess: "",
+      // sustainability: "",
     },
     targetGroup: [
       {
@@ -83,6 +85,9 @@ const EducationRuralUrbanTribalGroup = () => {
           ],
         },
       ],
+      evaluation: "",
+      monitoringProcess: "",
+      sustainability: "",
     },
 
     budget: [
@@ -91,8 +96,8 @@ const EducationRuralUrbanTribalGroup = () => {
         costs: 0,
       },
     ],
-    projectInChargeAgreement: "",
-    projectInChargeAgreementDate: "",
+    // projectInChargeAgreement: "",
+    // projectInChargeAgreementDate: "",
   });
   const [selectedMonths, setSelectedMonths] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -252,11 +257,38 @@ const EducationRuralUrbanTribalGroup = () => {
     // setFormData(tableData.filter((ele, ind) => ind !== index) );
     const updatedTargetGroup = [...formData.targetGroup];
     // console.log(updatedTargetGroup)
-    let newTargetGroup = updatedTargetGroup.filter((ele, ind) => ind !== index);
+    let removeTargetGroup = updatedTargetGroup.splice(index, 1)[0];
+
+    updatedTargetGroup.forEach((item, idx) => {
+      if (idx >= index) {
+        item.sn = idx + 1;
+      }
+    });
     setFormData((prevData) => ({
       ...prevData,
-      targetGroup: newTargetGroup,
+      targetGroup: updatedTargetGroup,
     }));
+    // setFormData((prevData) => ({
+    //   ...prevData,
+    //   targetGroup: newTargetGroup,
+    // }));
+  };
+
+  const handleDeleteObjective = (index) => {
+    const updatedData = { ...formData };
+
+    const removedObjective = updatedData.logicalFramework.objectives.splice(
+      index,
+      1
+    )[0];
+
+    // Rearrange the sn numbers of remaining objectives
+    updatedData.logicalFramework.objectives.forEach((objective, idx) => {
+      if (idx >= index) {
+        objective.sn = idx + 1;
+      }
+    });
+    setFormData(updatedData);
   };
 
   const handleDeleteResult = (index, subIndex) => {
@@ -279,7 +311,7 @@ const EducationRuralUrbanTribalGroup = () => {
     };
 
     updatedData.logicalFramework.objectives[index].activities.push(newActivity);
-    console.log(updatedData.logicalFramework.objectives[index].activities)
+    console.log(updatedData.logicalFramework.objectives[index].activities);
 
     setFormData(updatedData);
   };
@@ -325,23 +357,6 @@ const EducationRuralUrbanTribalGroup = () => {
     // Update the state with the modified data
     setFormData(updatedData);
 
-    setFormData(updatedData);
-  };
-
-  const handleDeleteObjective = (index) => {
-    const updatedData = { ...formData };
-
-    const removedObjective = updatedData.logicalFramework.objectives.splice(
-      index,
-      1
-    )[0];
-
-    // Rearrange the sn numbers of remaining objectives
-    updatedData.logicalFramework.objectives.forEach((objective, idx) => {
-      if (idx >= index) {
-        objective.sn = idx + 1;
-      }
-    });
     setFormData(updatedData);
   };
 
@@ -401,9 +416,9 @@ const EducationRuralUrbanTribalGroup = () => {
                 <FormControl mb={4}>
                   <FormLabel> Institutional / Non-Institutional</FormLabel>
                   <Select
-                  // name="projectTitle"
-                  // onChange={handleChange}
-                  // value={formData.projectTitle || ""}
+                  name="insOrNot"
+                  onChange={handleChange}
+                  value={formData.insOrNot || ""}
                   >
                     <option value="institutional"> Institutional</option>
                     <option value="non-Institutional">Non-Institutional</option>
@@ -412,9 +427,9 @@ const EducationRuralUrbanTribalGroup = () => {
                 <FormControl mb={4}>
                   <FormLabel>Children / Youth</FormLabel>
                   <Select
-                  // name="projectTitle"
-                  // onChange={handleChange}
-                  // value={formData.projectTitle || ""}
+                  name="childOrYouth"
+                  onChange={handleChange}
+                  value={formData.childOrYouth || ""}
                   >
                     <option value="children"> Children </option>
                     <option value="youth"> Youth</option>
@@ -441,9 +456,9 @@ const EducationRuralUrbanTribalGroup = () => {
                 <FormLabel>Current phase</FormLabel>
                 <Input
                   type="text"
-                  name="overallProjectBudget"
+                  name="current_phase"
                   onChange={handleChange}
-                  value={formData.overallProjectBudget || ""}
+                  value={formData.current_phase || ""}
                 />
               </FormControl>
 
@@ -473,25 +488,25 @@ const EducationRuralUrbanTribalGroup = () => {
                     <Td>
                       <Input
                         type="text"
-                        name="provincialSuperiorName"
+                        name="provincialExecutorName"
                         onChange={handleChange}
-                        value={formData.provincialSuperiorName || ""}
+                        value={formData.provincialExecutorName || ""}
                       />
                     </Td>
                     <Td>
                       <Input
                         type="email"
-                        name="provincialSuperiorEmail"
+                        name="provincialExecutorEmail"
                         onChange={handleChange}
-                        value={formData.provincialSuperiorEmail || ""}
+                        value={formData.provincialExecutorEmail || ""}
                       />
                     </Td>
                     <Td>
                       <Input
                         type="email"
-                        name="provincialSuperiorEmail"
+                        name="provincialExecutorMobile"
                         onChange={handleChange}
-                        value={formData.provincialSuperiorEmail || ""}
+                        value={formData.provincialExecutorMobile || ""}
                       />
                     </Td>
                   </Tr>
@@ -505,9 +520,9 @@ const EducationRuralUrbanTribalGroup = () => {
               <FormControl mb={4}>
                 <FormLabel>Category</FormLabel>
                 <Select
-                // name="projectTitle"
-                // onChange={handleChange}
-                // value={formData.projectTitle || ""}
+                name="category"
+                onChange={handleChange}
+                value={formData.projectSummary.category || ""}
                 >
                   <option value="rural"> Rural</option>
                   <option value="urban">Urban</option>
@@ -1010,10 +1025,10 @@ const EducationRuralUrbanTribalGroup = () => {
 
                                   <Textarea
                                     name="activity"
-                                     value={activity.activity}
-                                     onChange={(e) =>
-                                       handleChangeObjective(e, index, subIndex)
-                                     }
+                                    value={activity.activity}
+                                    onChange={(e) =>
+                                      handleChangeObjective(e, index, subIndex)
+                                    }
                                     required
                                   />
                                 </FormControl>
@@ -1021,10 +1036,10 @@ const EducationRuralUrbanTribalGroup = () => {
                                   <FormLabel>MEANS OF VERIFICATION</FormLabel>
                                   <Textarea
                                     name="verification"
-                                     value={activity.verification}
-                                     onChange={(e) =>
-                                       handleChangeObjective(e, index, subIndex)
-                                     }
+                                    value={activity.verification}
+                                    onChange={(e) =>
+                                      handleChangeObjective(e, index, subIndex)
+                                    }
                                     required
                                   />
                                 </FormControl>
