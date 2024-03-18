@@ -93,14 +93,14 @@ const EducationGroup = () => {
       familyBackground: row.familyBackground || "",
     }))
   );
-  const [tableData, setTableData] = useState([
+  const [tableData, setTableData] = useState(
     projectData.peopleDetails.map((row) => ({
       class: row.class || "",
       totalFemale: row.totalFemale || 0,
       totalMale: row.totalMale || 0,
       total: row.total || 0,
     }))
-  ]);
+  );
   const [ongoingBeneficiary, setOngoingBeneficiary] = useState(
     projectData.ongoingBeneficiary.map((row) => ({
       name: row.name || "",
@@ -279,6 +279,11 @@ const EducationGroup = () => {
     const handleDeleteRow = (index) => {
       setTableData(tableData.filter((ele, ind) => ind !== index));
     };
+
+    // console.log(tableData.map((row, ind) => {
+    //   console.log( row.class );
+    // }))
+    // console.log( tableData );
 
     return (
       <Box p={4}>
