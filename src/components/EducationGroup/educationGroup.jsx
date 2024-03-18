@@ -207,21 +207,11 @@ const EducationGroup = () => {
       project_in_charge_agree: {
         agree: true,
       },
-      // project_coordinator_agree: {
-      //   agree: false,
-      // },
-      // project_coordinator_agree_swz: {
-      //   agree: false,
-      // },
-      // provincial_superior_agree: {
-      //   agree: false,
-      // },
     };
 
     // console.log(req);
     try {
       const res = await authAxios.post("/projects/createEG", req);
-      console.log(res);
       setIsLoading(false);
       if (res.data.success) {
         showToast({
@@ -241,7 +231,7 @@ const EducationGroup = () => {
         });
       }
     } catch (e) {
-      console.log(e);
+  
       setIsLoading(false);
       showToast({
         title: e.response.data.msg,
