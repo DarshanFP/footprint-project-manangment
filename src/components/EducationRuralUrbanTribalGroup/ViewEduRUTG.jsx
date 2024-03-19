@@ -30,7 +30,7 @@ const ReviewEduRUTG = () => {
   console.log(projectData);
   const [formData, setFormData] = useState({
     commentReviewer:
-      projectData.general_information.provincial_superior.comment,
+      projectData.comment_box_provincial_superior,
     amountApproved: projectData.project_summary.amount_approved,
     projectTitle: projectData.project_title || "",
     projectInchargeName:

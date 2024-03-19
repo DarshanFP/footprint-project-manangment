@@ -19,10 +19,15 @@ import {
   Td,
   Textarea,
   useToast,
+  HStack,
+  Select,
+  Flex
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import authAxios from "../../AuthAxios";
 import {useNavigate} from 'react-router-dom';
+import DashboardApplicant from "../Applicant/dashboardApplicant";
+
 
 const EditEduRUTG = () => {
   const navigate = useNavigate() ; 
@@ -31,13 +36,14 @@ const EditEduRUTG = () => {
   const projectData = JSON.parse(decodeURIComponent(useParams().project)); // Document 
   console.log(projectData);
   const [formData, setFormData] = useState({
-    projectRegion:
-      projectData.general_information.provincial_superior.ref.nameOfProvince,
+    insOrNot: projectData.insOrNot || "Institutional",
+    childOrYouth: projectData.childOrYouth || "Child",
+    projectID: projectData.project_code,
     projectTitle: projectData.project_title || "",
     projectInchargeName:
-      projectData.general_information.project_incharge.ref.name,
+     projectData.applicant.name,
     projectInchargeEmail:
-      projectData.general_information.project_incharge.ref.name,
+    projectData.applicant.email,
     projectInchargeAgreement: true,
     presentProjectYear: projectData.present_project_year ?? "",
     projectNumber: projectData.project_number,
@@ -106,10 +112,10 @@ const EditEduRUTG = () => {
         projectData.project_summary?.problems_identified_and_consequences || "",
       needOfProject: projectData.project_summary?.need_of_the_project || "",
 
-      sustainability: projectData.project_summary?.sustainability || "",
+      sustainability: projectData.project_summary?.solution_analysis_logical_framework.sustainability || "",
       monitoringProcess:
-        projectData.project_summary?.monitoring_process_of_the_project || "",
-      evaluation: projectData.project_summary?.mode_of_evaluation || "",
+        projectData.project_summary?.solution_analysis_logical_framework.monitoring_process_of_the_project || "",
+      evaluation: projectData.project_summary?.solution_analysis_logical_framework.mode_of_evaluation || "",
     },
     budget: {
       expenses:
@@ -121,7 +127,7 @@ const EditEduRUTG = () => {
     },
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  console.log(formData);
+  // console.log(formData);
   // Populate formData from req
 
   const handleSubmit = async (e) => {
@@ -148,9 +154,9 @@ const EditEduRUTG = () => {
         problems_identified_and_consequences:
           formData.projectSummary.identifiedProblems,
         need_of_the_project: formData.projectSummary.needOfProject,
-        sustainability: formData.projectSummary.sustainability,
-        monitoring_process_of_the_project: formData.projectSummary.monitoringProcess,
-        mode_of_evaluation: formData.projectSummary.evaluation,
+        sustainability: formData.projectSummary.solution_analysis_logical_framework.sustainability,
+        monitoring_process_of_the_project: formData.projectSummary.solution_analysis_logical_framework.monitoringProcess,
+        mode_of_evaluation: formData.projectSummary.solution_analysis_logical_framework.evaluation,
 
         target_group: formData.targetGroup.map((target) => ({
           name: target.name,
@@ -234,6 +240,7 @@ const EditEduRUTG = () => {
     }));
   };
 
+
   const handleTargetGroupChange = (index, field, value) => {
     const updatedTargetGroup = [...formData.targetGroup];
     updatedTargetGroup[index][field] = value;
@@ -287,6 +294,7 @@ const EditEduRUTG = () => {
   const handleAddObjective = () => {
     const updatedData = { ...formData };
     updatedData.logicalFramework.objectives.push({
+      sn: updatedData.logicalFramework.objectives.length + 1,
       objective: "",
       results: [""],
       activities: [],
@@ -341,7 +349,11 @@ const EditEduRUTG = () => {
 
   return (
     <ChakraProvider>
-      <Box p={4}>
+          <Flex w="100vw" h="full" >
+        <VStack w="30%" h="100vh" overflowY="scroll">
+          <DashboardApplicant></DashboardApplicant>
+        </VStack>
+      <Box  p={8}  w="70%" h='100vh' overflowY={'scroll'} overflowX={'hidden'}>
         <Heading as="h2" size="lg">
           Education Rural Urban Tribal Group
         </Heading>
@@ -368,16 +380,31 @@ const EditEduRUTG = () => {
               />
             </FormControl>
 
-            <FormControl mb={4}>
-              <FormLabel>Project Region</FormLabel>
-              <Input
-                type="text"
-                name="projectRegion"
-                onChange={handleChange}
-                value={formData.projectRegion || ""}
-                required
-              />
-            </FormControl>
+            <HStack>
+                <FormControl mb={4}>
+                  <FormLabel> Institutional / Non-Institutional</FormLabel>
+                  <Select
+                  name="insOrNot"
+                  onChange={handleChange}
+                  value={formData.insOrNot || ""}
+                  
+                  >
+                    <option value="institutional"> Institutional</option>
+                    <option value="non-Institutional">Non-Institutional</option>
+                  </Select>
+                </FormControl>
+                <FormControl mb={4}>
+                  <FormLabel>Children / Youth</FormLabel>
+                  <Select
+                  name="childOrYouth"
+                  onChange={handleChange}
+                  value={formData.childOrYouth || ""}
+                  >
+                    <option value="children"> Children </option>
+                    <option value="youth"> Youth</option>
+                  </Select>
+                </FormControl>
+              </HStack>
 
             {/* General Information */}
             <Heading as="h2" size="lg" mt={6} mb={4}>
@@ -932,7 +959,9 @@ const EditEduRUTG = () => {
         </VStack>
         {/* Submit Button */}
       </Box>
+      </Flex>
     </ChakraProvider>
+
   );
 };
 
