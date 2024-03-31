@@ -25,14 +25,14 @@ import {
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
 import { useNavigate, useParams } from "react-router-dom";
-// import DashboardApplicant from './../Applicant/dashboardApplicant';
-import DashboardReviewer from './../Reviewer/dashboardReviewer';
+import DashboardApplicant from './../Applicant/dashboardApplicant';
+import DashboardApprover from "../Approver/dashboardApprover";
 
-export const ReviewCG = () => {
+export const ViewCGApprover = () => {
   const navigate = useNavigate();
 
   const projectData = JSON.parse(decodeURIComponent(useParams().project));
-  // console.log(projectData)
+  console.log(projectData)
 
   const [formData, setformData] = useState({
     currentPhase: projectData.currentPhase || "",
@@ -74,8 +74,7 @@ export const ReviewCG = () => {
     approver_cmt : projectData.comment_box_project_coordinator || "",
     swz_approver_cmt : projectData.comment_box_project_coordinator_swz || "",
     reviewer_cmt : projectData.comment_box_provincial_superior || "",
-    amountApprovedByProjectCoordinator: projectData.amount_approved || "",
-    provincialSuperiorAgreement: projectData.provincial_superior_agree.agree || false,
+    amountApprovedByProjectCoordinator: projectData.amount_approved || ""
   });
   // const [budgetData, setBudgetData] = useState([{ budget: "", cost: "" }]);
   const [isLoading, setIsLoading] = useState(false);
@@ -161,129 +160,82 @@ export const ReviewCG = () => {
     setformData(updatedData);
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   // Add your form submission logic here
-  //   formData.projectInChargeAgreement = true;
-  //   const req = {
-  //     projectID: projectData.project_code,
-  //     currentPhase: formData.currentPhase || "NA",
-  //     currentPhaseProjectBudget: formData.currentPhaseProjectBudget || "NA",
-  //     reportingMethodology: formData.reportingMethodology || "NA", //
-  //     // project_title: formData.project_title || "", //
-  //     president: formData.president || "NA",
-  //     nameOfSociety: formData.NAMEOFTHESOCIETY,
-  //     DateOfSubmission: JSON.stringify(Date.now()).substring(0, 10),
-  //     TitleOfProject: formData.TITLEOFTHEPROJECT,
-  //     address: formData.address,
-  //     OverallProjectPeriod: formData.overallProjectPeriod,
-  //     OverallProjectBudget: formData.overallProjectBudget,
-  //     problemAnalysis: formData.problemAnalysis,
-  //     // solutionAnalysis: formData.solutionAnalysis,
-  //     sustainability: formData.sustainability, // Add sustainability
-  //     monitoringProcess: formData.monitoringProcess, // Add monitoringProcess
-  //     beneficiaryAgreement: true,
-  //     beneficiaryAgreementDate: new Date(),
-  //     ProjectArea: formData.projectArea, // Add projectArea
-  //     directBeneficiaries: formData.directBeneficiaries, // Add directBeneficiaries
-  //     indirectBeneficiaries: formData.indirectBeneficiaries, // Add indirectBeneficiaries
-  //     evaluationMethodology: formData.evaluationMethodology, // Add evaluationMethodology
-  //     goal: formData.logicalFramework.goal,
-  //     objectives: formData.logicalFramework.objectives.map((objective) => ({
-  //       objective: objective.objective,
-  //       results: objective.results,
-  //       activities: objective.activities,
-  //     })),
-  //     // budget_cost_table: budgetData,
-  //     personalBudget: personalBudget,
-  //     programmeBudget: programmeBudget,
-  //     timeFrame: timeFrame,
-
-
-  //     project_in_charge_agree: {
-  //       agree: true,
-  //     },
-  //     project_coordinator_agree: {
-  //       agree: false,
-  //     },
-  //     project_coordinator_agree_swz: {
-  //       agree: false,
-  //     },
-  //     provincial_superior_agree: {
-  //       agree: false,
-  //     },
-  //     comment_box_provincial_superior: null,
-  //     comment_box_project_coordinator: null,
-  //     comment_box_project_coordinator_swz: null,
-  //     amount_approved: 0,
-  //     provincialSuperiorAgreement: false
-  //   };
-  //   // console.log( req );
-
-  //   try {
-  //     // console.log("req", req);
-  //     setIsLoading((prevLoading) => !prevLoading);
-  //     const response = await authAxios.put("/projects/editCG", req);
-  //     setIsLoading((prevLoading) => !prevLoading);
-  //     console.log(response.data);
-  //     if (response.data.success) {
-  //       showToast({
-  //         title: "Successfull form submission",
-  //         status: "success",
-  //         duration: 5000,
-  //       });
-  //       setTimeout(() => {
-  //         navigate("/myProjects");
-  //       }, 2000);
-  //     } else {
-  //       showToast({
-  //         title: response.data.msg,
-  //         duration: 5000,
-  //         status: "error",
-  //       });
-  //     }
-  //   } catch (e) {
-  //     setIsLoading(false);
-  //     showToast({
-  //       title: e.response?.data?.msg,
-  //       duration: 5000,
-  //       status: "error",
-  //     });
-  //   }
-
-  //   setIsSubmitted(true);
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
     // Add your form submission logic here
+    formData.projectInChargeAgreement = true;
+    const req = {
+      projectID: projectData.project_code,
+      currentPhase: formData.currentPhase || "NA",
+      currentPhaseProjectBudget: formData.currentPhaseProjectBudget || "NA",
+      reportingMethodology: formData.reportingMethodology || "NA", //
+      // project_title: formData.project_title || "", //
+      president: formData.president || "NA",
+      nameOfSociety: formData.NAMEOFTHESOCIETY,
+      DateOfSubmission: JSON.stringify(Date.now()).substring(0, 10),
+      TitleOfProject: formData.TITLEOFTHEPROJECT,
+      address: formData.address,
+      OverallProjectPeriod: formData.overallProjectPeriod,
+      OverallProjectBudget: formData.overallProjectBudget,
+      problemAnalysis: formData.problemAnalysis,
+      // solutionAnalysis: formData.solutionAnalysis,
+      sustainability: formData.sustainability, // Add sustainability
+      monitoringProcess: formData.monitoringProcess, // Add monitoringProcess
+      beneficiaryAgreement: true,
+      beneficiaryAgreementDate: new Date(),
+      ProjectArea: formData.projectArea, // Add projectArea
+      directBeneficiaries: formData.directBeneficiaries, // Add directBeneficiaries
+      indirectBeneficiaries: formData.indirectBeneficiaries, // Add indirectBeneficiaries
+      evaluationMethodology: formData.evaluationMethodology, // Add evaluationMethodology
+      goal: formData.logicalFramework.goal,
+      objectives: formData.logicalFramework.objectives.map((objective) => ({
+        objective: objective.objective,
+        results: objective.results,
+        activities: objective.activities,
+      })),
+      // budget_cost_table: budgetData,
+      personalBudget: personalBudget,
+      programmeBudget: programmeBudget,
+      timeFrame: timeFrame,
+
+
+      project_in_charge_agree: {
+        agree: true,
+      },
+      project_coordinator_agree: {
+        agree: false,
+      },
+      project_coordinator_agree_swz: {
+        agree: false,
+      },
+      provincial_superior_agree: {
+        agree: false,
+      },
+      comment_box_provincial_superior: null,
+      comment_box_project_coordinator: null,
+      comment_box_project_coordinator_swz: null,
+      amount_approved: 0
+    };
+    // console.log( req );
 
     try {
-      // console.log(projectData._id);
-      const res = await authAxios.put("/projects/editreviewerCG", {
-        projectID: projectData._id,
-        comment_box_provincial_superior: formData.reviewer_cmt,
-        provincial_superior_agree: {
-          agree: formData.provincialSuperiorAgreement
-        },
-      });
-      setIsLoading(false);
-      if (res.data.success) {
+      // console.log("req", req);
+      setIsLoading((prevLoading) => !prevLoading);
+      const response = await authAxios.put("/projects/editCG", req);
+      setIsLoading((prevLoading) => !prevLoading);
+      console.log(response.data);
+      if (response.data.success) {
         showToast({
-          title: formData.provincialSuperiorAgreement ? "Reviewed successfully" : "Reverted successfully",
-          duration: 5000,
+          title: "Successfull form submission",
           status: "success",
+          duration: 5000,
         });
-        setIsSubmitted(true);
         setTimeout(() => {
-          navigate(formData.provincialSuperiorAgreement ? "/ApprovedProjectsForReviewer": "/MyReviewedProject" ); 
-        }, 2000) 
-
+          navigate("/myProjects");
+        }, 2000);
       } else {
         showToast({
-          title: res?.data?.msg || "Unsuccessful submission",
+          title: response.data.msg,
           duration: 5000,
           status: "error",
         });
@@ -291,13 +243,13 @@ export const ReviewCG = () => {
     } catch (e) {
       setIsLoading(false);
       showToast({
-        title: "Unsuccessful submission",
+        title: e.response?.data?.msg,
         duration: 5000,
         status: "error",
       });
     }
 
-    // Now you can use this request object to send data to your server for validation.
+    setIsSubmitted(true);
   };
 
   const BudgetTable = () => {
@@ -490,10 +442,6 @@ export const ReviewCG = () => {
             ))}
 
             {/* <Button onClick={handleAddPersonalProject}>Add Row</Button> */}
-
-            <Text color={"blue"} fontSize={"xl"} margin={8}>
-            Total Personal cost (Table A)
-          </Text>
 
             <Box borderWidth="1px" borderRadius="md" p={2} m={4}>
               <Box>
@@ -708,10 +656,6 @@ export const ReviewCG = () => {
             ))}
 
             {/* <Button onClick={handleAddProgrammeProject}>Add Row</Button> */}
-
-            <Text color={"blue"} fontSize={"xl"} margin={8}>
-            Total Programme Expenses (Table B)
-          </Text>
 
             <Box borderWidth="1px" borderRadius="md" p={2} m={4}>
               <Box>
@@ -1009,7 +953,7 @@ export const ReviewCG = () => {
     <ChakraProvider>
       <Flex w="full" h="full">
         <VStack w="30%" h="100vh" overflowY="scroll">
-          <DashboardReviewer></DashboardReviewer>
+          <DashboardApprover></DashboardApprover>
         </VStack>
         <Box p={6} w="70%" h="100vh" overflowX={"scroll"}>
           <Heading
@@ -1032,7 +976,7 @@ export const ReviewCG = () => {
           <form onSubmit={handleSubmit}>
             <VStack align="start" spacing={4} mb={8}>
 
-            {/* <FormControl>
+            <FormControl>
               <FormLabel color={'red'}>## SWZ Approver Comment *</FormLabel>
               <Input
                 type="text"
@@ -1072,7 +1016,7 @@ export const ReviewCG = () => {
                 color={'red'}
                 readOnly
               />
-            </FormControl> */}
+            </FormControl>
 
               <Heading fontSize={"xl"}>GENERAL INFORMATION</Heading>
               {/* TITLE OF THE PROJECT */}
@@ -1496,42 +1440,60 @@ export const ReviewCG = () => {
 
               {BudgetTable()}
 
-              <FormControl isRequired>
-              <FormLabel>Comment(For Reviewer)</FormLabel>
-              <Input
-                type="text"
-                name="reviewer_cmt"
-                value={formData.reviewer_cmt}
-                onChange={handleChange}
-                required
-              />
-            </FormControl>
+              
 
             </VStack>
 
+            <Heading as="h2" size="lg" mb={4} textAlign="center">
+                Manual Signatures
+              </Heading>
+              <HStack align="start" spacing={8} mb={8}>            
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              Project Executor
+              </Heading>
+            </Box>
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              Project Applicant
+              </Heading>
+            </Box>
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              President of Society
+              </Heading>
+            </Box>
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+              Sanctioning Authority
+              </Heading>
+            </Box>
+          <Box mt={'10'} width="100%" mb={4}>
+            <hr width='100%' />
+              <Heading as="h2" size="sm" mb={7} textAlign="center" color="grey">
+               Project Co-ordinator
+              </Heading>
+            </Box>
+
+
+          </HStack>
 
             {/* Submit Button */}
-          <Button
-            colorScheme="blue"
-            mx={3}
-            type="submit"
-            onClick={() => (formData.provincialSuperiorAgreement = true)}
-          >
-            Accept
-          </Button>
-          {/* decline Button */}
-          <Button
-            colorScheme="red"
-            mx={3}
-            type="submit"
-            onClick={() => (formData.provincialSuperiorAgreement = false)}
-          >
-            Revert
-          </Button>
+            <Button
+              colorScheme="blue"
+              // type="submit"
+              // onClick={() => (formData.projectInChargeAgreement = true)}
+            >
+              print
+            </Button>
           </form>
         </Box>
       </Flex>
     </ChakraProvider>
   );
 };
-export default ReviewCG;
+export default ViewCGApprover;

@@ -21,18 +21,24 @@ import {
   Td,
   useToast,
   Flex,
+  Text,
 } from "@chakra-ui/react";
 import authAxios from "../../AuthAxios";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import DashboardApplicant from "../Applicant/dashboardApplicant";
 
 export const Common = () => {
   const navigate = useNavigate();
   const [formData, setformData] = useState({
-    NAMEOFTHESOCIETY: "",
+    currentPhase: "",
+    currentPhaseProjectBudget: "",
+    reportingMethodology: " ", //
+    // project_title: "", //
+    president: " ", //
+    NAMEOFTHESOCIETY: "", //
     dATEOFSUBMISSION: "",
-    TITLEOFTHEPROJECT: "",
-    address: "",
+    TITLEOFTHEPROJECT: "", //
+    address: "", //
     provincialSuperiorName: "",
     provincialSuperiorCellNumber: "",
     provincialSuperiorEmail: "",
@@ -40,18 +46,18 @@ export const Common = () => {
     projectInChargeCellNumber: "",
     projectInChargeEmail: "",
     projOfIntialProject: "",
-    overallProjectPeriod: "",
+    overallProjectPeriod: "", //
     overallProjectBudget: "",
-    problemAnalysis: "",
-    solutionAnalysis: "",
-    sustainability: "", // Add sustainability
-    monitoringProcess: "", // Add monitoringProcess
+    problemAnalysis: "", //
+    // solutionAnalysis: "",
+    sustainability: "", // Add sustainability //
+    monitoringProcess: "", // Add monitoringProcess //
     projectInChargeAgreement: false,
     projectInChargeAgreementDate: "",
-    projectArea: "", // Add projectArea
-    directBeneficiaries: "", // Add directBeneficiaries
-    indirectBeneficiaries: "", // Add indirectBeneficiaries
-    evaluationMethodology: "", // Add evaluationMethodology
+    projectArea: "", // Add projectArea //
+    directBeneficiaries: "", // Add directBeneficiaries //
+    indirectBeneficiaries: "", // Add indirectBeneficiaries //
+    evaluationMethodology: "", // Add evaluationMethodology //
     logicalFramework: {
       goal: "",
       objectives: [
@@ -61,13 +67,34 @@ export const Common = () => {
           activities: [],
         },
       ],
-    },
+    }, //
   });
-  const [budgetData, setBudgetData] = useState([{ budget: "", cost: "" }]);
+  // const [budgetData, setBudgetData] = useState([{ budget: "", cost: "" }]);
   const [isLoading, setIsLoading] = useState(false);
   const showToast = useToast();
   const [selectedMonths, setSelectedMonths] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const [personalBudget, setpersonalBudget] = useState([
+    {
+      particulars: "",
+      staff: 0,
+      rate: 0,
+      year_1: 0,
+      year_2: 0,
+      year_3: 0,
+      year_4: 0,
+    },
+  ]);
+  const [programmeBudget, setProgrammeBudget] = useState([
+    {
+      particulars: "",
+      year_1: 0,
+      year_2: 0,
+      year_3: 0,
+      year_4: 0,
+    },
+  ]);
 
   const handleChange = (e, index, subIndex) => {
     const updatedData = { ...formData };
@@ -122,7 +149,6 @@ export const Common = () => {
     updatedData.logicalFramework.objectives[index].activities.push({
       activity: "",
       verification: "",
-      timeframe: Array.from({ length: 12 }).fill(false), // Initialize a new array for the timeframe
     });
     setformData(updatedData);
   };
@@ -130,16 +156,21 @@ export const Common = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Add your form submission logic here
-     formData.projectInChargeAgreement=true
+    formData.projectInChargeAgreement = true;
     const req = {
+      currentPhase: formData.currentPhase || "NA",
+      currentPhaseProjectBudget: formData.currentPhaseProjectBudget || "NA",
+      reportingMethodology: formData.reportingMethodology || "NA", //
+      // project_title: formData.project_title || "", //
+      president: formData.president || "NA",
       nameOfSociety: formData.NAMEOFTHESOCIETY,
-      DateOfSubmission: JSON.stringify(Date.now()).substring(0,10),
+      DateOfSubmission: JSON.stringify(Date.now()).substring(0, 10),
       TitleOfProject: formData.TITLEOFTHEPROJECT,
       address: formData.address,
       OverallProjectPeriod: formData.overallProjectPeriod,
       OverallProjectBudget: formData.overallProjectBudget,
       problemAnalysis: formData.problemAnalysis,
-      solutionAnalysis: formData.solutionAnalysis,
+      // solutionAnalysis: formData.solutionAnalysis,
       sustainability: formData.sustainability, // Add sustainability
       monitoringProcess: formData.monitoringProcess, // Add monitoringProcess
       project_in_charge_agree: {
@@ -157,11 +188,15 @@ export const Common = () => {
         results: objective.results,
         activities: objective.activities,
       })),
-      budget_cost_table: budgetData,
+      // budget_cost_table: budgetData,
+      personalBudget: personalBudget,
+      programmeBudget: programmeBudget,
+      timeFrame: timeFrame,
     };
+    // console.log( req );
 
     try {
-      console.log('req' ,  req);
+      // console.log("req", req);
       setIsLoading((prevLoading) => !prevLoading);
       const response = await authAxios.post("/projects/createCG", req);
       setIsLoading((prevLoading) => !prevLoading);
@@ -172,105 +207,696 @@ export const Common = () => {
           status: "success",
           duration: 5000,
         });
-        navigate("/dashboardApplicant");
+        setTimeout(() => {
+          navigate("/myProjects");
+        }, 2000);
       } else {
         showToast({
-          title: "Unsuccessful form submission",
-          status: "error",
-          description: response.data.msg,
+          title: response.data.msg,
           duration: 5000,
+          status: "error",
         });
       }
-    } catch (err) {
+    } catch (e) {
       setIsLoading(false);
-      console.log(err);
+      showToast({
+        title: e.response.data.msg,
+        duration: 5000,
+        status: "error",
+      });
     }
 
     setIsSubmitted(true);
   };
 
   const BudgetTable = () => {
-    const handleBudgetChange = (index, field, value) => {
-      const newData = [...budgetData];
+    const handleOngoingInputChange = (index, field, value) => {
+      const newData = [...personalBudget];
       newData[index][field] = value;
-      setBudgetData(newData);
+      setpersonalBudget(newData);
     };
-
-    const handleAddBudgetRow = () => {
-      setBudgetData([...budgetData, { budget: "", cost: "" }]);
+    const handleProgrammeInputChange = (index, field, value) => {
+      const newData = [...programmeBudget];
+      newData[index][field] = value;
+      setProgrammeBudget(newData);
     };
-
-    const calculateTotalAmount = () => {
-      formData.overallProjectBudget =  budgetData.reduce(
-        (total, row) => total + parseFloat(row.cost) || 0,
-        0
-      );
-      return formData.overallProjectBudget;
+    const handleAddPersonalProject = () => {
+      setpersonalBudget([
+        ...personalBudget,
+        {
+          particulars: "",
+          staff: 0,
+          rate: 0,
+          year_1: 0,
+          year_2: 0,
+          year_3: 0,
+          year_4: 0,
+        },
+      ]);
+    };
+    const handleAddProgrammeProject = () => {
+      setProgrammeBudget([
+        ...programmeBudget,
+        {
+          particulars: "",
+          year_1: 0,
+          year_2: 0,
+          year_3: 0,
+          year_4: 0,
+        },
+      ]);
+    };
+    const handleDeletePersonalProject = (index) => {
+      const newData = personalBudget.filter((ele, ind) => index !== ind);
+      setpersonalBudget(newData);
+    };
+    const handleDeleteProgrammePsroject = (index) => {
+      const newData = programmeBudget.filter((ele, ind) => index !== ind);
+      setProgrammeBudget(newData);
     };
 
     return (
-      <Box p={4}>
+      <Box p={4} w={"100%"}>
         <Heading as="h1" size="xl" mb={6}>
           Budget Details
         </Heading>
+        <Text fontSize={"2xl"} my={"4"}>
+          Project Budget for 4 Years
+        </Text>
 
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Budget</Th>
-              <Th>Cost</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {budgetData.map((row, index) => (
-              <Tr key={index}>
-                <Td>
+        <Box>
+          <Text color={"blue"} fontSize={"xl"}>
+            Personal cost (Table A)
+          </Text>
+
+          <Box w={"60%"}>
+            {personalBudget.map((row, index) => (
+              <Box key={index} borderWidth="1px" borderRadius="md" p={2} m={4}>
+                <Box mx={2} color={"red.300"}>
+                  S.No: {index + 1}
+                </Box>
+                <Box>
+                  <Text mx={2}>Particulars **</Text>
                   <Input
                     type="text"
-                    value={row.budget}
+                    value={row.particulars}
                     onChange={(e) =>
-                      handleBudgetChange(index, "budget", e.target.value)
+                      handleOngoingInputChange(
+                        index,
+                        "particulars",
+                        e.target.value
+                      )
                     }
+                    placeholder="particulars"
+                    required
                   />
-                </Td>
-                <Td>
+                </Box>
+                <Box>
+                  <Text mx={2}>No. Stuff **</Text>
                   <Input
                     type="number"
-                    value={row.cost}
+                    value={row.staff}
                     onChange={(e) =>
-                      handleBudgetChange(index, "cost", e.target.value)
+                      handleOngoingInputChange(index, "staff", e.target.value)
                     }
+                    placeholder="staff"
+                    required
                   />
-                </Td>
-                {/* Overall Project Budget */}
-              </Tr>
+                </Box>
+                <Box>
+                  <Text mx={2}>Rate **</Text>
+                  <Input
+                    type="number"
+                    value={row.rate}
+                    onChange={(e) =>
+                      handleOngoingInputChange(index, "rate", e.target.value)
+                    }
+                    placeholder="staff"
+                    required
+                  />
+                </Box>
+
+                <Box>
+                  <Text mx={2}>1st Year **</Text>
+                  <Input
+                    type="number"
+                    value={row.year_1}
+                    onChange={(e) =>
+                      handleOngoingInputChange(index, "year_1", e.target.value)
+                    }
+                    placeholder="year_1"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Text mx={2}>2nd Year **</Text>
+                  <Input
+                    type="number"
+                    value={row.year_2}
+                    onChange={(e) =>
+                      handleOngoingInputChange(index, "year_2", e.target.value)
+                    }
+                    placeholder="year_2"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Text mx={2}>3rd Year **</Text>
+                  <Input
+                    type="number"
+                    value={row.year_3}
+                    onChange={(e) =>
+                      handleOngoingInputChange(index, "year_3", e.target.value)
+                    }
+                    placeholder="year_3"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Text mx={2}>4th Year **</Text>
+                  <Input
+                    type="number"
+                    value={row.year_4}
+                    onChange={(e) =>
+                      handleOngoingInputChange(index, "year_4", e.target.value)
+                    }
+                    placeholder="year_4"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Text mx={2}>Total **</Text>
+                  <Input
+                    type="number"
+                    value={
+                      parseInt(row.year_1) +
+                      parseInt(row.year_2) +
+                      parseInt(row.year_3) +
+                      parseInt(row.year_4)
+                    }
+                    placeholder="year_4"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Button
+                    my={2}
+                    bg={"red.500"}
+                    onClick={() => handleDeletePersonalProject(index)}
+                  >
+                    Delete Row
+                  </Button>
+                </Box>
+              </Box>
             ))}
-          </Tbody>
-        </Table>
-        <FormControl isRequired>
-          <FormLabel>Overall Project Budget</FormLabel>
-          <Input
-            type="number"
-            name="overallProjectBudget"
-            readOnly
-            onChange={handleChange}
-            value={calculateTotalAmount()}
-            required
-          />
-        </FormControl>
 
-        <Button onClick={handleAddBudgetRow} mt={4}>
-          Add Row
-        </Button>
+            <Button onClick={handleAddPersonalProject}>Add Row</Button>
+            <Text color={"blue"} fontSize={"xl"}>
+            Total Personal cost (Table A)
+          </Text>
+            <Box borderWidth="1px" borderRadius="md" p={2} m={4}>
+              <Box>
+                <Text mx={2}>No. Stuff **</Text>
+                <Input
+                  type="number"
+                  value={personalBudget.reduce(
+                    (total, ele) => (total += parseInt(ele.staff)),
+                    0
+                  )}
+                  placeholder="Total staff"
+                  required
+                />
+              </Box>
 
-        <FormControl>
-          <FormLabel>Total Amount</FormLabel>
-          <Input type="text" value={calculateTotalAmount()} isReadOnly />
-        </FormControl>
+              <Box>
+                <Text mx={2}>1st Year **</Text>
+                <Input
+                  type="number"
+                  value={personalBudget.reduce(
+                    (total, ele) => (total += parseInt(ele.year_1)),
+                    0
+                  )}
+                  placeholder="total year_1"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>2nd Year **</Text>
+                <Input
+                  type="number"
+                  value={personalBudget.reduce(
+                    (total, ele) => (total += parseInt(ele.year_2)),
+                    0
+                  )}
+                  placeholder="total year_2"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>3rd Year **</Text>
+                <Input
+                  type="number"
+                  value={personalBudget.reduce(
+                    (total, ele) => (total += parseInt(ele.year_3)),
+                    0
+                  )}
+                  placeholder="Total year_3"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>4th Year **</Text>
+                <Input
+                  type="number"
+                  value={personalBudget.reduce(
+                    (total, ele) => (total += parseInt(ele.year_4)),
+                    0
+                  )}
+                  placeholder="Total year_4"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Total **</Text>
+                <Input
+                  type="number"
+                  value={personalBudget.reduce(
+                    (total, ele) =>
+                      (total +=
+                        parseInt(ele.year_1) +
+                        parseInt(ele.year_2) +
+                        parseInt(ele.year_3) +
+                        parseInt(ele.year_4)),
+                    0
+                  )}
+                  placeholder="All total"
+                  required
+                />
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+        <Box>
+          <Text color={"blue"} fontSize={"xl"} margin={8}>
+            Programme Expenses (Table B)
+          </Text>
+
+          <Box w={"60%"}>
+            {programmeBudget.map((row, index) => (
+              <Box key={index} borderWidth="1px" borderRadius="md" p={2} m={4}>
+                <Box mx={2} color={"red.300"}>
+                  S.No: {index + 1}
+                </Box>
+                <Box>
+                  <Text mx={2}>Particulars **</Text>
+                  <Input
+                    type="text"
+                    value={row.particulars}
+                    onChange={(e) =>
+                      handleProgrammeInputChange(
+                        index,
+                        "particulars",
+                        e.target.value
+                      )
+                    }
+                    placeholder="particulars"
+                    required
+                  />
+                </Box>
+
+                <Box>
+                  <Text mx={2}>1st Year **</Text>
+                  <Input
+                    type="number"
+                    value={row.year_1}
+                    onChange={(e) =>
+                      handleProgrammeInputChange(
+                        index,
+                        "year_1",
+                        e.target.value
+                      )
+                    }
+                    placeholder="year_1"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Text mx={2}>2nd Year **</Text>
+                  <Input
+                    type="number"
+                    value={row.year_2}
+                    onChange={(e) =>
+                      handleProgrammeInputChange(
+                        index,
+                        "year_2",
+                        e.target.value
+                      )
+                    }
+                    placeholder="year_2"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Text mx={2}>3rd Year **</Text>
+                  <Input
+                    type="number"
+                    value={row.year_3}
+                    onChange={(e) =>
+                      handleProgrammeInputChange(
+                        index,
+                        "year_3",
+                        e.target.value
+                      )
+                    }
+                    placeholder="year_3"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Text mx={2}>4th Year **</Text>
+                  <Input
+                    type="number"
+                    value={row.year_4}
+                    onChange={(e) =>
+                      handleProgrammeInputChange(
+                        index,
+                        "year_4",
+                        e.target.value
+                      )
+                    }
+                    placeholder="year_4"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Text mx={2}>Total **</Text>
+                  <Input
+                    type="number"
+                    value={
+                      parseInt(row.year_1) +
+                      parseInt(row.year_2) +
+                      parseInt(row.year_3) +
+                      parseInt(row.year_4)
+                    }
+                    placeholder="year_4"
+                    required
+                  />
+                </Box>
+                <Box>
+                  <Button
+                    my={2}
+                    bg={"red.500"}
+                    onClick={() => handleDeleteProgrammePsroject(index)}
+                  >
+                    Delete Row
+                  </Button>
+                </Box>
+              </Box>
+            ))}
+
+            <Button onClick={handleAddProgrammeProject}>Add Row</Button>
+
+            <Text color={"blue"} fontSize={"xl"} margin={8}>
+            Total Programme Expenses (Table B)
+          </Text>
+
+            <Box borderWidth="1px" borderRadius="md" p={2} m={4}>
+              <Box>
+                <Text mx={2}>1st Year **</Text>
+                <Input
+                  type="number"
+                  value={programmeBudget.reduce(
+                    (total, ele) => (total += parseInt(ele.year_1)),
+                    0
+                  )}
+                  placeholder="total year_1"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>2nd Year **</Text>
+                <Input
+                  type="number"
+                  value={programmeBudget.reduce(
+                    (total, ele) => (total += parseInt(ele.year_2)),
+                    0
+                  )}
+                  placeholder="total year_2"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>3rd Year **</Text>
+                <Input
+                  type="number"
+                  value={programmeBudget.reduce(
+                    (total, ele) => (total += parseInt(ele.year_3)),
+                    0
+                  )}
+                  placeholder="Total year_3"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>4th Year **</Text>
+                <Input
+                  type="number"
+                  value={programmeBudget.reduce(
+                    (total, ele) => (total += parseInt(ele.year_4)),
+                    0
+                  )}
+                  placeholder="Total year_4"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Total **</Text>
+                <Input
+                  type="number"
+                  value={programmeBudget.reduce(
+                    (total, ele) =>
+                      (total +=
+                        parseInt(ele.year_1) +
+                        parseInt(ele.year_2) +
+                        parseInt(ele.year_3) +
+                        parseInt(ele.year_4)),
+                    0
+                  )}
+                  placeholder="All total"
+                  required
+                />
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+
+        <Box>
+          <Text color={"blue"} fontSize={"xl"} margin={8}>
+            Financial Summary (Table C)
+          </Text>
+
+          <Box w={"60%"}>
+            <Box borderWidth="1px" borderRadius="md" p={2} m={4}>
+              <Box>
+                <Text mx={2}>Total 1st Year **</Text>
+                <Input
+                  type="number"
+                  value={
+                    programmeBudget.reduce(
+                      (total, ele) => (total += parseInt(ele.year_1)),
+                      0
+                    ) +
+                    personalBudget.reduce(
+                      (total, ele) => (total += parseInt(ele.year_1)),
+                      0
+                    )
+                  }
+                  placeholder="total year_1"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Total 2nd Year **</Text>
+                <Input
+                  type="number"
+                  value={
+                    programmeBudget.reduce(
+                      (total, ele) => (total += parseInt(ele.year_2)),
+                      0
+                    ) +
+                    personalBudget.reduce(
+                      (total, ele) => (total += parseInt(ele.year_2)),
+                      0
+                    )
+                  }
+                  placeholder="total year_2"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Total 3rd Year **</Text>
+                <Input
+                  type="number"
+                  value={
+                    programmeBudget.reduce(
+                      (total, ele) => (total += parseInt(ele.year_3)),
+                      0
+                    ) +
+                    personalBudget.reduce(
+                      (total, ele) => (total += parseInt(ele.year_3)),
+                      0
+                    )
+                  }
+                  placeholder="Total year_3"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Total 4th Year **</Text>
+                <Input
+                  type="number"
+                  value={
+                    programmeBudget.reduce(
+                      (total, ele) => (total += parseInt(ele.year_4)),
+                      0
+                    ) +
+                    personalBudget.reduce(
+                      (total, ele) => (total += parseInt(ele.year_4)),
+                      0
+                    )
+                  }
+                  placeholder="Total year_4"
+                  required
+                />
+              </Box>
+              <Box>
+                <Text mx={2}>Grand Total **</Text>
+                <Input
+                  type="number"
+                  value={
+                    programmeBudget.reduce(
+                      (total, ele) =>
+                        (total +=
+                          parseInt(ele.year_1) +
+                          parseInt(ele.year_2) +
+                          parseInt(ele.year_3) +
+                          parseInt(ele.year_4)),
+                      0
+                    ) +
+                    personalBudget.reduce(
+                      (total, ele) =>
+                        (total +=
+                          parseInt(ele.year_1) +
+                          parseInt(ele.year_2) +
+                          parseInt(ele.year_3) +
+                          parseInt(ele.year_4)),
+                      0
+                    )
+                  }
+                  placeholder="All total"
+                  required
+                />
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       </Box>
     );
   };
 
+  const [timeFrame, setTimeFrame] = useState([
+    {
+      activities: "",
+      months: new Array(12).fill(false),
+    },
+  ]);
+
+  const TimeFrame = () => {
+    const Month = [
+      "Jan",
+      "Feb",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    return (
+      <Box my={8} w={'70%'} >
+        <Heading my={4}>Time Frame</Heading>
+            {timeFrame.map((ele, ind) => (
+              <VStack w={"100%"} p={4} border={'2px solid gray'} my={4}>
+                <Box w={'100%'} >
+                  <Text size={'xxl'}>Activity **</Text> 
+
+                  <Textarea
+                    w={'100%'}
+                    type="text"
+                    value={ele.activities}
+                    onChange={(e) => {
+                      let newTimeFrame = [...timeFrame];
+                      newTimeFrame[ind].activities = e.target.value;
+                      setTimeFrame(newTimeFrame);
+                    }}
+                    placeholder={`Activities ${ind + 1}`}
+                    required
+                  ></Textarea>
+                </Box>
+                <Box>
+                <Text size={'xxl'}>Month **</Text> 
+                 {ele.months.map((ele, index) => (
+                      <Checkbox
+                        m={2}
+                        isChecked={ele}
+                        onChange={(e) => {
+                          const newTime = [...timeFrame];
+                          newTime[ind]["months"][index] = e.target.checked;
+                          setTimeFrame(newTime);
+                          // console.log(newTime)
+                        }}
+                      >
+                        {Month[index]}
+                      </Checkbox>
+                    ))}
+                  </Box>
+                <Box>
+                <Button
+                    color={"red.500"}
+                    onClick={() => {
+                      const newTime = timeFrame.filter(
+                        (ele, eleInd) => eleInd !== ind
+                      );
+                      setTimeFrame(newTime);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Box>
+              </VStack>
+            ))}
+          <Button
+            my={2}
+            onClick={() => {
+              setTimeFrame([
+                ...timeFrame,
+                {
+                  activities: "",
+                  months: new Array(12).fill(false),
+                },
+              ]);
+            }}
+          >
+            Add Activities
+          </Button>
+      </Box>
+    );
+  };
 
   return (
     <ChakraProvider>
@@ -278,7 +904,7 @@ export const Common = () => {
         <VStack w="30%" h="100vh" overflowY="scroll">
           <DashboardApplicant></DashboardApplicant>
         </VStack>
-        <Box p={6} w='70%' h='100vh' overflowX={'scroll'}>
+        <Box p={6} w="70%" h="100vh" overflowX={"scroll"}>
           <Heading
             as="h1"
             size="xl"
@@ -286,7 +912,7 @@ export const Common = () => {
             align="center"
             justifyContent="center"
           >
-            Common Project Application Form
+            PROJECT PROPOSAL FOR THE DEVELOPMENT PROJECT
           </Heading>
 
           {isSubmitted && (
@@ -298,17 +924,7 @@ export const Common = () => {
 
           <form onSubmit={handleSubmit}>
             <VStack align="start" spacing={4} mb={8}>
-              {/* NAME OF THE SOCIETY */}
-              <FormControl isRequired>
-                <FormLabel>NAME OF THE SOCIETY</FormLabel>
-                <Input
-                  type="text"
-                  name="NAMEOFTHESOCIETY"
-                  onChange={handleChange}
-                  value={formData.NAMEOFTHESOCIETY}
-                  required
-                />
-              </FormControl>
+              <Heading fontSize={"xl"}>GENERAL INFORMATION</Heading>
               {/* TITLE OF THE PROJECT */}
               <FormControl isRequired>
                 <FormLabel>TITLE OF THE PROJECT </FormLabel>
@@ -320,6 +936,18 @@ export const Common = () => {
                   required
                 />
               </FormControl>
+              {/* NAME OF THE SOCIETY */}
+              <FormControl isRequired>
+                <FormLabel>President / Chair Person</FormLabel>
+                <Input
+                  type="text"
+                  name="president"
+                  onChange={handleChange}
+                  value={formData.president}
+                  required
+                />
+              </FormControl>
+
               {/* ADDRESS*/}
               <FormControl isRequired>
                 <FormLabel>ADDRESS</FormLabel>
@@ -331,6 +959,60 @@ export const Common = () => {
                   required
                 />
               </FormControl>
+
+              {/* NAME OF THE SOCIETY */}
+              <FormControl isRequired>
+                <FormLabel>NAME OF THE SOCIETY / TRUST</FormLabel>
+                <Input
+                  type="text"
+                  name="NAMEOFTHESOCIETY"
+                  onChange={handleChange}
+                  value={formData.NAMEOFTHESOCIETY}
+                  required
+                />
+              </FormControl>
+              {/* Overall Project Period */}
+              <FormControl isRequired>
+                <FormLabel>Overall Project Period (in months)</FormLabel>
+                <Input
+                  type="number"
+                  name="overallProjectPeriod"
+                  onChange={handleChange}
+                  value={formData.overallProjectPeriod}
+                  required
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Current Phase</FormLabel>
+                <Input
+                  type="string"
+                  name="currentPhase"
+                  onChange={handleChange}
+                  value={formData.currentPhase}
+                  required
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Overall Project Budget </FormLabel>
+                <Input
+                  type="number"
+                  name="overallProjectBudget"
+                  onChange={handleChange}
+                  value={formData.overallProjectBudget}
+                  required
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Current Phase Project Budget</FormLabel>
+                <Input
+                  type="number"
+                  name="currentPhaseProjectBudget"
+                  onChange={handleChange}
+                  value={formData.currentPhaseProjectBudget}
+                  required
+                />
+              </FormControl>
+
               {/* Contacts Table */}
               <Table variant="simple" mb={4}>
                 <Thead>
@@ -357,17 +1039,6 @@ export const Common = () => {
                   </Tr>
                 </Tbody>
               </Table>
-              {/* Overall Project Period */}
-              <FormControl isRequired>
-                <FormLabel>Overall Project Period (in months)</FormLabel>
-                <Input
-                  type="number"
-                  name="overallProjectPeriod"
-                  onChange={handleChange}
-                  value={formData.overallProjectPeriod}
-                  required
-                />
-              </FormControl>
 
               {/* Project Area */}
               <FormControl isRequired>
@@ -419,21 +1090,13 @@ export const Common = () => {
               </FormControl>
 
               {/* Solution Analysis */}
-              <FormControl isRequired>
-                <FormLabel>Solution Analysis</FormLabel>
-                <Textarea
-                  name="solutionAnalysis"
-                  onChange={handleChange}
-                  value={formData.solutionAnalysis}
-                  required
-                />
-              </FormControl>
+              <Heading size="xl">SOLUTION ANALYSIS</Heading>
 
               {/* Logical Framework */}
 
               <Heading
                 as="h1"
-                size="xl"
+                size="lg"
                 mb={6}
                 align="center"
                 justifyContent="center"
@@ -467,6 +1130,7 @@ export const Common = () => {
                   borderRadius="lg"
                   p={4}
                   mb={8}
+                  w={"100%"}
                 >
                   <VStack key={index} align="start" spacing={4} mb={8}>
                     {/* Objective */}
@@ -492,25 +1156,44 @@ export const Common = () => {
                             onChange={(e) => handleChange(e, index, subIndex)}
                             required
                           />
-                        
+                          <Button
+                            bg={"red.500"}
+                            onClick={() => {
+                              const updatedData = { ...formData };
+                              updatedData.logicalFramework.objectives[
+                                index
+                              ].results =
+                                updatedData.logicalFramework.objectives[
+                                  index
+                                ].results.filter(
+                                  (ele, ind) => ind !== subIndex
+                                );
+                              setformData(updatedData);
+                            }}
+                          >
+                            Delete
+                          </Button>
                         </VStack>
                       ))}
                       <Button
-                            onClick={() => handleAddResult(index)}
-                            colorScheme="teal"
-                          >
-                            Add Result
-                          </Button>
+                        onClick={() => handleAddResult(index)}
+                        colorScheme="teal"
+                      >
+                        Add Result
+                      </Button>
                     </FormControl>
 
                     {/* Activities and Means of Verification */}
                     <FormControl isRequired>
-                      <FormLabel>Activities and Means of Verification</FormLabel>
+                      <FormLabel>
+                        Activities and Means of Verification
+                      </FormLabel>
                       <Table variant="simple">
                         <Thead>
                           <Tr>
                             <Th>Activity</Th>
                             <Th>Means of Verification</Th>
+                            <Th>Delete</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -537,27 +1220,22 @@ export const Common = () => {
                                 />
                               </Td>
                               <Td>
-                                {/* Timeframe */}
-                                <FormControl>
-                                  <FormLabel>Timeframe</FormLabel>
-                                  {activity.timeframe.map((value, monthIndex) => (
-                                    <Checkbox
-                                      key={monthIndex}
-                                      isChecked={value}
-                                      onChange={() => {
-                                        setSelectedMonths([]);
-                                        activity.timeframe[monthIndex] =
-                                          !activity.timeframe[monthIndex];
-                                        console.log(activity.timeframe);
-                                      }}
-                                    >
-                                      {new Date(2024, monthIndex).toLocaleString(
-                                        "default",
-                                        { month: "long" }
-                                      )}
-                                    </Checkbox>
-                                  ))}
-                                </FormControl>
+                                <Button
+                                  onClick={() => {
+                                    const updatedData = { ...formData };
+                                    updatedData.logicalFramework.objectives[
+                                      index
+                                    ].activities =
+                                      updatedData.logicalFramework.objectives[
+                                        index
+                                      ].activities.filter(
+                                        (ele, ind) => subIndex !== ind
+                                      );
+                                    setformData(updatedData);
+                                  }}
+                                >
+                                  Delete
+                                </Button>
                               </Td>
                             </Tr>
                           ))}
@@ -571,16 +1249,36 @@ export const Common = () => {
                         Add Activity
                       </Button>
                     </FormControl>
+
+                    <Button
+                      bg={"red.500"}
+                      onClick={() => {
+                        const updatedData = { ...formData };
+                        updatedData.logicalFramework.objectives =
+                          updatedData.logicalFramework.objectives.filter(
+                            (ele, ind) => ind !== index
+                          );
+                        setformData(updatedData);
+                      }}
+                    >
+                      Delete Objective
+                    </Button>
                   </VStack>
                 </Box>
               ))}
-              <Button onClick={handleAddObjective} colorScheme="purple" ml="auto">
+              <Button
+                onClick={handleAddObjective}
+                colorScheme="purple"
+                ml="auto"
+              >
                 Add Objective
               </Button>
 
+              {TimeFrame()}
+
               {/* Sustainability of the Project */}
               <FormControl isRequired>
-                <FormLabel>Sustainability of the Project</FormLabel>
+                <FormLabel>Explain the sustainability of the Project</FormLabel>
                 <Textarea
                   name="sustainability"
                   value={formData.sustainability}
@@ -613,17 +1311,30 @@ export const Common = () => {
                 />
               </FormControl>
 
+              {/* Methodology of Evaluation */}
+              <FormControl isRequired>
+                <FormLabel>Explain the Methodology of reporting</FormLabel>
+                <Textarea
+                  name="reportingMethodology"
+                  value={formData.reportingMethodology}
+                  onChange={(e) => handleChange(e)}
+                  required
+                />
+              </FormControl>
+
               {BudgetTable()}
             </VStack>
             {/* Submit Button */}
-            <Button colorScheme="blue" type="submit"
-            onClick={() => (formData.projectInChargeAgreement = true)}
+            <Button
+              colorScheme="blue"
+              type="submit"
+              onClick={() => (formData.projectInChargeAgreement = true)}
             >
               Submit
             </Button>
           </form>
         </Box>
-      </Flex >
+      </Flex>
     </ChakraProvider>
   );
 };

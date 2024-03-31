@@ -60,6 +60,7 @@ const ReviewEG = () => {
       projectData.project_in_charge_agree.agree || false,
     projectInChargeAgreementDate:
       projectData.project_in_charge_agree.date || "",
+      comment: projectData.comment_box_provincial_superior || "",
   });
 
   // Populate studiesTableData from req
@@ -1103,6 +1104,7 @@ const ReviewEG = () => {
               <Input
                 type="text"
                 name="comment"
+                value={formData.comment}
                 onChange={handleChange}
                 required
               />

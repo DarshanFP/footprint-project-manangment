@@ -26,9 +26,11 @@ import {
 import authAxios from "../../AuthAxios";
 import { useNavigate, useParams } from "react-router-dom";
 // import DashboardApplicant from './../Applicant/dashboardApplicant';
-import DashboardReviewer from './../Reviewer/dashboardReviewer';
+// import DashboardReviewer from '../Reviewer/dashboardReviewer';
+import DashboardApprover from '../Approver/dashboardApprover';
+// import { ApproveCG } from './ViewCG';
 
-export const ReviewCG = () => {
+export const ApproveCGswz = () => {
   const navigate = useNavigate();
 
   const projectData = JSON.parse(decodeURIComponent(useParams().project));
@@ -75,7 +77,8 @@ export const ReviewCG = () => {
     swz_approver_cmt : projectData.comment_box_project_coordinator_swz || "",
     reviewer_cmt : projectData.comment_box_provincial_superior || "",
     amountApprovedByProjectCoordinator: projectData.amount_approved || "",
-    provincialSuperiorAgreement: projectData.provincial_superior_agree.agree || false,
+    provincialSuperiorAgreement: projectData.provincial_superior_agree.agree || true,
+    projectCoordinatorAgreement: projectData.project_coordinator_agree|| false,
   });
   // const [budgetData, setBudgetData] = useState([{ budget: "", cost: "" }]);
   const [isLoading, setIsLoading] = useState(false);
@@ -256,48 +259,52 @@ export const ReviewCG = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
     // Add your form submission logic here
 
     try {
-      // console.log(projectData._id);
-      const res = await authAxios.put("/projects/editreviewerCG", {
+      setIsLoading((prevLoading) => !prevLoading);
+      const response = await authAxios.put("/projects/editapproverCG", {
         projectID: projectData._id,
-        comment_box_provincial_superior: formData.reviewer_cmt,
-        provincial_superior_agree: {
-          agree: formData.provincialSuperiorAgreement
+        comment_box_project_coordinator: formData.approver_cmt,
+        comment_box_project_coordinator_swz: formData.swz_approver_cmt,
+        project_coordinator_agree: {
+          agree: true
         },
+        project_coordinator_agree_swz: {
+          agree: true
+        },
+        amount_approved: parseInt(formData.amountApprovedByProjectCoordinator),
       });
-      setIsLoading(false);
-      if (res.data.success) {
+      setIsLoading((prevLoading) => !prevLoading);
+      console.log(response.data);
+      if (response.data.success) {
         showToast({
-          title: formData.provincialSuperiorAgreement ? "Reviewed successfully" : "Reverted successfully",
-          duration: 5000,
+          title: "Approved successfully",
           status: "success",
-        });
-        setIsSubmitted(true);
-        setTimeout(() => {
-          navigate(formData.provincialSuperiorAgreement ? "/ApprovedProjectsForReviewer": "/MyReviewedProject" ); 
-        }, 2000) 
-
-      } else {
-        showToast({
-          title: res?.data?.msg || "Unsuccessful submission",
           duration: 5000,
+        });
+        setTimeout(() => {
+          // navigate("/ApprovedProjects");
+          navigate("/ApprovedProjects");
+        }, 2000);
+      }else {
+        showToast({
+          title: "Unsuccessful form submission",
           status: "error",
+          duration: 5000,
         });
       }
-    } catch (e) {
+    } catch (err) {
       setIsLoading(false);
       showToast({
-        title: "Unsuccessful submission",
-        duration: 5000,
+        title: "Unsuccessful form submission",
         status: "error",
+        duration: 5000,
       });
+      console.log(err);
     }
 
-    // Now you can use this request object to send data to your server for validation.
+    setIsSubmitted(true);
   };
 
   const BudgetTable = () => {
@@ -1009,7 +1016,7 @@ export const ReviewCG = () => {
     <ChakraProvider>
       <Flex w="full" h="full">
         <VStack w="30%" h="100vh" overflowY="scroll">
-          <DashboardReviewer></DashboardReviewer>
+          <DashboardApprover></DashboardApprover>
         </VStack>
         <Box p={6} w="70%" h="100vh" overflowX={"scroll"}>
           <Heading
@@ -1504,6 +1511,40 @@ export const ReviewCG = () => {
                 value={formData.reviewer_cmt}
                 onChange={handleChange}
                 required
+                readOnly
+              />
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>Comment(For Approver)</FormLabel>
+              <Input
+                type="text"
+                name="approver_cmt"
+                value={formData.approver_cmt}
+                onChange={handleChange}
+                required
+                readOnly
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Approved Amount</FormLabel>
+              <Input
+                type="text"
+                name="amountApprovedByProjectCoordinator"
+                value={formData.amountApprovedByProjectCoordinator}
+                onChange={handleChange}
+                required
+                readOnly
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Comment(For Approver Switzerland)</FormLabel>
+              <Input
+                type="text"
+                name="swz_approver_cmt"
+                value={formData.swz_approver_cmt}
+                onChange={handleChange}
+                required
               />
             </FormControl>
 
@@ -1515,23 +1556,24 @@ export const ReviewCG = () => {
             colorScheme="blue"
             mx={3}
             type="submit"
-            onClick={() => (formData.provincialSuperiorAgreement = true)}
+            onClick={() => (formData.projectCoordinatorAgreement = true)}
           >
             Accept
           </Button>
           {/* decline Button */}
-          <Button
+          {/* <Button
             colorScheme="red"
             mx={3}
             type="submit"
-            onClick={() => (formData.provincialSuperiorAgreement = false)}
+            onClick={() => (formData.projectCoordinatorAgreement = false)}
           >
             Revert
-          </Button>
+          </Button> */}
           </form>
         </Box>
       </Flex>
     </ChakraProvider>
   );
 };
-export default ReviewCG;
+export default ApproveCGswz;
+
