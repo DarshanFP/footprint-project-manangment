@@ -102,7 +102,7 @@ const EducationRuralUrbanTribalGroup = () => {
   const handleSubmit = async (e) => {
     // Send requestBody to the backend
     e.preventDefault();
-    console.log("inside handle submit");
+    // console.log("inside handle submit");
 
     console.log("ins",formData.insOrNot)
 
@@ -178,7 +178,7 @@ const EducationRuralUrbanTribalGroup = () => {
     };
 
     console.log("working before try");
-    console.log(req);
+    // console.log(req);
     try {
       const res = await authAxios.post("/projects/createEGS", req);
       // console.log(res);
@@ -281,10 +281,6 @@ const EducationRuralUrbanTribalGroup = () => {
       ...prevData,
       targetGroup: updatedTargetGroup,
     }));
-    // setFormData((prevData) => ({
-    //   ...prevData,
-    //   targetGroup: newTargetGroup,
-    // }));
   };
 
   const handleDeleteObjective = (index) => {
@@ -436,7 +432,7 @@ const EducationRuralUrbanTribalGroup = () => {
                   
                   >
                     <option value="institutional"> Institutional</option>
-                    <option value="non-Institutional">Non-Institutional</option>
+                    <option value="non-institutional">Non-Institutional</option>
                   </Select>
                 </FormControl>
                 <FormControl mb={4}>
